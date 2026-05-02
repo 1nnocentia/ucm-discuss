@@ -1,10 +1,33 @@
-export const COLORS = {
+const COMMON_COLORS = {
     primary: '#FDA258',
     secondary: '#9CB380',
     lightSecondary: '#D4E09B',
     tertiary: '#94A89A',
+}
 
-    background: '#FDFDFD',
+export const LIGHT_THEME = {
+    colors: {
+        ...COMMON_COLORS,
+        background: '#FDFDFD',
+        textPrimary: '#121212',
+        textSecondary: '#4F4F4F',
+    },
+    spacing: {
+        xs: 4,
+        s: 8,
+        m: 16,
+        l: 24,
+    }
+}
+
+export const DARK_THEME = {
+    colors: {
+        ...COMMON_COLORS,
+        background: '#121212',
+        textPrimary: '#FDFDFD',
+        textSecondary: '#AFAFAF',
+    },
+    spacing : LIGHT_THEME.spacing
 }
 
 export const FONTS = {
