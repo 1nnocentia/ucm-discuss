@@ -3,7 +3,25 @@ const COMMON_COLORS = {
     secondary: '#9CB380',
     lightSecondary: '#D4E09B',
     tertiary: '#94A89A',
-}
+} as const;
+
+export const FONTS = {
+    inter: 'Inter, sans-serif',
+    montserrat: 'Montserrat, sans-serif',
+    openSans: 'Open Sans, sans-serif',
+    merienda: 'Merienda, cursive',
+} as const;
+
+export const FONT_SIZES = {
+    mini: '0.625rem', // 10
+    small: '0.75rem', // 12
+    medium: '0.875rem', // 14
+    large: '1rem', // 16
+    headline: '1.063rem', // 17
+    title: '1.25rem', // 20
+    titlelarge: '1.375rem', // 22
+    titlexlarge: '1.75rem' // 28
+} as const;
 
 export const LIGHT_THEME = {
     colors: {
@@ -17,8 +35,10 @@ export const LIGHT_THEME = {
         s: 8,
         m: 16,
         l: 24,
-    }
-}
+    },
+    fonts: FONTS,
+    fontSizes: FONT_SIZES
+} as const;
 
 export const DARK_THEME = {
     colors: {
@@ -27,24 +47,10 @@ export const DARK_THEME = {
         textPrimary: '#FDFDFD',
         textSecondary: '#AFAFAF',
     },
-    spacing : LIGHT_THEME.spacing
-}
+    spacing : LIGHT_THEME.spacing,
+    fonts: FONTS,
+    fontSizes: FONT_SIZES
+} as const;
 
-export const FONTS = {
-    inter: 'Inter, sans-serif',
-    montserrat: 'Montserrat, sans-serif',
-    openSans: 'Open Sans, sans-serif',
-    merienda: 'Merienda, cursive',
-}
 
-export const FONT_SIZES = {
-    mini: '0.625rem', // 10
-    small: '0.75rem', // 12
-    medium: '0.875rem', // 14
-    large: '1rem', // 16
-    headline: '1.063rem', // 17
-    title: '1.25rem', // 20
-    titlelarge: '1.375rem', // 22
-    titlexlarge: '1.75rem' // 28
-}
-
+export type Theme = typeof LIGHT_THEME;
