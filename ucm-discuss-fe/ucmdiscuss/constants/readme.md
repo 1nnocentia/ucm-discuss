@@ -1,0 +1,1 @@
+Config warna, ukuran font, spacing (Theme)
