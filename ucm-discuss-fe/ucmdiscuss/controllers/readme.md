@@ -1,0 +1,1 @@
+Logic: Pemrosesan data, API call, state management
