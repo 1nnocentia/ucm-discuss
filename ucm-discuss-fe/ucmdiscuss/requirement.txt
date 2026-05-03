@@ -1,0 +1,1 @@
+npx expo install @expo-google-fonts/inter @expo-google-fonts/montserrat @expo-google-fonts/open-sans @expo-google-fonts/merienda expo-font
