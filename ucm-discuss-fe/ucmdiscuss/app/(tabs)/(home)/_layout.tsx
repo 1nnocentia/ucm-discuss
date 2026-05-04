@@ -1,5 +1,7 @@
 import { Stack } from 'expo-router';
 import { useTheme } from '@/context/ThemeContext';
+import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import Ionicons from '@expo/vector-icons/build/Ionicons';
 
 export default function HomeStackLayout() {
   const { theme } = useTheme();
@@ -7,18 +9,31 @@ export default function HomeStackLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: theme.colors.background },
-        headerTintColor: theme.colors.textPrimary,
-        // headerTitleStyle: { 
-        //   fontFamily: theme.fonts.header, 
-        //   fontSize: theme.fontSizes.headline 
-        // },
+        headerStyle: { 
+            backgroundColor: theme.colors.background 
+        },
         headerShadowVisible: false,
       }}
     >
       <Stack.Screen 
         name="index" 
-        options={{ title: 'Threads' }} 
+        options={{ 
+            headerTitle: () => (
+                <Text style={{ 
+                  fontFamily: 'Marienda-Bold',
+                  fontSize: theme.fontSizes.title,
+                  color: theme.colors.textPrimary
+                 }}>
+                    UCM Discuss
+                 </Text>
+            ),
+            headerTitleAlign: 'center',
+            headerRight: () => {
+              <TouchableOpacity style={{ marginRight: 16 }}>
+                <Ionicons name="search-outline" size={24} color={theme.colors.textSecondary} />
+              </TouchableOpacity>
+            }
+        }} 
       />
       <Stack.Screen 
         name="[id]" 
@@ -27,3 +42,12 @@ export default function HomeStackLayout() {
     </Stack>
   );
 }
+
+// const { theme } = useTheme();
+
+// const styles = StyleSheet.create({
+//     logo: {
+//         fontFamily: 'Merienda-Bold',
+//         fontSize: theme.fontSizes.title,
+//     }
+// })
