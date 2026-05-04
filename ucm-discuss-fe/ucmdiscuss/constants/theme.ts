@@ -3,6 +3,9 @@ const COMMON_COLORS = {
     secondary: '#9CB380',
     lightSecondary: '#D4E09B',
     tertiary: '#94A89A',
+
+    buttonOn: '#D34A16',
+    buttonOff: '#E6E6E6'
 } as const;
 
 export const FONTS = {

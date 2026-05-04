@@ -1,11 +1,11 @@
 import { View } from "react-native";
 
-const recentScreen = () => {
+const notificationsScreen = () => {
     return (
         <View>
-            
+
         </View>
     )
 }
 
-export default recentScreen;
+export default notificationsScreen;

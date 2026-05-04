@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-const recentScreen = () => {
+const homeScreen = () => {
     return (
         <View>
             
@@ -8,4 +8,4 @@ const recentScreen = () => {
     )
 }
 
-export default recentScreen;
+export default homeScreen;

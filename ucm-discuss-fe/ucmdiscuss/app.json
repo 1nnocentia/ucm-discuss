@@ -8,6 +8,9 @@
     "scheme": "ucmdiscuss",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splashscreen/splashMinimal.png"
+    },
     "ios": {
       "supportsTablet": true
     },
