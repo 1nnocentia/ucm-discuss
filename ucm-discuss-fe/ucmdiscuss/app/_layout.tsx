@@ -23,6 +23,7 @@ export default function RootLayout() {
     'Montserrat-Bold': Montserrat_600SemiBold,
     'OpenSans-Regular': OpenSans_400Regular,
     'Merienda-Regular': Merienda_400Regular,
+    'Merienda-Bold': Merienda_600SemiBold,
   });
 
   useEffect(() => {
@@ -64,7 +65,7 @@ function MainLayout() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false}} />
     </Stack>
   );
 }

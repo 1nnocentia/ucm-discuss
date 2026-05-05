@@ -1,7 +1,9 @@
 import { Tabs } from "expo-router";
 import { useTheme } from "@/context/ThemeContext";
-import { HapticTab } from "@/app-example/components/haptic-tab";
 import { Ionicons } from "@expo/vector-icons";
+
+import { AnimatedTabButton } from "@/components/buttons/tabButton";
+import { CenterTabButton } from "@/components/buttons/centerTabButton";
 
 export default function TabsLayout() {
     const { theme } = useTheme();
@@ -12,11 +14,18 @@ export default function TabsLayout() {
                 tabBarActiveTintColor: theme.colors.buttonOn,
                 tabBarInactiveTintColor: theme.colors.buttonOff,
                 headerShown: false,
-                tabBarButton: HapticTab,
+                tabBarStyle: {
+                    backgroundColor: theme.colors.primary,
+                    paddingTop: 7,
+                    paddingBottom: 10,
+                },
+                tabBarButton: (props) => <AnimatedTabButton {...props} />,
+
              }}>
             <Tabs.Screen
-                name="index"
+                name="(home)"
                 options={{
+                    // tabBarShowLabel: false,
                     title: "Home",
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="home" size={size ?? 24} color={color} />
@@ -26,6 +35,7 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="recent"
                 options={{
+                    // tabBarShowLabel: false,
                     title: "Recent",
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="time" size={size ?? 24} color={color} />
@@ -35,15 +45,24 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="createNewThread"
                 options={{
-                    title: "Create New Thread",
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="add-circle" size={size ?? 24} color={color} />
+                    // tabBarShowLabel: false,
+                    title: "New Thread",
+                    tabBarIcon: ({ focused, color }) => (
+                        <CenterTabButton focused={focused}>
+                            <Ionicons 
+                            name="add" 
+                            size={32} 
+                            color={focused ? "#FFFFFF" : color} 
+                            />
+                        </CenterTabButton>
                     ),
+                    // tabBarLabel: () => null,
                 }}
             />
             <Tabs.Screen
-                name="notifications"
+                name="notification"
                 options={{
+                    // tabBarShowLabel: false,
                     title: "Notifications",
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="notifications" size={size ?? 24} color={color} />

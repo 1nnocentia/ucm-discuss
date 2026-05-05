@@ -5,7 +5,7 @@ const COMMON_COLORS = {
     tertiary: '#94A89A',
 
     buttonOn: '#D34A16',
-    buttonOff: '#E6E6E6'
+    buttonOff: '#FFFFFF'
 } as const;
 
 export const FONTS = {
@@ -16,14 +16,14 @@ export const FONTS = {
 } as const;
 
 export const FONT_SIZES = {
-    mini: '0.625rem', // 10
-    small: '0.75rem', // 12
-    medium: '0.875rem', // 14
-    large: '1rem', // 16
-    headline: '1.063rem', // 17
-    title: '1.25rem', // 20
-    titlelarge: '1.375rem', // 22
-    titlexlarge: '1.75rem' // 28
+    mini: 10, // 10
+    small: 12, // 12
+    medium: 14, // 14
+    large: 16, // 16
+    headline: 17, // 17
+    title: 20, // 20
+    titlelarge: 22, // 22
+    titlexlarge: 28 // 28
 } as const;
 
 export const LIGHT_THEME = {
