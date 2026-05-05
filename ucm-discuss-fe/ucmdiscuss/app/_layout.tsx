@@ -11,6 +11,7 @@ import { View, StyleSheet } from 'react-native';
 
 import LottieView from 'lottie-react-native';
 import * as SplashScreen from 'expo-splash-screen';
+import { AuthProvider } from '@/context/AuthContext';
 
 
 export default function RootLayout() {
@@ -55,7 +56,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <MainLayout />
+      <AuthProvider>
+        <MainLayout />
+      </AuthProvider>
     </ThemeProvider>
   );
 }
