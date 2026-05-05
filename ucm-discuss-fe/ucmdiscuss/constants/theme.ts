@@ -5,7 +5,7 @@ const COMMON_COLORS = {
     tertiary: '#94A89A',
 
     buttonOn: '#D34A16',
-    buttonOff: '#E6E6E6'
+    buttonOff: '#FFFFFF'
 } as const;
 
 export const FONTS = {

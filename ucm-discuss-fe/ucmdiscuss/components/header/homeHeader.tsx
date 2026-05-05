@@ -8,16 +8,14 @@ export const HomeHeader = () => {
   const { theme } = useTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.primary }]}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
 
       {/* Logo */}
-      <View style={styles.titleContainer}>
-        <Text style={[styles.title, { color: theme.colors.textPrimary, fontFamily: theme.fonts.merienda }]}>
+        <Text style={[styles.title, { color: theme.colors.primary }]}>
           UCM Discuss
         </Text>
-      </View>
 
-      {/* Tombol Search */}
+      {/* Search */}
       <View style={styles.rightContainer}>
         <AnimatedSearchHeader />
       </View>
@@ -31,19 +29,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     height: 60,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
   },
   iconButton: {
     width: 40,
     justifyContent: 'center',
   },
-  titleContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
   title: {
     fontSize: 20,
-    fontFamily: 'Marienda-Bold'
+    fontFamily: 'Merienda-Bold',
   },
   rightContainer: {
     width: 'auto',

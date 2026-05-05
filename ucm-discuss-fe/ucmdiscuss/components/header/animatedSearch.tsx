@@ -1,6 +1,14 @@
-import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, View, Dimensions } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } from 'react-native-reanimated';
+import React, { useState, useRef } from 'react';
+import { 
+  StyleSheet, 
+  TouchableOpacity, 
+  TextInput, 
+  Animated, 
+  Dimensions, 
+  View,
+  Keyboard,
+  Text,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 
@@ -10,73 +18,99 @@ export const AnimatedSearchHeader = () => {
   const { theme } = useTheme();
   const [active, setActive] = useState(false);
   
-  const animation = useSharedValue(0);
+  // Menggunakan Animated bawaan untuk performa ringan
+  const overlayAnim = useRef(new Animated.Value(0)).current;
 
   const toggleSearch = () => {
-    const newValue = active ? 0 : 1;
-    animation.value = withTiming(newValue, { duration: 300 });
-    setActive(!active);
+    if (!active) {
+      setActive(true);
+      Animated.timing(overlayAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false, // Properti Layout (width/right) tidak dukung native driver
+      }).start();
+    } else {
+      Keyboard.dismiss();
+      Animated.timing(overlayAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: false,
+      }).start(() => setActive(false));
+    }
   };
-
-  // Style untuk box pencarian
-  const animatedBoxStyle = useAnimatedStyle(() => {
-    return {
-      width: interpolate(animation.value, [0, 1], [40, SCREEN_WIDTH - 80]),
-      backgroundColor: active ? theme.colors.lightSecondary : 'transparent',
-      borderRadius: 20,
-      paddingHorizontal: interpolate(animation.value, [0, 1], [0, 12]),
-    };
-  });
-
-  // Style untuk menyembunyikan/memunculkan input text
-  const animatedInputStyle = useAnimatedStyle(() => {
-    return {
-      opacity: animation.value,
-      flex: 1,
-    };
-  });
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.searchBox, animatedBoxStyle]}>
-        <TouchableOpacity onPress={toggleSearch}>
-          <Ionicons 
-            name={active ? "close-outline" : "search-outline"} 
-            size={24} 
-            color={theme.colors.textSecondary} 
-          />
-        </TouchableOpacity>
-        
-        {active && (
-          <Animated.View style={animatedInputStyle}>
+      {/* Trigger Icon */}
+      <TouchableOpacity onPress={toggleSearch}>
+        <Ionicons name="search-outline" size={24} color={theme.colors.textSecondary} />
+      </TouchableOpacity>
+
+      {/* Full Overlay Search Bar */}
+      {active && (
+        <Animated.View 
+          style={[
+            styles.searchOverlay, 
+            { 
+              backgroundColor: theme.colors.background,
+              // Animasi melebar dari kanan ke kiri
+              width: overlayAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [40, SCREEN_WIDTH] 
+              }),
+              opacity: overlayAnim
+            }
+          ]}
+        >
+          <View style={styles.innerContainer}>
+            <Ionicons name="search-outline" size={20} color={theme.colors.primary} />
             <TextInput
               placeholder="Search threads..."
               placeholderTextColor={theme.colors.textSecondary}
-              style={[styles.input, { color: theme.colors.textPrimary, fontFamily: theme.fonts.inter }]}
+              style={[
+                styles.input, 
+                { color: theme.colors.textPrimary, fontFamily: theme.fonts.inter }
+              ]}
               autoFocus
             />
-          </Animated.View>
-        )}
-      </Animated.View>
+            <TouchableOpacity onPress={toggleSearch} style={styles.closeButton}>
+              <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.inter }}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    zIndex: 10,
   },
-  searchBox: {
-    height: 40,
+  searchOverlay: {
+    position: 'absolute',
+    top: -15, // Menyeimbangkan posisi vertical di dalam header
+    right: -16, // Menutup padding horizontal header
+    height: 60,
+    justifyContent: 'center',
+    elevation: 5, // Shadow untuk Android
+    shadowColor: '#000', // Shadow untuk iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  innerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    overflow: 'hidden',
+    paddingHorizontal: 16,
   },
   input: {
-    marginLeft: 8,
-    fontSize: 14,
-    height: '100%',
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 16,
+    height: 40,
   },
+  closeButton: {
+    marginLeft: 10,
+  }
 });
