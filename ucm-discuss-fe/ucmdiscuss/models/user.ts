@@ -4,10 +4,11 @@ export interface User {
     is_student: boolean;
 }
 
+
 export interface History {
     id: number;
     username: string;
-    type: 'post' | 'comment';
+    is_type_post: boolean;
     description: string;
     voteCount: number;
     commentCount: number;
