@@ -18,3 +18,13 @@ export const dummyHistoryData = [
         createdAt: new Date()
     }
 ];
+
+export const dummyProfileData = {
+    name: "Innocentia",
+    nim: "0806022410010",
+    major: "Artificial Intelligence",
+    faculty: "IMT",
+    postCount: 10,
+    commentCount: 5,
+    headerImage?: string;
+}
