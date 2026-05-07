@@ -44,7 +44,7 @@ export default function RootLayout() {
     return (
       <View style={{ flex: 1, backgroundColor: '#121212' }}> 
         <LottieView
-          source={require('@/assets/splashscreen/splashScreen.json')}
+          source={require('@/assets/splashscreen/splashscreen.json')}
           autoPlay
           loop={false}
           onAnimationFinish={() => setLottieFinished(true)}

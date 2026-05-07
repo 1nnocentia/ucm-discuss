@@ -3,3 +3,4 @@ npx expo install @expo-google-fonts/inter @expo-google-fonts/montserrat @expo-go
 npx expo install lottie-react-native
 
 npx expo install @react-native-async-storage/async-storage
+

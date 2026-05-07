@@ -18,7 +18,6 @@ export const AnimatedSearchHeader = () => {
   const { theme } = useTheme();
   const [active, setActive] = useState(false);
   
-  // Menggunakan Animated bawaan untuk performa ringan
   const overlayAnim = useRef(new Animated.Value(0)).current;
 
   const toggleSearch = () => {
@@ -27,7 +26,7 @@ export const AnimatedSearchHeader = () => {
       Animated.timing(overlayAnim, {
         toValue: 1,
         duration: 300,
-        useNativeDriver: false, // Properti Layout (width/right) tidak dukung native driver
+        useNativeDriver: false, 
       }).start();
     } else {
       Keyboard.dismiss();
@@ -53,7 +52,6 @@ export const AnimatedSearchHeader = () => {
             styles.searchOverlay, 
             { 
               backgroundColor: theme.colors.background,
-              // Animasi melebar dari kanan ke kiri
               width: overlayAnim.interpolate({
                 inputRange: [0, 1],
                 outputRange: [40, SCREEN_WIDTH] 
@@ -89,12 +87,12 @@ const styles = StyleSheet.create({
   },
   searchOverlay: {
     position: 'absolute',
-    top: -15, // Menyeimbangkan posisi vertical di dalam header
-    right: -16, // Menutup padding horizontal header
+    top: -15, 
+    right: -16, 
     height: 60,
     justifyContent: 'center',
-    elevation: 5, // Shadow untuk Android
-    shadowColor: '#000', // Shadow untuk iOS
+    elevation: 5, 
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
