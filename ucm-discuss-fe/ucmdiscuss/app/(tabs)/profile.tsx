@@ -1,11 +1,17 @@
-import { View } from "react-native";
+import { useState } from "react";
+import { ScrollView } from "react-native";
+import { useTheme } from "@/context/ThemeContext";
+import { ProfileTabs } from "@/components/history/profileTabs";
+import { dummyHistoryData } from "@/constants/dummyData/dummyData";
 
-const profileScreen = () => {
+
+export const profileScreen = () => {
     return (
-        <View>
-            
-        </View>
-    )
+        <ScrollView>
+            {/* <UserInfo /> */}
+            <ProfileTabs data={dummyHistoryData} />
+        </ScrollView>
+    );
 }
 
 export default profileScreen;
