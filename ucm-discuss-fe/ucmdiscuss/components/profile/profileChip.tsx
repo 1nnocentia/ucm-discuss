@@ -27,5 +27,8 @@ const styles = StyleSheet.create({
         marginRight: 8,
         marginTop: 8,
     },
-    text: { fontSize: 12, fontWeight: '600' },
+    text: { 
+        fontSize: 12, 
+        fontWeight: '600' 
+    },
 });

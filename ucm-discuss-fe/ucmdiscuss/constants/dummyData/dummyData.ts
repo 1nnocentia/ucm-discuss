@@ -1,3 +1,5 @@
+import { headerImg } from '@/assets/profile/header.jpg';
+
 export const dummyHistoryData = [
     {
         id: 1,
@@ -24,7 +26,9 @@ export const dummyProfileData = {
     nim: "0806022410010",
     major: "Artificial Intelligence",
     faculty: "IMT",
-    postCount: 10,
-    commentCount: 5,
-    headerImage?: string;
+    votes_count: 10,
+    // contributions_count: 5,
+    headerImage: headerImg,
+    post_count: 5,
+    comment_count: 3
 }

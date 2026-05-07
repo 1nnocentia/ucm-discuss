@@ -1,22 +1,26 @@
 // src/components/profile/ProfileCard.tsx
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, image } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { ProfileCardData } from '@/models/user';
 import { ProfileChip } from './profileChip';
+import { ContributionTrigger } from './contributionTrigger';
 
 export const ProfileCard = ({ user }: { user: ProfileCardData }) => {
     const { theme } = useTheme();
+    const headerSource = typeof user.headerImage === 'string' 
+        ? { uri: user.headerImage } 
+        : require('@/assets/profile/header.jpg');
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
             {/* Header Image */}
             <Image 
-                source={{ uri: user.headerImage || require('@/assets/profile/header.jpg') }} 
+                source={headerSource} 
                 style={styles.headerImg} 
             />
 
-            <View style={styles.content}>
+            <View style={[styles.content, { backgroundColor: theme.colors.background }]}>
                 {/* Name & Edit Chip */}
                 <View style={styles.row}>
                     <Text style={[styles.name, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
@@ -33,7 +37,7 @@ export const ProfileCard = ({ user }: { user: ProfileCardData }) => {
                 </Text>
 
                 {/* Academic Chips */}
-                <View style={styles.chipRow}>
+                <View style={[styles.chipRow, { backgroundColor: theme.colors.background }]}>
                     <ProfileChip label={user.major} />
                     <ProfileChip label={user.faculty} />
                 </View>
@@ -41,15 +45,18 @@ export const ProfileCard = ({ user }: { user: ProfileCardData }) => {
                 {/* Contribution Stats */}
                 <View style={[styles.statsRow, { borderTopColor: theme.colors.textSecondary + '33' }]}>
                     <View style={styles.statBox}>
-                        <Text style={[styles.statValue, { color: theme.colors.textPrimary }]}>{user.postCount}</Text>
-                        <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Posts</Text>
+                        <Text style={[styles.statValue, { color: theme.colors.textPrimary }]}>{user.votes_count}</Text>
+                        <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Votes</Text>
                     </View>
                     <View style={[styles.divider, { backgroundColor: theme.colors.textSecondary + '33' }]} />
                     <View style={styles.statBox}>
-                        <Text style={[styles.statValue, { color: theme.colors.textPrimary }]}>{user.commentCount}</Text>
-                        <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Contributions</Text>
+                        <ContributionTrigger 
+                            post_count={user.post_count} 
+                            comment_count={user.comment_count} 
+                        />
                     </View>
                 </View>
+
             </View>
         </View>
     );
@@ -65,7 +72,7 @@ const styles = StyleSheet.create({
         resizeMode: 'cover' 
     },
     content: { 
-        padding: 16 
+        padding: 20,
     },
     row: { 
         flexDirection: 'row', 
@@ -105,11 +112,11 @@ const styles = StyleSheet.create({
         alignItems: 'center' 
     },
     statValue: { 
-        fontSize: 18, 
+        fontSize: 16, 
         fontWeight: 'bold' 
     },
     statLabel: { 
-        fontSize: 12, 
+        fontSize: 10, 
         marginTop: 2 
     },
     divider: { 

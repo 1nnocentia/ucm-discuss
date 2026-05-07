@@ -6,14 +6,16 @@ export interface User {
     name: string;
 }
 
-export interface ProfileCard {
+export interface ProfileCardData {
     name: string;
     nim: string;
     major: string;
     faculty: string;
-    postCount: number;
-    commentCount: number;
+    votes_count: number;
+    contributions_count: number;
     headerImage?: string;
+    post_count: number;
+    comment_count: number;
 }
 
 
