@@ -1,7 +1,7 @@
 package com.example.ucm_discuss_be.commentAttachments;
 
-import java.math.BigInteger;
-import java.security.Timestamp;
+// import java.math.BigInteger;
+// import java.security.Timestamp;
 // import java.sql.Time;
 // import java.util.Objects;
 
@@ -9,6 +9,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,9 +28,11 @@ import jakarta.persistence.Id;
 
 public class CommentAttachmentModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
-    private BigInteger comment_id; //Foreign key to comments table
+    private Long id;
+    private Long comment_id; //Foreign key to comments table
     private String file_url;
     private String file_type;
-    private Timestamp created_at;
+
+    @CreationTimestamp
+    private LocalDateTime created_at;
 }

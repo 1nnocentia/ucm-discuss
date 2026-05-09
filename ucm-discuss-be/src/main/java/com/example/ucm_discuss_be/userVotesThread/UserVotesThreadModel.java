@@ -1,7 +1,7 @@
 package com.example.ucm_discuss_be.userVotesThread;
 
-import java.math.BigInteger;
-import java.security.Timestamp;
+// import java.math.BigInteger;
+// import java.security.Timestamp;
 // import java.sql.Time;
 // import java.util.Objects;
 
@@ -9,6 +9,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,8 +26,10 @@ import jakarta.persistence.Id;
 @Entity
 public class UserVotesThreadModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
-    private BigInteger user_id; //Foreign key to users table
-    private BigInteger thread_id; //Foreign key to threads table
-    private Timestamp created_at;
+    private Long id;
+    private Long user_id; //Foreign key to users table
+    private Long thread_id; //Foreign key to threads table
+    
+    @CreationTimestamp
+    private LocalDateTime created_at;
 }

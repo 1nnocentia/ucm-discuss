@@ -1,5 +1,5 @@
 package com.example.ucm_discuss_be.faculties;
-import java.math.BigInteger;
+// import java.math.BigInteger;
 // import java.security.Timestamp;
 // import java.sql.Time;
 // import java.util.Objects;
@@ -21,6 +21,6 @@ import jakarta.persistence.Id;
 
 public class FacultyModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
     private String name;
 }

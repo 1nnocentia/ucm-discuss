@@ -1,7 +1,7 @@
 package com.example.ucm_discuss_be.threadAttachments;
 
-import java.math.BigInteger;
-import java.security.Timestamp;
+// import java.math.BigInteger;
+// import java.security.Timestamp;
 // import java.sql.Time;
 // import java.util.Objects;
 
@@ -13,6 +13,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.CreationTimestamp;
 
 
 @AllArgsConstructor
@@ -22,9 +24,11 @@ import jakarta.persistence.Id;
 @Entity
 public class ThreadAttachmentModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
-    private BigInteger thread_id; //Foreign key to threads table
+    private Long id;
+    private Long thread_id; //Foreign key to threads table
     private String file_url;
     private String file_type;
-    private Timestamp created_at;
+
+    @CreationTimestamp
+    private LocalDateTime created_at;
 }

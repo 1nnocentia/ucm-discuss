@@ -1,9 +1,13 @@
 package com.example.ucm_discuss_be.comments;
 
-import java.math.BigInteger;
-import java.security.Timestamp;
+import java.time.LocalDateTime;
+
+// import java.math.BigInteger;
+// import java.security.Timestamp;
 // import java.sql.Time;
 // import java.util.Objects;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,12 +27,14 @@ import jakarta.persistence.Id;
 
 public class CommentModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
-    private BigInteger thread_id; //Foreign key to threads table
-    private BigInteger user_id; //Foreign key to users table
+    private Long id;
+    private Long thread_id; //Foreign key to threads table
+    private Long user_id; //Foreign key to users table
     private String content;
     private int vote_count;
     private Boolean asked_ai;
     private Boolean is_anon;
-    private Timestamp created_at;
+
+    @CreationTimestamp
+    private LocalDateTime created_at;
 }
