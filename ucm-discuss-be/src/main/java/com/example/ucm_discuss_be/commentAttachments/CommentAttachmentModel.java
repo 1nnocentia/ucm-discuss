@@ -18,6 +18,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 
 @AllArgsConstructor
@@ -25,6 +26,7 @@ import jakarta.persistence.Id;
 @Getter
 @Setter
 @Entity
+@Table(name = "comment_attachments")
 
 public class CommentAttachmentModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
