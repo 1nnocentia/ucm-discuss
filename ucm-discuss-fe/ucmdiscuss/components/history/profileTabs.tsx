@@ -1,12 +1,12 @@
 // src/components/profile/ProfileTabs.tsx
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, FlatList } from 'react-native';
-import { History } from '@/models/user';
 import { HistoryCard } from '@/components/history/history';
 import { useTheme } from '@/context/ThemeContext';
+import { UserHistory } from '@/models/user';
 
 interface ProfileTabsProps {
-    data: History[];
+    data: UserHistory[];
 }
 
 export const ProfileTabs = ({ data }: ProfileTabsProps) => {
@@ -16,7 +16,7 @@ export const ProfileTabs = ({ data }: ProfileTabsProps) => {
     const filteredData = data.filter(item => item.type === activeTab);
 
     return (
-        <View style={styles.container}>
+        <View style={[  styles.container, { backgroundColor: theme.colors.background }]}>
             {/* Tab Header */}
             <View style={[styles.tabBar, { borderBottomColor: theme.colors.textSecondary }]}>
                 {['post', 'comment'].map((tab) => (
@@ -43,7 +43,7 @@ export const ProfileTabs = ({ data }: ProfileTabsProps) => {
                 data={filteredData}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => <HistoryCard item={item} />}
-                scrollEnabled={false} // Karena akan dibungkus ScrollView di page Profile
+                scrollEnabled={false}
                 ListEmptyComponent={<Text style={[styles.empty, { color: theme.colors.textSecondary }]}>No {activeTab} yet.</Text>}
             />
         </View>
@@ -51,7 +51,7 @@ export const ProfileTabs = ({ data }: ProfileTabsProps) => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
+    container: { height: '100%' },
     tabBar: { flexDirection: 'row', borderBottomWidth: 1 },
     tabItem: { flex: 1, paddingVertical: 12, alignItems: 'center' },
     tabText: { fontSize: 14 },

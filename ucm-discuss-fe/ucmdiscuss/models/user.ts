@@ -77,7 +77,7 @@ export interface CommentHistory {
 }
 
 export type ProfileCardData = Pick<UserProfile, 
-  'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'contributionsCount' | 'headerImage' | 'postCount' | 'commentCount'
+  'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'headerImage' | 'postCount' | 'commentCount'
 >;
 
 export type UserHistory = PostHistory | CommentHistory;

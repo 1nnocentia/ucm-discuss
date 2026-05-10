@@ -6,11 +6,11 @@ import { useTheme } from '@/context/ThemeContext';
 interface ContributionModalProps {
   isVisible: boolean;
   onClose: () => void;
-  post_count: number;
-  comment_count: number;
+  postCount: number;
+  commentCount: number;
 }
 
-export const ContributionModal = ({ isVisible, onClose, post_count, comment_count }: ContributionModalProps) => {
+export const ContributionModal = ({ isVisible, onClose, postCount, commentCount }: ContributionModalProps) => {
   const { theme } = useTheme();
 
   return (
@@ -26,18 +26,15 @@ export const ContributionModal = ({ isVisible, onClose, post_count, comment_coun
             </TouchableOpacity>
           </View>
 
-          {/* <Text style={[styles.subTitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>
-            Total posts and comments
-          </Text> */}
 
           <View style={styles.statsGrid}>
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>{post_count}</Text>
+              <Text style={[styles.statValue, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>{postCount}</Text>
               <Text style={[styles.statLabel, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>Post</Text>
             </View>
             <View style={[styles.verticalDivider, { backgroundColor: theme.colors.textSecondary + '33' }]} />
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>{comment_count}</Text>
+              <Text style={[styles.statValue, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>{commentCount}</Text>
               <Text style={[styles.statLabel, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>Comment</Text>
             </View>
           </View>

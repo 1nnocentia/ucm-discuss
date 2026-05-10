@@ -1,34 +1,34 @@
-import { headerImg } from '@/assets/profile/header.jpg';
+import { UserHistory, ProfileCardData } from '@/models/user';
 
-export const dummyHistoryData = [
+
+export const dummyHistoryData: UserHistory[] = [
     {
-        id: 1,
-        username: "John Doe",
-        is_type_post: true,
-        description: "This is a sample history item.",
-        voteCount: 10,
+        type: 'post',
+        id: "1",
+        title: "Sample Post Title",
+        createdAt: "11 Mei 2026",
+        votesCount: 10,
         commentCount: 5,
-        createdAt: new Date()
     },
     {
-        id: 2,
-        username: "Jane Smith",
-        is_type_post: false,
-        description: "Another sample history item.",
-        voteCount: 15,
+        type: 'comment',
+        id: "2",
+        postId: "1",
+        content: "This is a sample comment content that the user has made on a post.",
+        parentPostTitle: "Sample Post Title",
+        createdAt: "12 Mei 2026",
+        votesCount: 15,
         commentCount: 8,
-        createdAt: new Date()
     }
 ];
 
-export const dummyProfileData = {
+export const dummyProfileData: ProfileCardData = {
     name: "Innocentia",
     nim: "0806022410010",
     major: "Artificial Intelligence",
     faculty: "IMT",
-    votes_count: 10,
-    // contributions_count: 5,
-    headerImage: headerImg,
-    post_count: 5,
-    comment_count: 3
+    votesCount: 10,
+    headerImage: undefined,
+    postCount: 5,
+    commentCount: 3,
 }
