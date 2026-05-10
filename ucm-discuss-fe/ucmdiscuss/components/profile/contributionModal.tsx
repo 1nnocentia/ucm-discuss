@@ -114,4 +114,4 @@ const styles = StyleSheet.create({
   infoText: { 
     fontSize: 12
 }
-});
+}); 

@@ -38,8 +38,8 @@ export const ProfileCard = ({ user }: { user: ProfileCardData }) => {
 
                 {/* Academic Chips */}
                 <View style={[styles.chipRow, { backgroundColor: theme.colors.background }]}>
-                    <ProfileChip label={user.major} />
                     <ProfileChip label={user.faculty} />
+                    <ProfileChip label={user.major} />
                 </View>
 
                 {/* Contribution Stats */}
@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     },
     content: { 
         padding: 20,
+        paddingBottom: 16,
     },
     row: { 
         flexDirection: 'row', 
@@ -100,12 +101,12 @@ const styles = StyleSheet.create({
     chipRow: { 
         flexDirection: 'row', 
         flexWrap: 'wrap', 
-        marginBottom: 16 },
+        marginBottom: 11 },
     statsRow: { 
         flexDirection: 'row', 
-        paddingTop: 16, 
+        paddingTop: 10, 
         borderTopWidth: 1, 
-        marginTop: 8 
+        marginTop: 2
     },
     statBox: { 
         flex: 1, 

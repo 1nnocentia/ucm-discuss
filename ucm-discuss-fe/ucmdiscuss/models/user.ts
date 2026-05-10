@@ -1,31 +1,83 @@
 export interface User {
-    id: number;
+    id: string;
     email: string;
-    is_student: boolean;
+    isStudent: boolean;
     nim: string;
     name: string;
 }
 
-export interface ProfileCardData {
-    name: string;
-    nim: string;
+export interface UserProfile extends User {
     major: string;
     faculty: string;
-    votes_count: number;
-    contributions_count: number;
+    votesCount: number;
+    contributionsCount: number;
     headerImage?: string;
-    post_count: number;
-    comment_count: number;
-}
-
-
-export interface History {
-    id: number;
-    username: string;
-    is_type_post: boolean;
-    description: string;
-    voteCount: number;
+    postCount: number;
     commentCount: number;
-    createdAt: Date;
+    isAnonymous: boolean;
 }
 
+export interface Post  {
+    id: string;
+    title: string;
+    createdAt: string;
+    votes: number;
+    comments: number;
+    image: string | null;
+    description: string | null;
+    topic: Topics;
+    user: User;
+    userVoteStatus?: boolean;
+}
+
+export interface Comment {
+    id: string;
+    postId: string;
+    userId: string;
+    parentPostId: string | null;
+    comment: string;
+    createdAt: string;
+    votes: number;
+    user: User;
+    replies: Comment[];
+    userVoteStatus?: boolean;
+}
+
+export interface Topics {
+    id: string;
+    name: string;
+}
+
+export interface CreatePostInput {
+    title: string;
+    description: string | null;
+    image?: string | null;
+    topicId: string;
+    isAnonymous: boolean;
+}
+
+export interface PostHistory {
+    type: 'post';
+    id: string;
+    title: string;
+    createdAt: string;
+    votesCount: number;
+    commentCount: number;
+}
+
+export interface CommentHistory {
+    type: 'comment';
+    id: string;
+    postId: string;
+    content: string;
+    parentPostTitle: string;
+    createdAt: string;
+    votesCount: number;
+    commentCount: number;
+}
+
+export type ProfileCardData = Pick<UserProfile, 
+  'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'contributionsCount' | 'headerImage' | 'postCount' | 'commentCount'
+>;
+
+export type UserHistory = PostHistory | CommentHistory;
