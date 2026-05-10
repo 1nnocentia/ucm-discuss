@@ -14,10 +14,15 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.example.ucm_discuss_be.comments.CommentModel;
+import com.example.ucm_discuss_be.users.UserModel;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @AllArgsConstructor
@@ -30,8 +35,17 @@ import jakarta.persistence.Table;
 public class UserVotesCommentModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long user_id; //Foreign key to users table
-    private Long comment_id; //Foreign key to comments table
+    // private Long user_id; //Foreign key to users table
+    // private Long comment_id; //Foreign key to comments table
+    // In UserVotesCommentModel.java
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserModel user; // Many votes belong to one user
+
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private CommentModel comment; // Many votes belong to one comment
 
     @CreationTimestamp
     private LocalDateTime created_at;

@@ -14,10 +14,26 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.example.ucm_discuss_be.comments.CommentModel;
+import com.example.ucm_discuss_be.courses.CourseModel;
+import com.example.ucm_discuss_be.faculties.FacultyModel;
+import com.example.ucm_discuss_be.majors.MajorModel;
+import com.example.ucm_discuss_be.notifications.NotificationModel;
+import com.example.ucm_discuss_be.threads.ThreadModel;
+import com.example.ucm_discuss_be.userVotesComment.UserVotesCommentModel;
+import com.example.ucm_discuss_be.userVotesThread.UserVotesThreadModel;
+
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @AllArgsConstructor
@@ -35,8 +51,45 @@ public class UserModel {
     private String email;
     private String password;
     private Boolean is_lecturer;
-    private Long major_id; //Foreign key to majors table
-    private Long faculty_id; //Foreign key to faculties table
+
+    @ManyToOne
+    @JoinColumn(name = "major_id")
+    private MajorModel major; //Many students - same major
+    
+    @ManyToOne
+    @JoinColumn(name = "faculty_id")
+    private FacultyModel faculty; //Many students - same faculty
+
+    @OneToMany(mappedBy = "user")
+    private List<NotificationModel> notifications; //One user can have many notifications
+
+    @OneToMany(mappedBy = "user")
+    private List<ThreadModel> created_threads; //One user can create many threads
+
+    @OneToMany(mappedBy = "user")
+    private List<CommentModel> comments; //One user can create many comments
+
+    @OneToMany(mappedBy = "user")
+    private List<UserVotesThreadModel> user_votes_threads; //One user can vote many threads
+
+    @OneToMany(mappedBy = "user")
+    private List<UserVotesCommentModel> user_votes_comments; //One user can downvote many threads
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_course",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id")
+    )
+    private List<CourseModel> courses; //One user can follow many courses
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_views_thread",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "thread_id", referencedColumnName = "id")
+    )
+    private List<ThreadModel> viewed_threads; //One user can view many threads
 
     @CreationTimestamp
     private LocalDateTime created_at;
