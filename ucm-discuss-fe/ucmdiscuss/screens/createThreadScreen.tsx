@@ -64,7 +64,7 @@ export default function CreateThreadScreen() {
 
                     {/* 5. Toolbar */}
                     <View style={styles.toolbar}>
-                        <UploadImg />
+                        <UploadImg onPress={() => console.log('Upload image pressed')} />
                         <TagAI />
                     </View>
                 </ScrollView>
