@@ -8,6 +8,7 @@ import { OpenSans_400Regular, OpenSans_500Medium, OpenSans_600SemiBold } from "@
 import { Merienda_400Regular, Merienda_500Medium, Merienda_600SemiBold } from "@expo-google-fonts/merienda";
 import React, { useCallback, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import LottieView from 'lottie-react-native';
 import * as SplashScreen from 'expo-splash-screen';
@@ -55,11 +56,13 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <MainLayout />
-      </AuthProvider>
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <MainLayout />
+        </AuthProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
 
