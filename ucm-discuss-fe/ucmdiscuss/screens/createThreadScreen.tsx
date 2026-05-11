@@ -17,6 +17,7 @@ export default function CreateThreadScreen() {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isAnonymous, setIsAnonymous] = useState(false);
+    const [postImage, setPostImage] = useState<string | null>(null);
     
     const currentUsername = "Innocentia"; 
 
@@ -64,7 +65,14 @@ export default function CreateThreadScreen() {
 
                     {/* 5. Toolbar */}
                     <View style={styles.toolbar}>
-                        <UploadImg onPress={() => console.log('Upload image pressed')} />
+                        <UploadImg 
+                            onImagesSelected={(images) => {
+                                if (images.length > 0) {
+                                    setPostImage(images[0].uri);
+                                    console.log("Gambar berhasil dipilih:", images[0].uri);
+                                }
+                            }} 
+                        />
                         <TagAI />
                     </View>
                 </ScrollView>

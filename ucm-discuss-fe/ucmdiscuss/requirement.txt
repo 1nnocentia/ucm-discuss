@@ -4,3 +4,4 @@ npx expo install lottie-react-native
 
 npx expo install @react-native-async-storage/async-storage
 
+npx expo install expo-image-picker
