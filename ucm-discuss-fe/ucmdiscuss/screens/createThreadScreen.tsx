@@ -64,12 +64,6 @@ export default function CreateThreadScreen() {
 
                     {/* 5. Toolbar */}
                     <View style={styles.toolbar}>
-                        {/* <TouchableOpacity style={styles.toolbarIcon}>
-                            <Ionicons name="image-outline" size={24} color={theme.colors.textSecondary} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.toolbarIcon}>
-                            <Ionicons name="color-wand-outline" size={24} color={theme.colors.textSecondary} />
-                        </TouchableOpacity> */}
                         <UploadImg />
                         <TagAI />
                     </View>
