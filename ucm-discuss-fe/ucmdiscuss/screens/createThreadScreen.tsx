@@ -9,6 +9,8 @@ import Header from '@/components/header/header';
 import BottomBar from '@/components/bottomBar/bottomBar';
 import UploadImg from '@/components/buttons/uploadImg';
 import TagAI from '@/components/buttons/tagAI';
+import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
+import { createThreadUpload } from '@/controllers/hooks/createThreadService';
 
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
@@ -18,8 +20,35 @@ export default function CreateThreadScreen() {
     const [content, setContent] = useState('');
     const [isAnonymous, setIsAnonymous] = useState(false);
     const [postImage, setPostImage] = useState<string | null>(null);
+
+    const imageContext = useImageManipulator(postImage || '');
     
-    const currentUsername = "Innocentia"; 
+    const currentUsername = "Innocentia";
+
+    const handlePost = async () => {
+        let finalImageUri = postImage;
+
+        if (postImage && imageContext) {
+            try {
+                imageContext.resize({ width: 1080 });
+                
+                const imageRef = await imageContext.renderAsync();
+                
+                const result = await imageRef.saveAsync({
+                    compress: 0.6,
+                    format: SaveFormat.JPEG,
+                });
+                
+                finalImageUri = result.uri;
+            } catch (error) {
+                console.error("Gagal mengkompresi gambar, menggunakan gambar asli:", error);
+            }
+        }
+        createThreadUpload(title, content, finalImageUri);
+        router.replace('/(tabs)/(home)');
+    };
+
+    const isButtonDisabled = title.trim().length === 0;
 
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
@@ -80,8 +109,8 @@ export default function CreateThreadScreen() {
                 <BottomBar
                     isAnonymous={isAnonymous}
                     onToggleAnonymous={setIsAnonymous}
-                    disabled={title.trim().length === 0}
-                    onPressPost={() => console.log('Submit to Controller')}
+                    disabled={isButtonDisabled}
+                    onPressPost={handlePost}
                 />
 
             </KeyboardAvoidingView>
