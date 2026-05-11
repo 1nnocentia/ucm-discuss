@@ -4,15 +4,15 @@ import { useTheme } from '@/context/ThemeContext';
 import { ContributionModal } from './contributionModal';
 
 interface Props {
-  post_count: number;
-  comment_count: number;
+  postCount: number;
+  commentCount: number;
 }
 
-export const ContributionTrigger = ({ post_count, comment_count }: Props) => {
+export const ContributionTrigger = ({ postCount, commentCount }: Props) => {
   const { theme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const totalContributions = post_count + comment_count;
+  const totalContributions = postCount + commentCount;
 
   return (
     <>
@@ -35,8 +35,8 @@ export const ContributionTrigger = ({ post_count, comment_count }: Props) => {
       <ContributionModal 
         isVisible={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
-        post_count={post_count}
-        comment_count={comment_count}
+        postCount={postCount}
+        commentCount={commentCount}
       />
     </>
   );

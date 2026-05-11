@@ -45,14 +45,14 @@ export const ProfileCard = ({ user }: { user: ProfileCardData }) => {
                 {/* Contribution Stats */}
                 <View style={[styles.statsRow, { borderTopColor: theme.colors.textSecondary + '33' }]}>
                     <View style={styles.statBox}>
-                        <Text style={[styles.statValue, { color: theme.colors.textPrimary }]}>{user.votes_count}</Text>
+                        <Text style={[styles.statValue, { color: theme.colors.textPrimary }]}>{user.votesCount}</Text>
                         <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Votes</Text>
                     </View>
                     <View style={[styles.divider, { backgroundColor: theme.colors.textSecondary + '33' }]} />
                     <View style={styles.statBox}>
                         <ContributionTrigger 
-                            post_count={user.post_count} 
-                            comment_count={user.comment_count} 
+                            postCount={user.postCount} 
+                            commentCount={user.commentCount} 
                         />
                     </View>
                 </View>
