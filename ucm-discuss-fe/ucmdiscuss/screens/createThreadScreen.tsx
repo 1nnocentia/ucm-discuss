@@ -1,6 +1,6 @@
 // src/app/(tabs)/(home)/create.tsx (Atau letak rute modamu)
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Switch, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
@@ -22,7 +22,7 @@ export default function CreateThreadScreen() {
     const [postImage, setPostImage] = useState<string | null>(null);
 
     const imageContext = useImageManipulator(postImage || '');
-    
+
     const currentUsername = "Innocentia";
 
     const handlePost = async () => {
@@ -81,6 +81,22 @@ export default function CreateThreadScreen() {
                         onChangeText={setTitle}
                     />
 
+                    {postImage && (
+                        <View style={styles.imagePreviewContainer}>
+                            <Image 
+                                source={{ uri: postImage }} 
+                                style={styles.imagePreview} 
+                                resizeMode="cover"
+                            />
+                            <TouchableOpacity 
+                                style={[styles.removeImageBtn, { backgroundColor: 'rgba(0,0,0,0.6)' }]} 
+                                onPress={() => setPostImage(null)}
+                            >
+                                <Ionicons name="close" size={20} color="#FDFDFD" />
+                            </TouchableOpacity>
+                        </View>
+                    )}
+
                     {/* 4. Body Input / Rich Text Area */}
                     <TextInput
                         style={[styles.contentInput, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}
@@ -119,15 +135,66 @@ export default function CreateThreadScreen() {
 }
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1 },
-    container: { flex: 1 },
-    
-    scrollView: { flex: 1, paddingHorizontal: 16 },
-    topicSelector: { flexDirection: 'row', alignItems: 'center', marginTop: 16, marginBottom: 12 },
-    topicText: { fontSize: 14, fontWeight: '600' },
-    topicIcon: { marginHorizontal: 8 },
-    titleInput: { fontSize: 18, fontWeight: 'bold', borderBottomWidth: 1, paddingVertical: 12, marginBottom: 16 },
-    contentInput: { fontSize: 14, minHeight: 200, lineHeight: 22 },
-    toolbar: { flexDirection: 'row', marginTop: 16, marginBottom: 32 },
-    toolbarIcon: { marginRight: 16 },
+    safeArea: { 
+        flex: 1 
+    },
+    container: { 
+        flex: 1 
+    },
+    scrollView: { 
+        flex: 1, 
+        paddingHorizontal: 20
+    },
+    topicSelector: { 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        marginTop: 16, 
+        marginBottom: 12 
+    },
+    topicText: { 
+        fontSize: 14, 
+        fontWeight: '600' 
+    },
+    topicIcon: { 
+        marginHorizontal: 8 
+    },
+    titleInput: { 
+        fontSize: 18, 
+        fontWeight: 'bold', 
+        borderBottomWidth: 1, 
+        paddingVertical: 12, 
+        marginBottom: 16 
+    },
+    contentInput: { 
+        fontSize: 14, 
+        minHeight: 200, 
+        lineHeight: 22 
+    },
+    toolbar: { 
+        flexDirection: 'row', 
+        marginTop: 16, 
+        marginBottom: 32 
+    },
+    toolbarIcon: { 
+        marginRight: 16 
+    },
+    imagePreviewContainer: {
+        width: '100%',
+        height: 200,
+        marginBottom: 16,
+        borderRadius: 12,
+        overflow: 'hidden',
+        position: 'relative',
+    },
+    imagePreview: {
+        width: '100%',
+        height: '100%',
+    },
+    removeImageBtn: {
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        padding: 6,
+        borderRadius: 20,
+    },
 });
