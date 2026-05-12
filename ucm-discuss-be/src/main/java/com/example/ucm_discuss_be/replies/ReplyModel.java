@@ -9,13 +9,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 import com.example.ucm_discuss_be.comments.CommentModel;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -33,11 +37,11 @@ public class ReplyModel {
     // private Long parent_comment_id; //Foreign key to comments table
 
     // Relation to the comments table
-        @OneToOne
-        @JoinColumn(name = "source_comment_id")
-        private CommentModel comment; // One reply is associated with one comment
+    @OneToOne (cascade = CascadeType.ALL)
+    @JoinColumn(name = "source_comment_id")
+    private CommentModel reply_comment; // One reply is associated with one comment
     
-        @OneToOne
-        @JoinColumn(name = "parent_comment_id")
-        private CommentModel parent_comment; // One reply can be a reply to one parent comment
+    @ManyToOne (cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent_comment_id")
+    private List<CommentModel> parent_comment; // One reply can be a reply to one parent comment
 }

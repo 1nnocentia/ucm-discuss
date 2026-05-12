@@ -17,6 +17,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.example.ucm_discuss_be.comments.CommentModel;
 import com.example.ucm_discuss_be.users.UserModel;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,11 +40,11 @@ public class UserVotesCommentModel {
     // private Long comment_id; //Foreign key to comments table
     // In UserVotesCommentModel.java
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private UserModel user; // Many votes belong to one user
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id")
     private CommentModel comment; // Many votes belong to one comment
 

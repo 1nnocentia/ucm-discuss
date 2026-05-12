@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,24 +47,24 @@ public class ThreadModel {
     private int vote_count; // I believe there's an easier way to count using a seperate table to track users' votes we have created. But I don't know how to utilise it optimally on Spring Boot yet. Since this should be easy
     private boolean is_anon;
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private UserModel user; // Many threads belong to one user
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "course_id")
     private CourseModel course; // Many threads belong to one course
 
-    @OneToMany(mappedBy = "thread")
+    @OneToMany(mappedBy = "thread", cascade = CascadeType.ALL)
     private List<CommentModel> comments; // One thread can have many comments
 
-    @OneToMany(mappedBy = "thread")
+    @OneToMany(mappedBy = "thread", cascade = CascadeType.ALL)
     private List<UserVotesThreadModel> user_votes_threads; // One thread can have many votes
 
-    @OneToOne(mappedBy = "thread")
+    @OneToOne(mappedBy = "thread", cascade = CascadeType.ALL)
     private ThreadAttachmentModel thread_attachment; // One thread can have one attachment  
 
-    @ManyToMany(mappedBy = "viewed_threads")
+    @ManyToMany(mappedBy = "viewed_threads", cascade = CascadeType.ALL)
     private List<UserModel> viewers; // Many users can view many threads
 
     @CreationTimestamp

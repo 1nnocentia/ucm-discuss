@@ -17,6 +17,7 @@ import java.util.List;
 import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.users.UserModel;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,9 +41,9 @@ public class CourseModel {
     private String course_name;
     private String year;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<ThreadModel> threads; // One course can have many threads
 
-    @ManyToMany(mappedBy = "courses")
+    @ManyToMany(mappedBy = "courses", cascade = CascadeType.ALL)
     private List<UserModel> users; // One course can be followed by many users  
 }

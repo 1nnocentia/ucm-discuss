@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,7 +38,7 @@ public class ThreadAttachmentModel {
     private String file_url;
     private String file_type;
 
-    @OneToOne
+    @OneToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "thread_id")
     private ThreadModel thread;
 

@@ -61,36 +61,36 @@ public class UserModel {
     @JoinColumn(name = "faculty_id")
     private FacultyModel faculty; //Many students - same faculty
 
-    // @OneToMany(mappedBy = "user")
-    // private List<NotificationModel> notifications; //One user can have many notifications
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<NotificationModel> notifications; //One user can have many notifications
 
-    // @OneToMany(mappedBy = "user")
-    // private List<ThreadModel> created_threads; //One user can create many threads
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<ThreadModel> created_threads; //One user can create many threads
 
-    // @OneToMany(mappedBy = "user")
-    // private List<CommentModel> comments; //One user can create many comments
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<CommentModel> comments; //One user can create many comments
 
-    // @OneToMany(mappedBy = "user")
-    // private List<UserVotesThreadModel> user_votes_threads; //One user can vote many threads
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserVotesThreadModel> voted_threads; //One user can vote many threads
 
-    // @OneToMany(mappedBy = "user")
-    // private List<UserVotesCommentModel> user_votes_comments; //One user can downvote many threads
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserVotesCommentModel> voted_comments; //One user can downvote many threads
 
-    // @ManyToMany
-    // @JoinTable(
-    //     name = "user_course",
-    //     joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-    //     inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id")
-    // )
-    // private List<CourseModel> courses; //One user can follow many courses
+    @ManyToMany (cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "user_course",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id")
+    )
+    private List<CourseModel> courses; //One user can follow many courses
 
-    // @ManyToMany
-    // @JoinTable(
-    //     name = "user_views_thread",
-    //     joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-    //     inverseJoinColumns = @JoinColumn(name = "thread_id", referencedColumnName = "id")
-    // )
-    // private List<ThreadModel> viewed_threads; //One user can view many threads
+    @ManyToMany (cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "user_views_thread",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "thread_id", referencedColumnName = "id")
+    )
+    private List<ThreadModel> viewed_threads; //One user can view many threads
 
     @CreationTimestamp
     private LocalDateTime created_at;

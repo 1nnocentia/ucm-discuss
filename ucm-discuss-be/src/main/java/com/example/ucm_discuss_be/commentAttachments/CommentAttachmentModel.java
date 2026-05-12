@@ -16,6 +16,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.example.ucm_discuss_be.comments.CommentModel;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,7 +40,7 @@ public class CommentAttachmentModel {
     private String file_url;
     private String file_type;
 
-    @OneToOne
+    @OneToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id")
     private CommentModel comment;
 

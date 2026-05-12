@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -49,29 +50,29 @@ public class CommentModel {
     private Boolean asked_ai;
     private Boolean is_anon;
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private UserModel user; // Many comments belong to one user
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "thread_id")
     private ThreadModel thread; // Many comments belong to one thread
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
     private List<UserVotesCommentModel> user_votes_comments; // One comment can have many votes
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
     private List<NotificationModel> notifications; // One comment can have many notifications
 
-    @OneToOne(mappedBy = "comment")
+    @OneToOne(mappedBy = "comment", cascade = CascadeType.ALL)
     private CommentAttachmentModel comment_attachment; // One comment can have one attachment
 
-    // Reply transient table relationship
-    @OneToOne(mappedBy = "comment")
-    private ReplyModel source_reply; // One comment can be a reply to one comment
+    // // Reply transient table relationship
+    @OneToOne(mappedBy = "reply_comment", cascade = CascadeType.ALL)
+    private ReplyModel reply_reference; // One comment can be a reply to one comment
 
-    @OneToMany(mappedBy = "comment")
-    private List<ReplyModel> parent_replies; // One comment can have many replies
+    @OneToMany(mappedBy = "parent_comment", cascade = CascadeType.ALL)
+    private List<ReplyModel> replies; // One comment can have many replies
 
     @CreationTimestamp
     private LocalDateTime created_at;
