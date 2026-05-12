@@ -1,6 +1,7 @@
 package com.example.ucm_discuss_be.logging;
 
 import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LoggingController {
-    org.slf4j.Logger logger = LoggerFactory.getLogger(LoggingController.class);
+    Logger logger = LoggerFactory.getLogger(LoggingController.class);
 
     @RequestMapping("/")
     public String index() {
