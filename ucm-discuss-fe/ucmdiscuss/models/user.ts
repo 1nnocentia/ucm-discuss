@@ -28,6 +28,7 @@ export interface Post  {
     topic: Topics;
     user: User;
     userVoteStatus?: boolean;
+    isAnonymous: boolean;
 }
 
 export interface Comment {
@@ -74,6 +75,15 @@ export interface CommentHistory {
     createdAt: string;
     votesCount: number;
     commentCount: number;
+}
+
+export interface NotificationProps {
+    id: string;
+    actorName: string;
+    actionType: 'reply_post' | 'reply_comment' | 'vote';
+    targetSnippet: string;
+    createdAt: string;
+    isRead: boolean;
 }
 
 export type ProfileCardData = Pick<UserProfile, 
