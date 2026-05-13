@@ -33,12 +33,12 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="recent"
+                name="Topics"
                 options={{
                     // tabBarShowLabel: false,
-                    title: "Recent",
+                    title: "Topics",
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="time" size={size ?? 24} color={color} />
+                        <Ionicons name="book-outline" size={size ?? 24} color={color} />
                     ),
                 }}
             />
