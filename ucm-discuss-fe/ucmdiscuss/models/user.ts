@@ -28,6 +28,7 @@ export interface Post  {
     topic: Topics;
     user: User;
     userVoteStatus?: boolean;
+    isAnonymous: boolean;
 }
 
 export interface Comment {
