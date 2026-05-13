@@ -36,7 +36,7 @@ public class RequestInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         //* Business logic just before the response reaches the client and the request is served
         try {
-            logger.info("2 - postHandle() : After the Controller serves the request (before returning back response to the client)");
+            logger.info("Request has been processed by the Controller and the response is ready to be sent to the client"); //Nanti sy ganti jika perlu
         }
         catch (Exception e) {
             logger.error("Error occurred while processing request : ", e);
@@ -48,7 +48,7 @@ public class RequestInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         //* Business logic after request and response is Completed
         try {
-            logger.info("3 - afterCompletion() : After the request and Response is completed");
+            logger.info("Request and response completed");
         }
         catch (Exception e) {
             logger.error("Error occurred while processing request : ", e);
