@@ -22,7 +22,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,6 +34,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Min;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,39 +47,104 @@ import jakarta.persistence.Table;
 @Table(name = "comments")
 
 public class CommentModel {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // private Long thread_id; //Foreign key to threads table
-    // private Long user_id; //Foreign key to users table
+
+    @NotBlank(message = "Content is required")
+    @Size(
+        min = 1,
+        max = 5000,
+        message = "Content must be between 1 and 5000 characters")
+    @Column(
+        nullable = false,
+        length = 5000
+    )
     private String content;
-    private int vote_count;
-    private Boolean asked_ai;
-    private Boolean is_anon;
 
-    @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private UserModel user; // Many comments belong to one user
+    @Min(
+        value = 0,
+        message = "Vote count cannot be negative"
+    )
+    @Column(
+        name = "vote_count",
+        nullable = false
+    )
+    private int vote_count = 0;
 
-    @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name = "thread_id")
-    private ThreadModel thread; // Many comments belong to one thread
+    @NotNull(message = "asked_ai status is required")
+    @Column(
+        name = "asked_ai",
+        nullable = false
+    )
+    private Boolean asked_ai = false;
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private List<UserVotesCommentModel> user_votes_comments; // One comment can have many votes
+    @NotNull(message = "Anonymous status is required")
+    @Column(
+        name = "is_anon",
+        nullable = false
+    )
+    private Boolean is_anon = false;
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
-    private List<NotificationModel> notifications; // One comment can have many notifications
+    @NotNull(message = "User is required")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "user_id",
+        nullable = false
+    )
+    private UserModel user;
 
-    @OneToOne(mappedBy = "comment", cascade = CascadeType.ALL)
-    private CommentAttachmentModel comment_attachment; // One comment can have one attachment
+    @NotNull(message = "Thread is required")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "thread_id",
+        nullable = false
+    )
+    private ThreadModel thread;
 
-    // // Reply transient table relationship
-    @OneToOne(mappedBy = "reply_comment", cascade = CascadeType.ALL)
-    private ReplyModel reply_reference; // One comment can be a reply to one comment
+    @OneToMany(
+        mappedBy = "comment",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<UserVotesCommentModel> user_votes_comments;
 
-    @OneToMany(mappedBy = "parent_comment", cascade = CascadeType.ALL)
-    private List<ReplyModel> replies; // One comment can have many replies
+    @OneToMany(
+        mappedBy = "comment",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<NotificationModel> notifications;
+
+    @OneToOne(
+        mappedBy = "comment",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    private CommentAttachmentModel comment_attachment;
+
+    // Reply transient table relationship
+    @OneToOne(
+        mappedBy = "reply_comment",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    private ReplyModel reply_reference;
+
+    @OneToMany(
+        mappedBy = "parent_comment",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<ReplyModel> replies;
 
     @CreationTimestamp
+    @Column(
+        name = "created_at",
+        nullable = false,
+        updatable = false
+    )
     private LocalDateTime created_at;
 }

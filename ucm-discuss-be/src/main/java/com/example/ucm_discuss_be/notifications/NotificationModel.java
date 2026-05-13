@@ -1,15 +1,5 @@
 package com.example.ucm_discuss_be.notifications;
 
-// import java.math.BigInteger;
-// import java.security.Timestamp;
-// import java.sql.Time;
-// import java.util.Objects;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,8 +7,14 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.example.ucm_discuss_be.comments.CommentModel;
 import com.example.ucm_discuss_be.users.UserModel;
 
-import jakarta.persistence.CascadeType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,29 +22,49 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import jakarta.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+
 @Entity
 @Table(name = "notifications")
-
 public class NotificationModel {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // private Long user_id; //Foreign key to users table
-    // private Long comment_id; //Foreign key to comments table
-    private Boolean is_read;
 
-    @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private UserModel user; // Many notifications can reference one user
+    @NotNull(message = "Read status is required")
+    @Column(
+        name = "is_read",
+        nullable = false
+    )
+    private Boolean is_read = false;
 
-    @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name = "comment_id")
-    private CommentModel comment; // Many notifications can reference one comment
+    @NotNull(message = "User is required")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "user_id",
+        nullable = false
+    )
+    private UserModel user;
+
+    @NotNull(message = "Comment is required")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "comment_id",
+        nullable = false
+    )
+    private CommentModel comment;
 
     @CreationTimestamp
+    @Column(
+        name = "created_at",
+        nullable = false,
+        updatable = false
+    )
     private LocalDateTime created_at;
 }
