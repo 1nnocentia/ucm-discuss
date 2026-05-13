@@ -2,15 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
-
-interface NotificationProps {
-    id: string;
-    actorName: string;
-    actionType: 'reply_post' | 'reply_comment' | 'upvote';
-    targetSnippet: string;
-    createdAt: string;
-    isRead: boolean;
-}
+import { NotificationProps } from '@/models/user';
 
 export default function NotificationCard({ item, onPress }: { item: NotificationProps, onPress: () => void }) {
     const { theme } = useTheme();
@@ -19,13 +11,13 @@ export default function NotificationCard({ item, onPress }: { item: Notification
         switch (item.actionType) {
             case 'reply_post': return 'replied to your post';
             case 'reply_comment': return 'replied to your comment';
-            case 'upvote': return 'upvoted your post';
+            case 'vote': return 'voted on your post';
             default: return 'interacted with you';
         }
     };
 
     const getIcon = () => {
-        if (item.actionType === 'upvote') return "arrow-up-circle";
+        if (item.actionType === 'vote') return "arrow-up-circle";
         return "chatbubble-ellipses";
     };
 

@@ -77,6 +77,15 @@ export interface CommentHistory {
     commentCount: number;
 }
 
+export interface NotificationProps {
+    id: string;
+    actorName: string;
+    actionType: 'reply_post' | 'reply_comment' | 'vote';
+    targetSnippet: string;
+    createdAt: string;
+    isRead: boolean;
+}
+
 export type ProfileCardData = Pick<UserProfile, 
   'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'headerImage' | 'postCount' | 'commentCount'
 >;
