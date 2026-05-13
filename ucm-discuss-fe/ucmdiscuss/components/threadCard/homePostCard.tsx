@@ -5,12 +5,12 @@ import { Post } from '@/models/user';
 import { Ionicons } from '@expo/vector-icons';
 import VoteButton from '../buttons/voteButton';
 
-interface PostCardProps {
+interface HomePostCardProps {
     post: Post;
     onPress: () => void;
 }
 
-export default function PostCard({ post, onPress }: PostCardProps) {
+export default function HomePostCard({ post, onPress }: HomePostCardProps) {
     const { theme } = useTheme();
     const authorName = post.isAnonymous ? 'anonymous' : post.user.name;
 
