@@ -38,7 +38,7 @@ export default function TabsLayout() {
                     // tabBarShowLabel: false,
                     title: "Topics",
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="book-outline" size={size ?? 24} color={color} />
+                        <Ionicons name="book" size={size ?? 24} color={color} />
                     ),
                 }}
             />
