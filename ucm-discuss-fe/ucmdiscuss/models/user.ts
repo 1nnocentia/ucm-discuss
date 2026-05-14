@@ -91,8 +91,18 @@ export interface Topics {
     name: string;
 }
 
+export interface TopicDetail extends Topics {
+    description: string;
+    status: 'current' | 'past';
+    discussionCount: number;
+}
+
 export type ProfileCardData = Pick<UserProfile, 
   'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'headerImage' | 'postCount' | 'commentCount'
 >;
 
+export type TopicsData = Pick<TopicDetail, 'id' | 'name' | 'description' | 'status' | 'discussionCount'>;
+
 export type UserHistory = PostHistory | CommentHistory;
+
+export type FilterType = 'all' | 'current' | 'past';

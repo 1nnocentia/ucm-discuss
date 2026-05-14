@@ -33,7 +33,7 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="topics"
+                name="(topics)"
                 options={{
                     // tabBarShowLabel: false,
                     title: "Topics",
