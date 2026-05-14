@@ -86,6 +86,11 @@ export interface NotificationProps {
     isRead: boolean;
 }
 
+export interface Topics {
+    id: string;
+    name: string;
+}
+
 export type ProfileCardData = Pick<UserProfile, 
   'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'headerImage' | 'postCount' | 'commentCount'
 >;

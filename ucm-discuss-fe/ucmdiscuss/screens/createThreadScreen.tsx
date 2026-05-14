@@ -1,6 +1,6 @@
 // src/app/(tabs)/(home)/create.tsx (Atau letak rute modamu)
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
@@ -11,10 +11,12 @@ import UploadImg from '@/components/buttons/uploadImg';
 import TagAI from '@/components/buttons/tagAI';
 import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
 import { createThreadUpload } from '@/controllers/hooks/createThreadService';
+import TopicSelector from '@/components/topic/topicSelector';
 
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
     const router = useRouter();
+    const [selectedTopic, setSelectedTopic] = useState<{ id: string, name: string } | null>(null);
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -48,7 +50,7 @@ export default function CreateThreadScreen() {
         router.replace('/(tabs)/(home)');
     };
 
-    const isButtonDisabled = title.trim().length === 0;
+    const isButtonDisabled = title.trim().length === 0 || selectedTopic === null;
 
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
@@ -59,67 +61,63 @@ export default function CreateThreadScreen() {
                 <Header title="New Thread" />
 
                 <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
-                    {/* 2. Topic Selector */}
-                    <View style={styles.topicSelector}>
-                        <Text style={[styles.topicText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
-                            {isAnonymous ? 'anonymous' : currentUsername}
-                        </Text>
-                        <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} style={styles.topicIcon} />
-                        <TouchableOpacity>
-                            <Text style={[styles.topicText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>
-                                Topics
+                    
+                        <View style={styles.topicSelector}>
+                            <Text style={[styles.topicText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
+                                {isAnonymous ? 'anonymous' : currentUsername}
                             </Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* 3. Title Input */}
-                    <TextInput
-                        style={[styles.titleInput, { color: theme.colors.textPrimary, borderColor: theme.colors.textSecondary + '33', fontFamily: theme.fonts.montserrat }]}
-                        placeholder="Title"
-                        placeholderTextColor={theme.colors.textSecondary}
-                        value={title}
-                        onChangeText={setTitle}
-                    />
-
-                    {postImage && (
-                        <View style={styles.imagePreviewContainer}>
-                            <Image 
-                                source={{ uri: postImage }} 
-                                style={styles.imagePreview} 
-                                resizeMode="cover"
+                            <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} style={styles.topicIcon} />
+                            <TopicSelector 
+                                selectedTopic={selectedTopic}
+                                onSelectTopic={setSelectedTopic}
                             />
-                            <TouchableOpacity 
-                                style={[styles.removeImageBtn, { backgroundColor: 'rgba(0,0,0,0.6)' }]} 
-                                onPress={() => setPostImage(null)}
-                            >
-                                <Ionicons name="close" size={20} color="#FDFDFD" />
-                            </TouchableOpacity>
                         </View>
-                    )}
 
-                    {/* 4. Body Input / Rich Text Area */}
-                    <TextInput
-                        style={[styles.contentInput, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}
-                        placeholder={`Before you post, please make sure to:\n1. Add a clear title that describe your question.\n2. Add all required option below (Course name and Topic)\n3. Write a detailed description of your issue\n\nNote: Screenshots are welcome, but please do not posts full assignment.`}
-                        placeholderTextColor={theme.colors.textSecondary}
-                        multiline
-                        textAlignVertical="top"
-                        value={content}
-                        onChangeText={setContent}
-                    />
-
-                    {/* 5. Toolbar */}
-                    <View style={styles.toolbar}>
-                        <UploadImg 
-                            onImagesSelected={(images) => {
-                                if (images.length > 0) {
-                                    setPostImage(images[0].uri);
-                                    console.log("Gambar berhasil dipilih:", images[0].uri);
-                                }
-                            }} 
+                        <TextInput
+                            style={[styles.titleInput, { color: theme.colors.textPrimary, borderColor: theme.colors.textSecondary + '33', fontFamily: theme.fonts.montserrat }]}
+                            placeholder="Title"
+                            placeholderTextColor={theme.colors.textSecondary}
+                            value={title}
+                            onChangeText={setTitle}
                         />
-                        <TagAI />
-                    </View>
+                        
+                        {postImage && (
+                            <View style={styles.imagePreviewContainer}>
+                                <Image 
+                                    source={{ uri: postImage }} 
+                                    style={styles.imagePreview} 
+                                    resizeMode="cover"
+                                />
+                                <TouchableOpacity 
+                                    style={[styles.removeImageBtn, { backgroundColor: 'rgba(0,0,0,0.6)' }]} 
+                                    onPress={() => setPostImage(null)}
+                                >
+                                    <Ionicons name="close" size={20} color="#FDFDFD" />
+                                </TouchableOpacity>
+                            </View>
+                        )}
+
+                        <TextInput
+                            style={[styles.contentInput, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}
+                            placeholder={`Before you post, please make sure to:\n1. Add a clear title that describe your question.\n2. Add all required option below (Course name and Topic)\n3. Write a detailed description of your issue\n\nNote: Screenshots are welcome, but please do not posts full assignment.`}
+                            placeholderTextColor={theme.colors.textSecondary}
+                            multiline
+                            textAlignVertical="top"
+                            value={content}
+                            onChangeText={setContent}
+                        />
+                        
+                        <View style={styles.toolbar}>
+                            <UploadImg 
+                                onImagesSelected={(images) => {
+                                    if (images.length > 0) {
+                                        setPostImage(images[0].uri);
+                                        console.log("Gambar berhasil dipilih:", images[0].uri);
+                                    }
+                                }} 
+                            />
+                            <TagAI />
+                        </View>
                 </ScrollView>
 
                 <BottomBar
@@ -128,7 +126,7 @@ export default function CreateThreadScreen() {
                     disabled={isButtonDisabled}
                     onPressPost={handlePost}
                 />
-
+                
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
