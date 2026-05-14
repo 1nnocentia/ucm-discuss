@@ -1,4 +1,4 @@
-import { UserHistory, ProfileCardData } from '@/models/user';
+import { UserHistory, ProfileCardData, Topics } from '@/models/user';
 
 
 export const dummyHistoryData: UserHistory[] = [
@@ -32,3 +32,10 @@ export const dummyProfileData: ProfileCardData = {
     postCount: 5,
     commentCount: 3,
 }
+
+export const TopicsDummyData : Topics[] = [
+    { id: '1', name: 'Software Engineering' },
+    { id: '2', name: 'Artificial Intelligence' },
+    { id: '3', name: 'Information Management' },
+    { id: '4', name: 'Computer Networks' },
+]

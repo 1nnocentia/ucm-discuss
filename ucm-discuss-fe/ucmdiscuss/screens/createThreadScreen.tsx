@@ -11,10 +11,12 @@ import UploadImg from '@/components/buttons/uploadImg';
 import TagAI from '@/components/buttons/tagAI';
 import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
 import { createThreadUpload } from '@/controllers/hooks/createThreadService';
+import TopicSelector from '@/components/topic/topicSelector';
 
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
     const router = useRouter();
+    const [selectedTopic, setSelectedTopic] = useState<{ id: string, name: string } | null>(null);
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -48,7 +50,7 @@ export default function CreateThreadScreen() {
         router.replace('/(tabs)/(home)');
     };
 
-    const isButtonDisabled = title.trim().length === 0;
+    const isButtonDisabled = title.trim().length === 0 || selectedTopic === null;
 
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
@@ -59,23 +61,18 @@ export default function CreateThreadScreen() {
                 <Header title="New Thread" />
 
                 <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
-                     {/* Mau pake ini tapi nanti pi */}
-                    {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */} 
                     
-                    {/* 2. Topic Selector */}
                         <View style={styles.topicSelector}>
                             <Text style={[styles.topicText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
                                 {isAnonymous ? 'anonymous' : currentUsername}
                             </Text>
                             <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} style={styles.topicIcon} />
-                            <TouchableOpacity>
-                                <Text style={[styles.topicText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>
-                                    Topics
-                                </Text>
-                            </TouchableOpacity>
+                            <TopicSelector 
+                                selectedTopic={selectedTopic}
+                                onSelectTopic={setSelectedTopic}
+                            />
                         </View>
 
-                        {/* 3. Title Input */}
                         <TextInput
                             style={[styles.titleInput, { color: theme.colors.textPrimary, borderColor: theme.colors.textSecondary + '33', fontFamily: theme.fonts.montserrat }]}
                             placeholder="Title"
@@ -100,7 +97,6 @@ export default function CreateThreadScreen() {
                             </View>
                         )}
 
-                        {/* 4. Body Input / Rich Text Area */}
                         <TextInput
                             style={[styles.contentInput, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}
                             placeholder={`Before you post, please make sure to:\n1. Add a clear title that describe your question.\n2. Add all required option below (Course name and Topic)\n3. Write a detailed description of your issue\n\nNote: Screenshots are welcome, but please do not posts full assignment.`}
@@ -111,8 +107,6 @@ export default function CreateThreadScreen() {
                             onChangeText={setContent}
                         />
                         
-
-                        {/* 5. Toolbar */}
                         <View style={styles.toolbar}>
                             <UploadImg 
                                 onImagesSelected={(images) => {
