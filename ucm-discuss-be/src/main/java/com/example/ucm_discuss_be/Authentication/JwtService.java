@@ -1,4 +1,4 @@
-package com.example.ucm_discuss_be.Authentication;
+package com.example.ucm_discuss_be.authentication;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
