@@ -1,4 +1,4 @@
-import { UserHistory, ProfileCardData, Topics, TopicsData } from '@/models/user';
+import { UserHistory, ProfileCardData, Topics, TopicsData, Post, PostHistory, User, ThreadComment } from '@/models/user';
 
 
 export const dummyHistoryData: UserHistory[] = [
@@ -75,5 +75,112 @@ export const TopicsDummyData: TopicsData[] = [
         description: 'Clean Architecture, SDLC, and Agile methodologies.',
         status: 'current',
         discussionCount: 56
+    }
+];
+
+const dummyUser1: User = {
+    id: 'user-001',
+    email: 'han@student.ciputra.ac.id',
+    isStudent: true,
+    nim: '20230001',
+    name: 'Han Inno'
+};
+
+const dummyUser2: User = {
+    id: 'user-002',
+    email: 'mifey@student.ciputra.ac.id',
+    isStudent: true,
+    nim: '20230002',
+    name: 'Mifey'
+};
+
+
+export const dummyHomePosts: Post[] = [
+    {
+        id: 'post-001',
+        title: 'Info jadwal pengisian KRS semester ganjil tahun ini dong?',
+        createdAt: '14 Mei 2026',
+        votes: 42,
+        comments: 8,
+        image: null,
+        description: 'Ada yang tau kapan persisnya KRS-an dibuka? Takut kehabisan slot kelas nih.',
+        topic: TopicsDummyData[0],
+        user: dummyUser1,
+        userVoteStatus: true,
+        isAnonymous: true
+    },
+    {
+        id: 'post-002',
+        title: 'Sharing: Pengalaman styling pakai Material 3 di React Native',
+        createdAt: '15 Mei 2026',
+        votes: 85,
+        comments: 14,
+        image: 'https://dummyimage.com/600x400/000/fff&text=Material+3+RN',
+        description: 'Buat temen-temen Informatika UCM yang lagi build app pakai RN, ini sedikit tips biar UI/UX nya tetep konsisten. Clean code is poetry!',
+        topic: TopicsDummyData[4],
+        user: dummyUser1,
+        userVoteStatus: false,
+        isAnonymous: false
+    },
+    {
+        id: 'post-003',
+        title: 'Parkiran motor kampus hari ini penuh banget nggak ya?',
+        createdAt: '15 Mei 2026',
+        votes: 12,
+        comments: 5,
+        image: null,
+        description: null,
+        topic: TopicsDummyData[2],
+        user: dummyUser2,
+        userVoteStatus: undefined,
+        isAnonymous: false
+    }
+];
+
+export const threadDetailPost: Post = dummyHomePosts[1];
+
+export const dummyThreadComments: ThreadComment[] = [
+    {
+        id: 'comment-101',
+        postId: 'post-002',
+        userId: dummyUser2.id,
+        parentPostId: null,
+        comment: 'Wah mantap Inno, kebetulan lagi nyari referensi buat implementasi dark mode juga. Boleh share repo-nya nggak?',
+        createdAt: '15 Mei 2026',
+        votes: 15,
+        user: dummyUser2,
+        userVoteStatus: true,
+        replies: [
+            {
+                id: 'comment-101-reply-1',
+                postId: 'post-002',
+                userId: dummyUser1.id,
+                parentPostId: 'comment-101',
+                comment: 'Siapp Mifey, nanti aku push ke GitHub ya. Kodenya kubuat serapih mungkin biar gampang dibaca.',
+                createdAt: '15 Mei 2026',
+                votes: 5,
+                user: dummyUser1,
+                userVoteStatus: undefined,
+                replies: []
+            }
+        ]
+    },
+    {
+        id: 'comment-102',
+        postId: 'post-002',
+        userId: 'user-003', 
+        parentPostId: null,
+        comment: 'Info yang sangat daging! Makasih sharingnya bro.',
+        createdAt: '15 Mei 2026',
+        votes: 8,
+        user: {
+            id: 'user-003',
+            email: 'student3@student.ciputra.ac.id',
+            isStudent: true,
+            nim: '20230003',
+            name: 'Andi'
+        },
+        userVoteStatus: false,
+        replies: []
     }
 ];

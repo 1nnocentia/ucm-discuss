@@ -32,6 +32,7 @@ export const LIGHT_THEME = {
         background: '#FDFDFD',
         textPrimary: '#121212',
         textSecondary: '#4F4F4F',
+        icon: '#121212',
     },
     spacing: {
         xs: 4,
@@ -49,6 +50,7 @@ export const DARK_THEME = {
         background: '#121212',
         textPrimary: '#FDFDFD',
         textSecondary: '#AFAFAF',
+        icon: '#FFFFFF',
     },
     spacing : LIGHT_THEME.spacing,
     fonts: FONTS,

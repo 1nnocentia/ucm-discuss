@@ -31,7 +31,7 @@ export interface Post  {
     isAnonymous: boolean;
 }
 
-export interface Comment {
+export interface ThreadComment {
     id: string;
     postId: string;
     userId: string;
@@ -40,7 +40,7 @@ export interface Comment {
     createdAt: string;
     votes: number;
     user: User;
-    replies: Comment[];
+    replies: ThreadComment[];
     userVoteStatus?: boolean;
 }
 
@@ -106,3 +106,5 @@ export type TopicsData = Pick<TopicDetail, 'id' | 'name' | 'description' | 'stat
 export type UserHistory = PostHistory | CommentHistory;
 
 export type FilterType = 'all' | 'current' | 'past';
+
+// recentsearch?
