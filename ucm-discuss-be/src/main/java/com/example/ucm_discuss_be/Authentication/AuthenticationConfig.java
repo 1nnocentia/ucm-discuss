@@ -11,10 +11,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.example.ucm_discuss_be.users.UserRepository;
 
 @Configuration
-public class AuthConfig {
+public class AuthenticationConfig {
     private final UserRepository userRepository;
 
-    public AuthConfig(UserRepository userRepository) {
+    public AuthenticationConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
