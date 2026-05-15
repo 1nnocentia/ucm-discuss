@@ -17,7 +17,6 @@ export default function homeScreen() {
 
     const { isSearchActive, searchQuery } = useSearch();
 
-    
     return (
         <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
             <FlashList 

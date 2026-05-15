@@ -1,4 +1,4 @@
-import { UserHistory, ProfileCardData, Topics, TopicsData, Post, PostHistory, User, ThreadComment } from '@/models/user';
+import { UserHistory, ProfileCardData, Topics, TopicsData, Post, PostHistory, User, ThreadComment, NotificationProps } from '@/models/user';
 
 
 export const dummyHistoryData: UserHistory[] = [
@@ -182,5 +182,41 @@ export const dummyThreadComments: ThreadComment[] = [
         },
         userVoteStatus: false,
         replies: []
+    }
+];
+
+
+export const dummyNotifications: NotificationProps[] = [
+    {
+        id: 'notif-001',
+        actorName: 'Mifey',
+        actionType: 'reply_post',
+        targetSnippet: 'Sharing: Pengalaman styling pakai Material 3...',
+        createdAt: '10 menit yang lalu',
+        isRead: true
+    },
+    {
+        id: 'notif-002',
+        actorName: 'Andi',
+        actionType: 'reply_comment',
+        targetSnippet: 'Wah mantap Han, kebetulan lagi nyari referensi...',
+        createdAt: '1 jam yang lalu',
+        isRead: true
+    },
+    {
+        id: 'notif-003',
+        actorName: 'Anonymous',
+        actionType: 'vote',
+        targetSnippet: 'Info jadwal pengisian KRS semester ganjil...',
+        createdAt: 'Kemarin',
+        isRead: true
+    },
+    {
+        id: 'notif-004',
+        actorName: 'Budi',
+        actionType: 'reply_post',
+        targetSnippet: 'Review dosen matkul Machine Learning...',
+        createdAt: '2 hari yang lalu',
+        isRead: true
     }
 ];
