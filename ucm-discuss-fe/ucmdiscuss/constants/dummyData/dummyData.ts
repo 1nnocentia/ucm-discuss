@@ -193,7 +193,7 @@ export const dummyNotifications: NotificationProps[] = [
         actionType: 'reply_post',
         targetSnippet: 'Sharing: Pengalaman styling pakai Material 3...',
         createdAt: '10 menit yang lalu',
-        isRead: true
+        isRead: false
     },
     {
         id: 'notif-002',
@@ -201,7 +201,7 @@ export const dummyNotifications: NotificationProps[] = [
         actionType: 'reply_comment',
         targetSnippet: 'Wah mantap Han, kebetulan lagi nyari referensi...',
         createdAt: '1 jam yang lalu',
-        isRead: true
+        isRead: false
     },
     {
         id: 'notif-003',
@@ -209,7 +209,7 @@ export const dummyNotifications: NotificationProps[] = [
         actionType: 'vote',
         targetSnippet: 'Info jadwal pengisian KRS semester ganjil...',
         createdAt: 'Kemarin',
-        isRead: true
+        isRead: false
     },
     {
         id: 'notif-004',
@@ -217,6 +217,6 @@ export const dummyNotifications: NotificationProps[] = [
         actionType: 'reply_post',
         targetSnippet: 'Review dosen matkul Machine Learning...',
         createdAt: '2 hari yang lalu',
-        isRead: true
+        isRead: false
     }
 ];
