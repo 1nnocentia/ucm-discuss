@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     },
     content: { 
         padding: 20,
-        paddingBottom: 16,
+        paddingBottom: 25,
     },
     row: { 
         flexDirection: 'row', 
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row', 
         paddingTop: 10, 
         borderTopWidth: 1, 
-        marginTop: 2
+        marginTop: 18
     },
     statBox: { 
         flex: 1, 

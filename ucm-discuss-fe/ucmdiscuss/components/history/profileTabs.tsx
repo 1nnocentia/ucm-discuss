@@ -54,7 +54,7 @@ export const ProfileTabs = ({ data }: ProfileTabsProps) => {
 
 const styles = StyleSheet.create({
     container: { 
-        flex: 1 
+        flex: 1
     },
     tabBar: { 
         flexDirection: 'row', 

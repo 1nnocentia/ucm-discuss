@@ -20,7 +20,6 @@ export default function TabsLayout() {
                     paddingBottom: 10,
                 },
                 tabBarButton: (props) => <AnimatedTabButton {...props} />,
-
              }}>
             <Tabs.Screen
                 name="(home)"
