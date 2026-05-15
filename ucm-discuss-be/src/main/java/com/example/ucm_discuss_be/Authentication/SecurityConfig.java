@@ -1,4 +1,4 @@
-package com.example.ucm_discuss_be.security;
+package com.example.ucm_discuss_be.Authentication;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
