@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {  ScrollView } from "react-native";
+import {  ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from "@/context/ThemeContext";
 import { ProfileTabs } from "@/components/history/profileTabs";
@@ -9,8 +9,8 @@ import { ProfileCard } from "@/components/profile/profileCard";
 
 export const profileScreen = () => {
     return (
-        <SafeAreaView>
-            <ScrollView>
+        <SafeAreaView style={styles.viewStyle}>
+            <ScrollView style={styles.scrollContainer} contentContainerStyle={{ flexGrow: 1 }}>
                 <ProfileCard user={dummyProfileData} />
                 <ProfileTabs data={dummyHistoryData} />
             </ScrollView>
@@ -19,3 +19,12 @@ export const profileScreen = () => {
 }
 
 export default profileScreen;
+
+const styles = StyleSheet.create({
+    viewStyle: {
+        flex: 1,
+    },
+    scrollContainer: {
+        // flex: 1,
+    }
+})

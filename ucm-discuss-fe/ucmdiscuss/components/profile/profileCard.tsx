@@ -26,9 +26,10 @@ export const ProfileCard = ({ user }: { user: ProfileCardData }) => {
                     <Text style={[styles.name, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
                         {user.name}
                     </Text>
-                    <TouchableOpacity style={[styles.editChip, { borderColor: theme.colors.textSecondary }]}>
+                    <ProfileChip faculty={user.faculty} major={user.major} />
+                    {/* <TouchableOpacity style={[styles.editChip, { borderColor: theme.colors.textSecondary }]}>
                         <Text style={[styles.editText, { color: theme.colors.textPrimary }]}>Edit</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
                 {/* NIM */}
@@ -37,10 +38,10 @@ export const ProfileCard = ({ user }: { user: ProfileCardData }) => {
                 </Text>
 
                 {/* Academic Chips */}
-                <View style={[styles.chipRow, { backgroundColor: theme.colors.background }]}>
-                    <ProfileChip label={user.faculty} />
-                    <ProfileChip label={user.major} />
-                </View>
+                {/* <View style={[styles.chipRow, { backgroundColor: theme.colors.background }]}> */}
+                    {/* <ProfileChip label={user.faculty} /> */}
+                    {/* <ProfileChip label={user.major} /> */}
+                {/* </View> */}
 
                 {/* Contribution Stats */}
                 <View style={[styles.statsRow, { borderTopColor: theme.colors.textSecondary + '33' }]}>

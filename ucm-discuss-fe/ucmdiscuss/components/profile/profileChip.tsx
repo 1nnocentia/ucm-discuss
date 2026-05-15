@@ -4,16 +4,17 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 
 interface ProfileChipProps {
-    label: string;
+    faculty: string;
+    major: string;
 }
 
-export const ProfileChip = ({ label }: ProfileChipProps) => {
+export const ProfileChip = ({ faculty, major }: ProfileChipProps) => {
     const { theme } = useTheme();
 
     return (
         <View style={[styles.chip, { backgroundColor: theme.colors.lightSecondary + '33' }]}>
             <Text style={[styles.text, { color: theme.colors.secondary, fontFamily: theme.fonts.openSans }]}>
-                {label}
+                {faculty} - {major}
             </Text>
         </View>
     );

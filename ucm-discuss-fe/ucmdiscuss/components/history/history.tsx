@@ -55,7 +55,7 @@ export const HistoryCard = ({ item }: { item: UserHistory }) => {
 const styles = StyleSheet.create({
     container: { 
         padding: 16, 
-        borderBottomWidth: 0.5 
+        borderBottomWidth: 0.5
     },
     header: { 
         flexDirection: 'row', 

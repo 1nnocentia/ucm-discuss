@@ -25,7 +25,7 @@ export const dummyHistoryData: UserHistory[] = [
 export const dummyProfileData: ProfileCardData = {
     name: "Innocentia",
     nim: "0806022410010",
-    major: "Artificial Intelligence",
+    major: "AI",
     faculty: "IMT",
     votesCount: 10,
     headerImage: undefined,

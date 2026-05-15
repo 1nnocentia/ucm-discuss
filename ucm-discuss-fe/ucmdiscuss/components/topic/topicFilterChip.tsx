@@ -13,9 +13,9 @@ export default function TopicFilterChips({ activeFilter, onFilterChange }: Filte
     const { theme } = useTheme();
 
     const filters: { label: string, value: FilterType }[] = [
-        { label: 'All Semesters', value: 'all' },
-        { label: 'Current Semester', value: 'current' },
-        { label: 'Past Semesters', value: 'past' },
+        { label: 'All', value: 'all' },
+        { label: 'Current', value: 'current' },
+        { label: 'Past', value: 'past' },
     ];
 
     return (

@@ -26,12 +26,3 @@ export default function TopicsStackLayout() {
     </Stack>
   );
 }
-
-// const { theme } = useTheme();
-
-// const styles = StyleSheet.create({
-//     logo: {
-//         fontFamily: 'Merienda-Bold',
-//         fontSize: theme.fontSizes.title,
-//     }
-// })
