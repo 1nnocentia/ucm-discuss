@@ -7,7 +7,7 @@ import { TopicsData } from '@/models/user';
 
 
 interface TopicListItemProps {
-    topic: TopicsData[];
+    topic: TopicsData;
     onPress: () => void;
 }
 
