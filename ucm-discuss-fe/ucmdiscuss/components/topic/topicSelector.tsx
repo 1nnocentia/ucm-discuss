@@ -47,7 +47,6 @@ export default function TopicSelector({ selectedTopic, onSelectTopic }: TopicSel
                 />
             </TouchableOpacity>
 
-            {/* 2. Modal Pemilihan Topik ala Reddit */}
             <Modal
                 visible={isModalVisible}
                 animationType="slide"

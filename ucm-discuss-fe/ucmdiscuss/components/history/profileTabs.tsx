@@ -16,7 +16,7 @@ export const ProfileTabs = ({ data }: ProfileTabsProps) => {
     const filteredData = data.filter(item => item.type === activeTab);
 
     return (
-        <View style={[  styles.container, { backgroundColor: theme.colors.background }]}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
             {/* Tab Header */}
             <View style={[styles.tabBar, { borderBottomColor: theme.colors.textSecondary }]}>
                 {['post', 'comment'].map((tab) => (
@@ -40,6 +40,8 @@ export const ProfileTabs = ({ data }: ProfileTabsProps) => {
 
             {/* Tab Content */}
             <FlatList
+                style={styles.list}
+                contentContainerStyle={styles.listContent}
                 data={filteredData}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => <HistoryCard item={item} />}
@@ -51,9 +53,30 @@ export const ProfileTabs = ({ data }: ProfileTabsProps) => {
 };
 
 const styles = StyleSheet.create({
-    container: { height: '100%' },
-    tabBar: { flexDirection: 'row', borderBottomWidth: 1 },
-    tabItem: { flex: 1, paddingVertical: 12, alignItems: 'center' },
-    tabText: { fontSize: 14 },
-    empty: { textAlign: 'center', marginTop: 20, opacity: 0.5 }
+    container: { 
+        flex: 1
+    },
+    tabBar: { 
+        flexDirection: 'row', 
+        borderBottomWidth: 1 
+    },
+    list: {
+        flex: 1,
+    },
+    listContent: {
+        flexGrow: 1,
+    },
+    tabItem: { 
+        flex: 1, 
+        paddingVertical: 12, 
+        alignItems: 'center' 
+    },
+    tabText: { 
+        fontSize: 14 
+    },
+    empty: { 
+        textAlign: 'center', 
+        marginTop: 20, 
+        opacity: 0.5 
+    }
 });

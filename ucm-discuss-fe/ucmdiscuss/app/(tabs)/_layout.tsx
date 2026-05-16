@@ -20,7 +20,6 @@ export default function TabsLayout() {
                     paddingBottom: 10,
                 },
                 tabBarButton: (props) => <AnimatedTabButton {...props} />,
-
              }}>
             <Tabs.Screen
                 name="(home)"
@@ -33,7 +32,7 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="topics"
+                name="(topics)"
                 options={{
                     // tabBarShowLabel: false,
                     title: "Topics",

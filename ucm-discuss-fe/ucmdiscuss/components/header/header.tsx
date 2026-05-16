@@ -25,9 +25,28 @@ export default function Header ({ title }: HeaderProps) {
 }
 
 export const styles = StyleSheet.create({
-    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1 },
-    headerLeft: { flex: 1 },
-    cancelText: { fontSize: 16 },
-    headerTitle: { fontSize: 16, fontWeight: 'bold', flex: 2, textAlign: 'center' },
-    headerRight: { flex: 1 },
+    header: { 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        paddingHorizontal: 16, 
+        paddingVertical: 16, 
+        borderBottomWidth: 1,
+        // marginTop: 12,
+    },
+    headerLeft: { 
+        flex: 1 
+    },
+    cancelText: { 
+        fontSize: 16 
+    },
+    headerTitle: { 
+        fontSize: 16, 
+        fontWeight: 'bold', 
+        flex: 2, 
+        textAlign: 'center' 
+    },
+    headerRight: { 
+        flex: 1 
+    },
 })
