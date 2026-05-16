@@ -50,6 +50,38 @@ public class UserService {
         // return userRepository.findById(id);
     }
 
+    public UserResponseDto getUserByEmail(String email) {
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return profileResponse(user);
+    }
+
+    public UserResponseDto profileResponse(UserModel user) {
+        UserResponseDto response = new UserResponseDto();
+        // response.setId(user.getId());
+        response.setNim_or_nisn(user.getNim_or_nisn());
+        response.setName(user.getName());
+        // response.setEmail(user.getEmail());
+        // response.setIs_lecturer(user.getIs_lecturer());
+        response.setIs_anon(user.getIs_anon());
+
+        if (user.getMajor() != null) {
+            MajorResponseDto majorResponse = new MajorResponseDto();
+            majorResponse.setId(user.getMajor().getId());
+            majorResponse.setName(user.getMajor().getName());
+            response.setMajor(majorResponse);
+        }
+
+        if (user.getFaculty() != null) {
+            FacultyResponseDto facultyResponse = new FacultyResponseDto();
+            facultyResponse.setId(user.getFaculty().getId());
+            facultyResponse.setName(user.getFaculty().getName());
+            response.setFaculty(facultyResponse);
+        }
+
+        return response;
+    }
+
     public UserModel saveUser(UserCreationDto request) {
         UserModel user = new UserModel();
         user.setNim_or_nisn(request.getNim_or_nisn());
