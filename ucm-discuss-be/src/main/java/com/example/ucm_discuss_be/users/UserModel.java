@@ -119,6 +119,13 @@ public class UserModel {
     )
     private Boolean is_lecturer = false;
 
+    @NotNull(message = "Anonymous status is required")
+    @Column(
+        name = "is_anon",
+        nullable = false
+    )
+    private Boolean is_anon = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_id")
     private MajorModel major;
