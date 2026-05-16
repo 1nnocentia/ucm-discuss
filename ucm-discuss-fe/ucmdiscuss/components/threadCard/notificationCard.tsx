@@ -27,7 +27,7 @@ export default function NotificationCard({ item, onPress }: { item: Notification
                 styles.container, 
                 { 
                     backgroundColor: item.isRead ? theme.colors.background : theme.colors.lightSecondary + '11',
-                    borderBottomColor: theme.colors.textSecondary + '33' 
+                    borderBottomColor: theme.colors.textSecondary + '33',
                 }
             ]}
             onPress={onPress}
@@ -35,7 +35,7 @@ export default function NotificationCard({ item, onPress }: { item: Notification
             <View style={styles.iconContainer}>
                 <Ionicons name={getIcon()} size={24} color={theme.colors.primary} />
             </View>
-            <View style={styles.contentContainer}>
+            <View style={[styles.contentContainer, { opacity: item.isRead ? 0.5 : 1 }]}>
                 <Text style={[styles.mainText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
                     <Text style={{ fontWeight: 'bold', fontFamily: theme.fonts.montserrat }}>{item.actorName}</Text> {getActionText()}
                 </Text>
