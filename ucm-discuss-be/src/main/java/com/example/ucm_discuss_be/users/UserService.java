@@ -1,5 +1,6 @@
 package com.example.ucm_discuss_be.users;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,12 +28,26 @@ public class UserService {
     @Autowired
     private FacultyRepository facultyRepository;
 
-    public List<UserModel> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponseDto> getAllUsers() {
+        List<UserModel> users = userRepository.findAll();
+        List<UserResponseDto> responseList = new ArrayList<>();
+        for (UserModel user : users) {
+            responseList.add(convertToResponse(user));
+        }
+        return responseList;
+        // return users;
     }
 
-    public Optional<UserModel> getUserById(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserResponseDto> getUserById(Long id) {
+        Optional<UserModel> userOpt = userRepository.findById(id);
+        if (userOpt != null && userOpt.isPresent()) {
+            UserResponseDto response = convertToResponse(userOpt.get());
+            return Optional.of(response);
+        }
+        return Optional.empty();
+        // UserResponseDto response = convertToResponse(userOpt.orElse(null));
+        // return Optional.of(response);
+        // return userRepository.findById(id);
     }
 
     public UserModel saveUser(UserCreationDto request) {
