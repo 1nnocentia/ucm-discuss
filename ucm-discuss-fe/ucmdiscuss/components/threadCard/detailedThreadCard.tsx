@@ -2,11 +2,16 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { Post } from '@/models/user';
-import { Ionicons } from '@expo/vector-icons';
 import VoteButton from '../buttons/voteButton';
+import CommentButton from '../buttons/commentButton';
+
+interface DetailedThreadCardProps {
+    post: Post;
+    onCommentPress?: () => void;
+}
 
 
-export default function DetailedThreadCard({ post }: { post: Post }) {
+export default function DetailedThreadCard({ post, onCommentPress }: DetailedThreadCardProps) {
     const { theme } = useTheme();
     const authorName = post.isAnonymous ? 'anonymous' : post.user.name;
 
@@ -44,13 +49,9 @@ export default function DetailedThreadCard({ post }: { post: Post }) {
             {/* Footer */}
             <View style={styles.footer}>
                 <VoteButton initialVotes={post.votes} initialIsVoted={post.userVoteStatus} />
-                
-                <View style={styles.commentGroup}>
-                    <Ionicons name="chatbubble-outline" size={18} color={theme.colors.textSecondary} />
-                    <Text style={[styles.footerText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>
-                        {post.comments}
-                    </Text>
-                </View>
+                <CommentButton 
+                post={post} 
+                onPress={onCommentPress} />
             </View>
         </View>
     );
@@ -110,13 +111,4 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         gap: 16 
     },
-    commentGroup: { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        gap: 6 
-    },
-    footerText: { 
-        fontSize: 13, 
-        fontWeight: '600' 
-    }
 });
