@@ -3,6 +3,7 @@ package com.example.ucm_discuss_be.users;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +30,22 @@ public class UserController {
 
     @PostMapping
     // Example: POST /api/users with JSON body { "name": "John Doe", "email": "john.doe@example.com" }
-    public UserModel createUser(@Valid @RequestBody UserModel user) {
-        return userService.saveUser(user);
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreationDto request) {
+        // Call your service to create the user, passing the DTO
+        UserModel createdUser = userService.saveUser(request);
+        UserResponseDto response = userService.convertToResponse(createdUser); // Convert to DTO
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+    // public UserModel createUser(@RequestBody UserModel user) {
+    //     return userService.saveUser(user);
+    // }
 
     @PatchMapping("/{id}")
     // Example: PATCH /api/users/1 with JSON body { "name": "Updated User Name", "email": "updated.email@example.com" }
-    public ResponseEntity<UserModel> updateUser(@PathVariable Long id, @Valid @RequestBody UserModel userDetails) {
-        return ResponseEntity.ok(userService.updateUser(id, userDetails));
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserModel userDetails) {
+        UserModel user = userService.updateUser(id, userDetails);
+        UserResponseDto response = userService.convertToResponse(user);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

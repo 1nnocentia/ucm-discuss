@@ -33,13 +33,13 @@ public class MajorController {
 
     @PostMapping
     // Example: POST /api/majors with JSON body { "name": "Computer Science" }
-    public MajorModel createMajor(@Valid @RequestBody MajorModel major) {
+    public MajorModel createMajor(@RequestBody MajorModel major) {
         return majorService.saveMajor(major);
     }
 
     @PutMapping("/{id}")
     // Example: PUT /api/majors/1 with JSON body { "name": "Updated Major Name" }
-    public ResponseEntity<MajorModel> updateMajor(@PathVariable Long id, @Valid @RequestBody MajorModel majorDetails) {
+    public ResponseEntity<MajorModel> updateMajor(@PathVariable Long id, @RequestBody MajorModel majorDetails) {
         return ResponseEntity.ok(majorService.updateMajor(id, majorDetails));
     }
 

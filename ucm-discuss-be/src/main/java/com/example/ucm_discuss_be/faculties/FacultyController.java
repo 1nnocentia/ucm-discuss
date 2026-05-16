@@ -33,13 +33,13 @@ public class FacultyController {
 
     @PostMapping
     // Example: POST /api/faculties with JSON body { "name": "Faculty of Science" }
-    public FacultyModel createFaculty(@Valid @RequestBody FacultyModel faculty) {
+    public FacultyModel createFaculty(@RequestBody FacultyModel faculty) {
         return facultyService.saveFaculty(faculty);
     }
 
     @PutMapping("/{id}")
     // Example: PUT /api/faculties/1 with JSON body { "name": "Updated Faculty Name" }
-    public ResponseEntity<FacultyModel> updateFaculty(@PathVariable Long id, @Valid @RequestBody FacultyModel facultyDetails) {
+    public ResponseEntity<FacultyModel> updateFaculty(@PathVariable Long id, @RequestBody FacultyModel facultyDetails) {
         return ResponseEntity.ok(facultyService.updateFaculty(id, facultyDetails));
     }
 
