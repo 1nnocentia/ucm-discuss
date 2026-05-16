@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,13 +29,13 @@ public class UserController {
 
     @PostMapping
     // Example: POST /api/users with JSON body { "name": "John Doe", "email": "john.doe@example.com" }
-    public UserModel createUser(@RequestBody UserModel user) {
+    public UserModel createUser(@Valid @RequestBody UserModel user) {
         return userService.saveUser(user);
     }
 
     @PatchMapping("/{id}")
     // Example: PATCH /api/users/1 with JSON body { "name": "Updated User Name", "email": "updated.email@example.com" }
-    public ResponseEntity<UserModel> updateUser(@PathVariable Long id, @RequestBody UserModel userDetails) {
+    public ResponseEntity<UserModel> updateUser(@PathVariable Long id, @Valid @RequestBody UserModel userDetails) {
         return ResponseEntity.ok(userService.updateUser(id, userDetails));
     }
 

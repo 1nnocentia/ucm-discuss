@@ -4,6 +4,9 @@ package com.example.ucm_discuss_be.faculties;
 // import com.example.ucm_discuss_be.faculties.FacultyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -30,13 +33,13 @@ public class FacultyController {
 
     @PostMapping
     // Example: POST /api/faculties with JSON body { "name": "Faculty of Science" }
-    public FacultyModel createFaculty(@RequestBody FacultyModel faculty) {
+    public FacultyModel createFaculty(@Valid @RequestBody FacultyModel faculty) {
         return facultyService.saveFaculty(faculty);
     }
 
     @PutMapping("/{id}")
     // Example: PUT /api/faculties/1 with JSON body { "name": "Updated Faculty Name" }
-    public ResponseEntity<FacultyModel> updateFaculty(@PathVariable Long id, @RequestBody FacultyModel facultyDetails) {
+    public ResponseEntity<FacultyModel> updateFaculty(@PathVariable Long id, @Valid @RequestBody FacultyModel facultyDetails) {
         return ResponseEntity.ok(facultyService.updateFaculty(id, facultyDetails));
     }
 
