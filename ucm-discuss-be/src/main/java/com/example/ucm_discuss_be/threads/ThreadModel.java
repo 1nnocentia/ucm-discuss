@@ -1,9 +1,5 @@
 package com.example.ucm_discuss_be.threads;
 
-// import java.math.BigInteger;
-// import java.security.Timestamp;
-// import java.sql.Time;
-// import java.util.Objects;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,8 +15,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,42 +30,116 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+
 @Entity
 @Table(name = "threads")
 public class ThreadModel {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // private Long user_id; //Foreign key to users table
-    // private Long course_id; //Foreign key to courses table
+
+    @NotBlank(message = "Thread title is required")
+    @Size(
+        min = 3,
+        max = 255,
+        message = "Thread title must be between 3 and 255 characters"
+    )
+    @Column(
+        name = "title",
+        nullable = false,
+        length = 255
+    )
     private String title;
+
+    @NotBlank(message = "Thread content is required")
+    @Size(
+        min = 1,
+        max = 10000,
+        message = "Thread content must be between 1 and 10000 characters"
+    )
+    @Column(
+        name = "content",
+        nullable = false,
+        length = 10000
+    )
     private String content;
-    private int vote_count; // I believe there's an easier way to count using a seperate table to track users' votes we have created. But I don't know how to utilise it optimally on Spring Boot yet. Since this should be easy
-    private boolean is_anon;
 
-    @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private UserModel user; // Many threads belong to one user
+    @Min(
+        value = 0,
+        message = "Vote count cannot be negative"
+    )
+    @Column(
+        name = "vote_count",
+        nullable = false
+    )
+    private int vote_count = 0;
 
-    @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name = "course_id")
-    private CourseModel course; // Many threads belong to one course
+    @NotNull(message = "Anonymous status is required")
+    @Column(
+        name = "is_anon",
+        nullable = false
+    )
+    private Boolean is_anon = false;
 
-    @OneToMany(mappedBy = "thread", cascade = CascadeType.ALL)
-    private List<CommentModel> comments; // One thread can have many comments
+    @NotNull(message = "User is required")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "user_id",
+        nullable = false
+    )
+    private UserModel user;
 
-    @OneToMany(mappedBy = "thread", cascade = CascadeType.ALL)
-    private List<UserVotesThreadModel> user_votes_threads; // One thread can have many votes
+    @NotNull(message = "Course is required")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "course_id",
+        nullable = false
+    )
+    private CourseModel course;
 
-    @OneToOne(mappedBy = "thread", cascade = CascadeType.ALL)
-    private ThreadAttachmentModel thread_attachment; // One thread can have one attachment  
+    @OneToMany(
+        mappedBy = "thread",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<CommentModel> comments;
 
-    @ManyToMany(mappedBy = "viewed_threads", cascade = CascadeType.ALL)
-    private List<UserModel> viewers; // Many users can view many threads
+    @OneToMany(
+        mappedBy = "thread",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<UserVotesThreadModel> user_votes_threads;
+
+    @OneToOne(
+        mappedBy = "thread",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    private ThreadAttachmentModel thread_attachment;
+
+    @ManyToMany(
+        mappedBy = "viewed_threads",
+        fetch = FetchType.LAZY
+    )
+    private List<UserModel> viewers;
 
     @CreationTimestamp
+    @Column(
+        name = "created_at",
+        nullable = false,
+        updatable = false
+    )
     private LocalDateTime created_at;
 }

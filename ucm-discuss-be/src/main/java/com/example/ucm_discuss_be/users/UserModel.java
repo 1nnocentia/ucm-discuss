@@ -1,16 +1,7 @@
 package com.example.ucm_discuss_be.users;
 
-// import java.math.BigInteger;
-// import java.security.Timestamp;
-// import java.sql.Time;
-// import java.util.Objects;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -23,10 +14,15 @@ import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.userVotesComment.UserVotesCommentModel;
 import com.example.ucm_discuss_be.userVotesThread.UserVotesThreadModel;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,62 +32,169 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+
 @Entity
-@Table(name = "users")
-
+@Table(
+    name = "users",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "nim_or_nisn")
+    }
+)
 public class UserModel {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "NIM or NISN is required")
+    @Size(
+        min = 5,
+        max = 50,
+        message = "NIM or NISN must be between 5 and 50 characters"
+    )
+    @Column(
+        name = "nim_or_nisn",
+        nullable = false,
+        unique = true,
+        length = 50
+    )
     private String nim_or_nisn;
+
+    @NotBlank(message = "Name is required")
+    @Size(
+        min = 2,
+        max = 255,
+        message = "Name must be between 2 and 255 characters"
+    )
+    @Column(
+        name = "name",
+        nullable = false,
+        length = 255
+    )
     private String name;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email format is invalid")
+    @Size(
+        max = 255,
+        message = "Email must not exceed 255 characters"
+    )
+    @Column(
+        name = "email",
+        nullable = false,
+        unique = true,
+        length = 255
+    )
     private String email;
+
+    @NotBlank(message = "Password is required")
+    @Size(
+        min = 8,
+        max = 255,
+        message = "Password must be between 8 and 255 characters"
+    )
+    @Column(
+        name = "password",
+        nullable = false,
+        length = 255
+    )
     private String password;
-    private Boolean is_lecturer;
 
-    @ManyToOne (cascade = CascadeType.ALL)
+    @NotNull(message = "Lecturer status is required")
+    @Column(
+        name = "is_lecturer",
+        nullable = false
+    )
+    private Boolean is_lecturer = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_id")
-    private MajorModel major; //Many students - same major
-    
-    @ManyToOne (cascade = CascadeType.ALL)
+    private MajorModel major;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id")
-    private FacultyModel faculty; //Many students - same faculty
+    private FacultyModel faculty;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<NotificationModel> notifications; //One user can have many notifications
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<NotificationModel> notifications;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<ThreadModel> created_threads; //One user can create many threads
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<ThreadModel> created_threads;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<CommentModel> comments; //One user can create many comments
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<CommentModel> comments;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserVotesThreadModel> voted_threads; //One user can vote many threads
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<UserVotesThreadModel> voted_threads;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserVotesCommentModel> voted_comments; //One user can downvote many threads
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<UserVotesCommentModel> voted_comments;
 
-    @ManyToMany (cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "user_course",
-        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id")
+        joinColumns = @JoinColumn(
+            name = "user_id",
+            referencedColumnName = "id"
+        ),
+        inverseJoinColumns = @JoinColumn(
+            name = "course_id",
+            referencedColumnName = "id"
+        )
     )
-    private List<CourseModel> courses; //One user can follow many courses
+    private List<CourseModel> courses;
 
-    @ManyToMany (cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "user_views_thread",
-        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "thread_id", referencedColumnName = "id")
+        joinColumns = @JoinColumn(
+            name = "user_id",
+            referencedColumnName = "id"
+        ),
+        inverseJoinColumns = @JoinColumn(
+            name = "thread_id",
+            referencedColumnName = "id"
+        )
     )
-    private List<ThreadModel> viewed_threads; //One user can view many threads
+    private List<ThreadModel> viewed_threads;
 
     @CreationTimestamp
+    @Column(
+        name = "created_at",
+        nullable = false,
+        updatable = false
+    )
     private LocalDateTime created_at;
 }
