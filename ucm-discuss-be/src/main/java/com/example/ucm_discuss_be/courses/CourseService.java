@@ -57,11 +57,23 @@ public class CourseService {
         return response;
     }
 
-    public CourseModel updateCourse(Long id, CourseModel courseDetails) {
+    public CourseModel updateCourse(Long id, CourseUpdateDto courseDetails) {
         CourseModel course = courseRepository.findById(id).orElseThrow(() -> new RuntimeException("Course not found"));
-        course.setCourse_code(courseDetails.getCourse_code());
-        course.setCourse_name(courseDetails.getCourse_name());
-        course.setYear(courseDetails.getYear());
+
+        if (courseDetails.getCourse_code() != null) {
+            course.setCourse_code(courseDetails.getCourse_code());
+        }
+
+        if (courseDetails.getCourse_name() != null) {
+            course.setCourse_name(courseDetails.getCourse_name());
+        }
+
+        if (courseDetails.getYear() != null) {
+            course.setYear(courseDetails.getYear());
+        }
+        // course.setCourse_code(courseDetails.getCourse_code());
+        // course.setCourse_name(courseDetails.getCourse_name());
+        // course.setYear(courseDetails.getYear());
         return courseRepository.save(course);
     }
 

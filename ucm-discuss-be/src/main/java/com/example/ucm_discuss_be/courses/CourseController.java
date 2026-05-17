@@ -44,7 +44,7 @@ public class CourseController {
 
     @PatchMapping("/{id}")
     // Example: PATCH /api/courses/1 with JSON body { "course_code": "CS102", "course_name": "Data Structures", "year": 2023 }
-    public ResponseEntity<CourseResponseDto> updateCourse(@PathVariable Long id, @Valid @RequestBody CourseModel courseDetails) {
+    public ResponseEntity<CourseResponseDto> updateCourse(@PathVariable Long id, @RequestBody CourseUpdateDto courseDetails) {
         CourseModel course = courseService.updateCourse(id, courseDetails);
         CourseResponseDto response = courseService.convertToResponse(course);
         return ResponseEntity.ok(response);
