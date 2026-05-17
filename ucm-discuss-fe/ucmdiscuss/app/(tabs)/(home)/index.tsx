@@ -1,8 +1,8 @@
 import { useSearch } from "@/context/SearchContext";
 import { useTheme } from "@/context/ThemeContext";
+import { useDebounce } from "@/controllers/hooks/useDebounce";
+
 import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList } from "react-native";
 import { AnimatedSearchOverlay } from "@/components/search/animatedSearchOverlay";
 import HomePostCard from "@/components/threadCard/homePostCard";
 import { useRouter } from "expo-router";
@@ -14,6 +14,7 @@ import { dummyHomePosts } from "@/constants/dummyData/dummyData";
 export default function homeScreen() {
     const { theme } = useTheme();
     const router = useRouter();
+    const debounceSearchQuery = useDebounce(useSearch().searchQuery, 500);
 
     const { isSearchActive, searchQuery } = useSearch();
 
@@ -33,7 +34,7 @@ export default function homeScreen() {
             {isSearchActive && (
                 <AnimatedSearchOverlay 
                     isSearchActive={isSearchActive}
-                    searchQuery={searchQuery}
+                    searchQuery={debounceSearchQuery}
                 />
             )}
         </View>
