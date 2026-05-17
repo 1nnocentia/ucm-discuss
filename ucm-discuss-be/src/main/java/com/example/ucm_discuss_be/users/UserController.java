@@ -55,7 +55,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     // Example: PATCH /api/users/1 with JSON body { "name": "Updated User Name", "email": "updated.email@example.com" }
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserModel userDetails) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @RequestBody UserUpdateDto userDetails) {
         UserModel user = userService.updateUser(id, userDetails);
         UserResponseDto response = userService.convertToResponse(user);
         return ResponseEntity.ok(response);
