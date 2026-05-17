@@ -133,13 +133,34 @@ public class UserService {
         return response;
     }
 
-    public UserModel updateUser(Long id, UserModel userDetails) {
+    public UserModel updateUser(Long id, UserUpdateDto userDetails) {
         UserModel user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setName(userDetails.getName());
-        user.setEmail(userDetails.getEmail());
-        user.setIs_lecturer(userDetails.getIs_lecturer());
-        user.setMajor(userDetails.getMajor());
-        user.setFaculty(userDetails.getFaculty());
+        if (userDetails.getNim_or_nisn() != null) {
+            user.setNim_or_nisn(userDetails.getNim_or_nisn());
+        }
+        if (userDetails.getName() != null) {
+            user.setName(userDetails.getName());
+        }
+        if (userDetails.getEmail() != null) {
+            user.setEmail(userDetails.getEmail());
+        }
+        if (userDetails.getIs_lecturer() != null) {
+            user.setIs_lecturer(userDetails.getIs_lecturer());
+        }
+        if (userDetails.getIs_anon() != null) {
+            user.setIs_anon(userDetails.getIs_anon());
+        }
+        if (userDetails.getMajor() != null) {
+            MajorModel major = majorRepository.findById(userDetails.getMajor().getId())
+                    .orElseThrow(() -> new RuntimeException("Major not found"));
+            user.setMajor(major);
+        }
+        if (userDetails.getFaculty() != null) {
+            FacultyModel faculty = facultyRepository.findById(userDetails.getFaculty().getId())
+                    .orElseThrow(() -> new RuntimeException("Faculty not found"));
+            user.setFaculty(faculty);
+        }
+
         return userRepository.save(user);
     }
 

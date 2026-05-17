@@ -19,13 +19,13 @@ public class MajorController {
 
     @GetMapping
     // Example: GET /api/majors
-    public List<MajorModel> getAllMajors() {
+    public List<MajorResponseDto> getAllMajors() {
         return majorService.getAllMajors();
     }
 
     @GetMapping("/{id}")
     // Example: GET /api/majors/1
-    public ResponseEntity<MajorModel> getMajorById(@PathVariable Long id) {
+    public ResponseEntity<MajorResponseDto> getMajorById(@PathVariable Long id) {
         return majorService.getMajorById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
