@@ -19,13 +19,13 @@ public class FacultyController {
 
     @GetMapping
     // Example: GET /api/faculties
-    public List<FacultyModel> getAllFaculties() {
+    public List<FacultyResponseDto> getAllFaculties() {
         return facultyService.getAllFaculties();
     }
 
     @GetMapping("/{id}")
     // Example: GET /api/faculties/1
-    public ResponseEntity<FacultyModel> getFacultyById(@PathVariable Long id) {
+    public ResponseEntity<FacultyResponseDto> getFacultyById(@PathVariable Long id) {
         return facultyService.getFacultyById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
