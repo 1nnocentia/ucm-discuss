@@ -1,4 +1,4 @@
-import { UserHistory, ProfileCardData, Topics, TopicsData, Post, PostHistory, User, ThreadComment, NotificationProps } from '@/models/user';
+import { UserHistory, ProfileCardData, TopicsData, Post, NotificationProps, AuthorSnippet, ThreadComment } from '@/models/user';
 
 
 export const dummyHistoryData: UserHistory[] = [
@@ -31,14 +31,8 @@ export const dummyProfileData: ProfileCardData = {
     headerImage: undefined,
     postCount: 5,
     commentCount: 3,
+    isAnonymous: false
 }
-
-// export const TopicsDummyData : Topics[] = [
-//     { id: '1', name: 'Software Engineering' },
-//     { id: '2', name: 'Artificial Intelligence' },
-//     { id: '3', name: 'Information Management' },
-//     { id: '4', name: 'Computer Networks' },
-// ]
 
 export const TopicsDummyData: TopicsData[] = [
     {
@@ -78,22 +72,29 @@ export const TopicsDummyData: TopicsData[] = [
     }
 ];
 
-const dummyUser1: User = {
+const dummyUser1: AuthorSnippet = {
     id: 'user-001',
-    email: 'han@student.ciputra.ac.id',
-    isStudent: true,
-    nim: '20230001',
-    name: 'Han Inno'
+    name: 'Han Inno',
+    isAnonymous: false,
 };
 
-const dummyUser2: User = {
+const dummyUser2: AuthorSnippet = {
     id: 'user-002',
-    email: 'mifey@student.ciputra.ac.id',
-    isStudent: true,
-    nim: '20230002',
-    name: 'Mifey'
+    name: 'Mifey',
+    isAnonymous: false,
 };
 
+const dummyUser3: AuthorSnippet = {
+    id: 'user-003',
+    name: 'Avin',
+    isAnonymous: false,
+};
+
+const dummyUser4: AuthorSnippet = {
+    id: 'user-004',
+    name: 'Gibert',
+    isAnonymous: false,
+};
 
 export const dummyHomePosts: Post[] = [
     {
@@ -107,7 +108,6 @@ export const dummyHomePosts: Post[] = [
         topic: TopicsDummyData[0],
         user: dummyUser1,
         userVoteStatus: true,
-        isAnonymous: true
     },
     {
         id: 'post-002',
@@ -120,7 +120,6 @@ export const dummyHomePosts: Post[] = [
         topic: TopicsDummyData[4],
         user: dummyUser1,
         userVoteStatus: false,
-        isAnonymous: false
     },
     {
         id: 'post-003',
@@ -133,7 +132,6 @@ export const dummyHomePosts: Post[] = [
         topic: TopicsDummyData[2],
         user: dummyUser2,
         userVoteStatus: undefined,
-        isAnonymous: false
     }
 ];
 
@@ -143,9 +141,9 @@ export const dummyThreadComments: ThreadComment[] = [
     {
         id: 'comment-101',
         postId: 'post-002',
-        userId: dummyUser2.id,
-        parentPostId: null,
-        comment: 'Wah mantap Inno, kebetulan lagi nyari referensi buat implementasi dark mode juga. Boleh share repo-nya nggak?',
+        parentPostId: 'post-002',
+        image: null,
+        content: 'Wah mantap Inno, kebetulan lagi nyari referensi buat implementasi dark mode juga. Boleh share repo-nya nggak?',
         createdAt: '15 Mei 2026',
         votes: 15,
         user: dummyUser2,
@@ -154,9 +152,9 @@ export const dummyThreadComments: ThreadComment[] = [
             {
                 id: 'comment-101-reply-1',
                 postId: 'post-002',
-                userId: dummyUser1.id,
                 parentPostId: 'comment-101',
-                comment: 'Siapp Mifey, nanti aku push ke GitHub ya. Kodenya kubuat serapih mungkin biar gampang dibaca.',
+                image: null,
+                content: 'Siapp Mifey, nanti aku push ke GitHub ya. Kodenya kubuat serapih mungkin biar gampang dibaca.',
                 createdAt: '15 Mei 2026',
                 votes: 5,
                 user: dummyUser1,
@@ -168,17 +166,15 @@ export const dummyThreadComments: ThreadComment[] = [
     {
         id: 'comment-102',
         postId: 'post-002',
-        userId: 'user-003', 
-        parentPostId: null,
-        comment: 'Info yang sangat daging! Makasih sharingnya bro.',
+        parentPostId: 'post-002',
+        image: null,
+        content: 'Info yang sangat daging! Makasih sharingnya bro.',
         createdAt: '15 Mei 2026',
         votes: 8,
         user: {
             id: 'user-003',
-            email: 'student3@student.ciputra.ac.id',
-            isStudent: true,
-            nim: '20230003',
-            name: 'Andi'
+            name: 'Andi',
+            isAnonymous: false
         },
         userVoteStatus: false,
         replies: []
@@ -220,3 +216,81 @@ export const dummyNotifications: NotificationProps[] = [
         isRead: false
     }
 ];
+
+export const MOCK_POST: Post = {
+    id: '1',
+    title: 'Bagaimana cara mengatasi error ADB saat debugging React Native?',
+    description: 'Saya mencoba menjalankan aplikasi di emulator Android, tetapi Metro bundler terus menampilkan error "ADB.exe is not recognized". Apakah ada yang tahu cara memperbaiki path environment-nya?',
+    image: null,
+    createdAt: '2h ago',
+    votes: 45,
+    comments: 2,
+    userVoteStatus: false,
+    topic: { id: 't1', name: 'Mobile Development' },
+    user: {
+        id: 'u1',
+        name: 'Innocentia',
+        isAnonymous: false
+    },
+};
+
+// export const MOCK_COMMENTS: ThreadComment[] = [
+//     {
+//         id: 'c1',
+//         content: 'Coba periksa Environment Variables di Windows kamu...',
+//         createdAt: '1h ago',
+//         votes: 12,
+//         user: dummyUser2,
+//         image: null,
+//         userVoteStatus: false,
+//         replies: [
+//             {
+//                 id: 'r1',
+//                 postId: '1',
+//                 parentPostId: 'c1',
+//                 content: 'Terima kasih! Ternyata memang path-nya belum di set.',
+//                 createdAt: '30m ago',
+//                 votes: 3,
+//                 image: null,
+//                 user: dummyUser1
+//             }
+//         ]
+//     },
+//     {
+//         id: 'c2',
+//         text: 'Setuju dengan komentar di atas. Atau kalau pakai Expo...',
+//         createdAt: '45m ago',
+//         votes: 5,
+//         user: { name: 'anonymous',  isAnonymous: true }
+//     }
+// ];
+
+export const MOCK_TOPIC_INFO = {
+    id: '1',
+    name: 'Artificial Intelligence',
+    description: 'The official community for AI enthusiasts at UCM. Discuss Machine Learning, Neural Networks, GenAI implementations, and the philosophical impact of AI on society.',
+    membersCount: '1.2k',
+    onlineCount: '42',
+    bannerUrl: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1080&auto=format&fit=crop', 
+    iconUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=200&auto=format&fit=crop',
+    isJoined: false
+};
+export const MOCK_TOPIC_POSTS: Post[] = Array(15).fill(0).map((_, i) => ({
+    id: `p${i}`,
+    title: `Discussing the implications of GPT-5 in our current curriculum ${i+1}`,
+    description: 'With the recent announcements, how should we adapt our final projects to leverage these new capabilities without violating academic integrity?',
+    image: null,
+    createdAt: `${i + 2}h ago`, 
+    votes: 120 - (i * 10),
+    comments: 24,
+    topic: { 
+        id: '1',
+        name: 'Artificial Intelligence' 
+    },
+    user: { 
+        id: 'user-001',
+        name: 'Innocentia', 
+        isAnonymous: false 
+    },
+    userVoteStatus: false,
+}));

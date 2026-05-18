@@ -11,3 +11,5 @@ npx expo install expo-image-manipulator
 npx expo install @shopify/flash-list
 
 npx expo install axios
+
+npx expo install @tanstack/react-query

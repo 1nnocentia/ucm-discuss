@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { Post } from '@/models/user';
-import { Ionicons } from '@expo/vector-icons';
 import VoteButton from '../buttons/voteButton';
 import CommentButton from '../buttons/commentButton';
 import { useRouter } from 'expo-router';
@@ -76,6 +75,7 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
                 <View style={styles.commentGroup}>
                     <CommentButton post={post} onPress={() => {}} />
                 </View>
+
             </View>
         </TouchableOpacity>
     );
@@ -95,7 +95,8 @@ const styles = StyleSheet.create({
     headerLeft: {
         flexDirection: 'row', 
         alignItems: 'center', 
-        gap: 6 
+        gap: 6,
+        flexWrap: 'wrap'
     },
     author: { 
         fontSize: 14, 
@@ -133,7 +134,8 @@ const styles = StyleSheet.create({
     footer: { 
         flexDirection: 'row', 
         alignItems: 'center', 
-        gap: 16 
+        gap: 16,
+        flexWrap: 'wrap' 
     },
     commentGroup: { 
         flexDirection: 'row', 
