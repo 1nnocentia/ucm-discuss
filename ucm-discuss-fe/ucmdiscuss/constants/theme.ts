@@ -5,7 +5,10 @@ const COMMON_COLORS = {
     tertiary: '#94A89A',
 
     buttonOn: '#D34A16',
-    buttonOff: '#FFFFFF'
+    buttonOff: '#FFFFFF',
+    
+    warning: '#FF6B6B',
+    error: '#FF3B30',
 } as const;
 
 export const FONTS = {
