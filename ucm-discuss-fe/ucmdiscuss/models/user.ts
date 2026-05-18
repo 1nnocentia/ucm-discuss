@@ -41,7 +41,7 @@ export interface Post  {
     userVoteStatus?: boolean;
 }
 
-export interface Comment {
+export interface ThreadComment {
     id: string;
     postId: string;
     parentPostId: string | null;
@@ -51,7 +51,7 @@ export interface Comment {
     votes: number;
     user: AuthorSnippet;
     userVoteStatus?: boolean;
-    replies?: Comment[];
+    replies?: ThreadComment[];
 }
 
 export interface CreatePostInput {
