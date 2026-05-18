@@ -4,10 +4,10 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 import VoteButton from '@/components/buttons/voteButton';
-import { ReplyData } from '@/models/user';
+import { Comment } from '@/models/user';
 
 interface ReplyItemProps {
-    reply: ReplyData;
+    reply: Comment;
 }
 
 export default function ReplyItem({ reply }: ReplyItemProps) {
@@ -16,6 +16,11 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
 
     return (
         <View style={styles.container}>
+            <View style={styles.leftColumn}>
+                    {reply.content && reply.content.length > 0 && (
+                        <View style={[styles.threadLine, { backgroundColor: theme.colors.textSecondary + '22' }]} />
+                    )}
+                </View>
 
             <View style={styles.replyContainer}>
                 <View style={styles.header}>
@@ -26,7 +31,7 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
                 </View>
 
                 <Text style={[styles.text, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
-                    {reply.text}
+                    {reply.content}
                 </Text>
 
                 <View style={styles.actions}>
@@ -68,5 +73,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row', 
         alignItems: 'center', 
         gap: 12 
+    },
+    leftColumn: { 
+        alignItems: 'center', 
+        marginRight: 8, 
+        width: 10 
+    },
+    threadLine: { 
+        width: 2, 
+        flex: 1,
+        marginTop: 4, 
+        borderRadius: 1 
     },
 });
