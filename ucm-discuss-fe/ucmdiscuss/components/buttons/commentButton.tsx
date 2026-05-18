@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, Touchable, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 import { Post } from '@/models/user';
+import { router } from 'expo-router';
 
 interface CommentButtonProps {
     post: Post;
@@ -11,9 +12,19 @@ interface CommentButtonProps {
 export default function CommentButton({ post, onPress }: CommentButtonProps) {
     const { theme } = useTheme();
     const commentCount = post.comments;
+    const handleCommentAction = () => {
+        if (onPress) {
+            onPress();
+        } else {
+            router.push({
+                pathname: '/threads/[id]',
+                params: { id: post.id, focusInput: 'true' }
+            });
+        }
+    }
 
     return (
-        <TouchableOpacity style={styles.commentGroup} onPress={onPress} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.commentGroup} onPress={handleCommentAction} activeOpacity={0.7}>
             <Ionicons name="chatbubble-outline" size={18} color={theme.colors.textSecondary} />
             <Text style={[styles.footerText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>
                 {commentCount}
@@ -31,7 +42,6 @@ const styles = StyleSheet.create({
         paddingRight: 12,
     },
     footerText: { 
-        fontSize: 13, 
-        fontWeight: '600' 
+        fontSize: 12, 
     }
 })
