@@ -35,7 +35,7 @@ export const PendingUploadsProvider: FC<{ children: ReactNode }> = ({ children }
     }, []);
 
     const persistLocalPosts = useCallback(async (nextPosts: LocalFeedPost[]) => {
-        setLocalPosts(nextPosts);
+        // setLocalPosts(nextPosts);
         try {
             await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(nextPosts));
         } catch (error) {
@@ -49,26 +49,32 @@ export const PendingUploadsProvider: FC<{ children: ReactNode }> = ({ children }
             if (stored) {
                 setLocalPosts(JSON.parse(stored));
             }
-            // setIsReady(true);
         } catch (error) {
             console.error('Error loading local posts:', error);
+        } finally {
             setIsReady(true);
         }
     };
 
-    const modifyPosts = useCallback(async (updater: (prevPosts: LocalFeedPost[]) => LocalFeedPost[]) => {
+    // const modifyPosts = useCallback(async (updater: (prevPosts: LocalFeedPost[]) => LocalFeedPost[]) => {
+    //     const nextPosts = updater(localPosts);
+    //     await persistLocalPosts(nextPosts);
+    // }, [localPosts, persistLocalPosts]);
+
+    const modifyPosts = useCallback(
+    async (updater: (prevPosts: LocalFeedPost[]) => LocalFeedPost[]) => {
         setLocalPosts((prev) => {
             const nextPosts = updater(prev);
-            AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(nextPosts)).catch(err => 
-                console.error('Error saving local posts:', err)
-            );
+            persistLocalPosts(nextPosts); 
             return nextPosts;
-        });
-    }, []);
+            });
+        },
+        [persistLocalPosts]
+    );
 
     const addLocalPost = useCallback(
         async (post: Omit<LocalFeedPost, 'syncStatus' | 'retryAvailableAt' | 'retryCount' | 'lastError' | 'createdAtTimestamp'> & { retryAvailableAt?: number; createdAtTimestamp?: number }) => {
-            if (!isReady) return; // Keamanan ganda
+            if (!isReady) return; 
 
             const nextPost: LocalFeedPost = {
                 ...post,
