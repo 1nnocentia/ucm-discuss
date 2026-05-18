@@ -1,4 +1,3 @@
-// src/app/(tabs)/(home)/create.tsx (Atau letak rute modamu)
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
