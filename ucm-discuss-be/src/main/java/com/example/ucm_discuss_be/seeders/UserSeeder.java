@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+// import java.util.List;
 
 @Component
 @Profile("dev")
@@ -34,33 +34,91 @@ public class UserSeeder implements CommandLineRunner {
 
             MajorModel imt = majorRepository.findById((long) 1).orElseThrow();
             MajorModel vcd = majorRepository.findById((long) 2).orElseThrow();
-            MajorModel acc = majorRepository.findById((long) 3).orElseThrow();
+            MajorModel man = majorRepository.findById((long) 3).orElseThrow();
 
             FacultyModel sift = facultyRepository.findById((long) 1).orElseThrow();
             FacultyModel fvcd = facultyRepository.findById((long) 2).orElseThrow();
-            FacultyModel fbe = facultyRepository.findById((long) 3).orElseThrow();
+            FacultyModel stie = facultyRepository.findById((long) 3).orElseThrow();
 
-            UserModel studentUser = new UserModel();
-            studentUser.setName("Adam Student");
-            studentUser.setNim_or_nisn("00123456789");
-            studentUser.setEmail("adam.student@example.com");
-            studentUser.setPassword("password123");
-            studentUser.setIs_lecturer(false);
-            studentUser.setIs_anon(false);
-            studentUser.setMajor(imt);
-            studentUser.setFaculty(sift);
+            UserModel student = new UserModel();
+            student.setName("Keihan Pradika Muzaki");
+            student.setNim_or_nisn("00123456789");
+            student.setEmail("kpradika@student.ciputra.ac.id");
+            student.setPassword("password123");
+            student.setIs_lecturer(false);
+            student.setIs_anon(false);
+            student.setMajor(imt);
+            student.setFaculty(sift);
+            userRepository.save(student);
 
-            UserModel lecturerUser = new UserModel();
-            lecturerUser.setName("Dr. Pickles");
-            lecturerUser.setNim_or_nisn("98765432100");
-            lecturerUser.setEmail("dr.pickles@example.com");
-            lecturerUser.setPassword("password123");
-            lecturerUser.setIs_lecturer(true);
-            lecturerUser.setIs_anon(false);
-            lecturerUser.setMajor(vcd);
-            lecturerUser.setFaculty(fvcd);
+            UserModel student2 = new UserModel();
+            student2.setName("Innocentia Handani");
+            student2.setNim_or_nisn("0012321139");
+            student2.setEmail("ihandani@student.ciputra.ac.id");
+            student2.setPassword("password123");
+            student2.setIs_lecturer(false);
+            student2.setIs_anon(false);
+            student2.setMajor(imt);
+            student2.setFaculty(sift);
+            userRepository.save(student2);
 
-            userRepository.saveAll(List.of(studentUser, lecturerUser));
+            UserModel student3 = new UserModel();
+            student3.setName("Nicholas Flamel");
+            student3.setNim_or_nisn("003727456789");
+            student3.setEmail("nflamel@student.ciputra.ac.id");
+            student3.setPassword("password123");
+            student3.setIs_lecturer(false);
+            student3.setIs_anon(false);
+            student3.setMajor(vcd);
+            student3.setFaculty(fvcd);
+            userRepository.save(student3);
+
+            UserModel student4 = new UserModel();
+            student4.setName("Rachel Dawes");
+            student4.setNim_or_nisn("024322456789");
+            student4.setEmail("rdawes@student.ciputra.ac.id");
+            student4.setPassword("password123");
+            student4.setIs_lecturer(false);
+            student4.setIs_anon(false);
+            student4.setMajor(vcd);
+            student4.setFaculty(fvcd);
+            userRepository.save(student4);
+
+            UserModel student5 = new UserModel();
+            student5.setName("Reinhart von Lohengramm");
+            student5.setNim_or_nisn("02222333789");
+            student5.setEmail("rvlohengramm@student.ciputra.ac.id");
+            student5.setPassword("password123");
+            student5.setIs_lecturer(false);
+            student5.setIs_anon(false);
+            student5.setMajor(man);
+            student5.setFaculty(stie);
+            userRepository.save(student5);
+
+            UserModel student6 = new UserModel();
+            student6.setName("Celine Chandra");
+            student6.setNim_or_nisn("02222456789");
+            student6.setEmail("cchandra@student.ciputra.ac.id");
+            student6.setPassword("password123");
+            student6.setIs_lecturer(false);
+            student6.setIs_anon(false);
+            student6.setMajor(man);
+            student6.setFaculty(stie);
+            userRepository.save(student6);
+
+            UserModel lecturer = new UserModel();
+            lecturer.setName("Dr. Pickles");
+            lecturer.setNim_or_nisn("98765432100");
+            lecturer.setEmail("dr.pickles@example.com");
+            lecturer.setPassword("password123");
+            lecturer.setIs_lecturer(true);
+            lecturer.setIs_anon(false);
+            lecturer.setMajor(imt);
+            lecturer.setFaculty(sift);
+            userRepository.save(lecturer);
+                      
+
+            // userRepository.saveAll(List.of(studentUser, lecturerUser));
             System.out.println("Users seeded.");
         }
     }

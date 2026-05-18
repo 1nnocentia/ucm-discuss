@@ -26,12 +26,12 @@ public class FacultySeeder implements CommandLineRunner {
             FacultyModel fvcd = new FacultyModel();
             fvcd.setName("Faculty of Visual Communication Design");
 
-            FacultyModel fbe = new FacultyModel();
-            fbe.setName("Faculty of Business and Economics");
+            FacultyModel stie = new FacultyModel();
+            stie.setName("Institute of Economic Science");
 
             facultyRepository.save(fsit);
             facultyRepository.save(fvcd);
-            facultyRepository.save(fbe);
+            facultyRepository.save(stie);
             System.out.println("Faculties seeded.");
         }
     }
