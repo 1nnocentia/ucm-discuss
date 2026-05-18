@@ -5,13 +5,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 import VoteButton from '@/components/buttons/voteButton';
 import ReplyItem from '@/components/threadDiscussion/replyItem';
-import { CommentData } from '@/models/user';
+import { Comment } from '@/models/user';
 
 
 
 interface CommentItemProps {
-    comment: CommentData;
-    onReplyPress: (commentId: string) => void;
+    comment: Comment;
+    onReplyPress: (commentId: string, imageUri: string | null) => void;
 }
 
 export default function CommentItem({ comment, onReplyPress }: CommentItemProps) {
@@ -31,12 +31,12 @@ export default function CommentItem({ comment, onReplyPress }: CommentItemProps)
                     </View>
 
                     <Text style={[styles.text, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
-                        {comment.text}
+                        {comment.content}
                     </Text>
 
                     <View style={styles.actions}>
                         <VoteButton initialVotes={comment.votes} />
-                        <TouchableOpacity onPress={() => onReplyPress(comment.id)} style={styles.replyBtn}>
+                        <TouchableOpacity onPress={() => onReplyPress(comment.id, null)} style={styles.replyBtn}>
                             <Text style={[styles.replyBtnText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>
                                 Reply
                             </Text>

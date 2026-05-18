@@ -9,11 +9,18 @@ import { useTheme } from "@/context/ThemeContext";
 
 export const notificationsScreen = () => {
     const { theme } = useTheme();
-
     const [notifications, setNotifications] = useState(dummyNotifications);
 
-    const unreadNotifications = useMemo(() => {
-        return notifications.filter((notif) => notif.isRead === false);
+    const sortedNotifications = useMemo(() => {
+        return [...notifications].sort((a, b) => {
+            if (a.isRead !== b.isRead) {
+                return a.isRead ? 1 : -1;
+            }
+            const dateA = new Date(a.createdAt).getTime();
+            const dateB = new Date(b.createdAt).getTime();
+            
+            return dateB - dateA;
+        });
     }, [notifications]);
 
     const handlePressNotification = (id: string) => {
@@ -30,7 +37,7 @@ export const notificationsScreen = () => {
         <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
             <Header title="Notifications" />
                 <FlatList
-                    data={unreadNotifications}
+                    data={sortedNotifications}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
                         <NotificationCard 

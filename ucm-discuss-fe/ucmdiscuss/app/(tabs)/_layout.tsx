@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { router, Tabs, useRouter } from "expo-router";
 import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -7,6 +7,7 @@ import { CenterTabButton } from "@/components/buttons/centerTabButton";
 
 export default function TabsLayout() {
     const { theme } = useTheme();
+    const router = useRouter();
 
     return (
         <Tabs
@@ -55,8 +56,15 @@ export default function TabsLayout() {
                             />
                         </CenterTabButton>
                     ),
+                    
                     // tabBarLabel: () => null,
                 }}
+                listeners={{ 
+                    tabPress: (e) => {
+                        e.preventDefault();
+                        router.push('/createNewThread');
+                    },
+                 }}
             />
             <Tabs.Screen
                 name="notification"

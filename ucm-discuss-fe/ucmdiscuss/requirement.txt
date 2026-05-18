@@ -9,3 +9,5 @@ npx expo install expo-image-picker
 npx expo install expo-image-manipulator
 
 npx expo install @shopify/flash-list
+
+npx expo install axios

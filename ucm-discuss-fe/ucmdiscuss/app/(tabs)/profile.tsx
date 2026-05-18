@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {  ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from "@/context/ThemeContext";
@@ -9,6 +9,16 @@ import { ProfileCard } from "@/components/profile/profileCard";
 
 export const profileScreen = () => {
     const { theme } = useTheme();
+    const [profileData, setProfileData] = useState(dummyProfileData);
+
+    const handleAnonymousToggle = (isAnonymous: boolean) => {
+        setProfileData((prev) => ({
+            ...prev,
+            isAnonymous,
+        }));
+        // set user status jadi anonym
+        console.log('Toggle anonymous:', isAnonymous);
+    };
 
     return (
         <SafeAreaView edges={['top']} style={[styles.viewStyle, { backgroundColor: theme.colors.primary }]}>
@@ -16,7 +26,10 @@ export const profileScreen = () => {
                 style={[styles.scrollContainer, { backgroundColor: theme.colors.background }]}
                 contentContainerStyle={[styles.scrollContent, { backgroundColor: theme.colors.background }]}
             >
-                <ProfileCard user={dummyProfileData} />
+                <ProfileCard 
+                    user={profileData} 
+                    onAnonymousToggle={handleAnonymousToggle}
+                />
                 <ProfileTabs data={dummyHistoryData} />
             </ScrollView>
         </SafeAreaView>
