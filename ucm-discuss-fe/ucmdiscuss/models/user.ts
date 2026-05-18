@@ -17,36 +17,41 @@ export interface UserProfile extends User {
     isAnonymous: boolean;
 }
 
-export interface Post  {
-    id: string;
-    title: string;
-    createdAt: string;
-    votes: number;
-    comments: number;
-    image: string | null;
-    description: string | null;
-    topic: Topics;
-    user: User;
-    userVoteStatus?: boolean;
-    isAnonymous: boolean;
-}
-
-export interface ThreadComment {
-    id: string;
-    postId: string;
-    userId: string;
-    parentPostId: string | null;
-    comment: string;
-    createdAt: string;
-    votes: number;
-    user: User;
-    replies: ThreadComment[];
-    userVoteStatus?: boolean;
-}
-
 export interface Topics {
     id: string;
     name: string;
+}
+
+export interface AuthorSnippet {
+    id: string;
+    name: string;
+    isAnonymous: boolean;
+}
+
+export interface Post  {
+    id: string;
+    title: string;
+    description: string | null;
+    image: string | null;
+    createdAt: string;
+    votes: number;
+    comments: number;
+    topic: Topics;
+    user: AuthorSnippet;
+    userVoteStatus?: boolean;
+}
+
+export interface Comment {
+    id: string;
+    postId: string;
+    parentPostId: string | null;
+    content: string;
+    image: string | null;
+    createdAt: string;
+    votes: number;
+    user: AuthorSnippet;
+    userVoteStatus?: boolean;
+    replies?: Comment[];
 }
 
 export interface CreatePostInput {
@@ -54,6 +59,14 @@ export interface CreatePostInput {
     description: string | null;
     image?: string | null;
     topicId: string;
+    isAnonymous: boolean;
+}
+
+export interface CreateCommentInput {
+    postId: string;
+    parentCommentId?: string | null;
+    content: string;
+    image?: string | null;
     isAnonymous: boolean;
 }
 
@@ -77,6 +90,8 @@ export interface CommentHistory {
     commentCount: number;
 }
 
+export type UserHistory = PostHistory | CommentHistory;
+
 export interface NotificationProps {
     id: string;
     actorName: string;
@@ -86,40 +101,16 @@ export interface NotificationProps {
     isRead: boolean;
 }
 
-export interface Topics {
-    id: string;
-    name: string;
-}
-
 export interface TopicDetail extends Topics {
     description: string;
     status: 'current' | 'past';
     discussionCount: number;
 }
 
-export interface ReplyData {
-    id: string;
-    text: string;
-    createdAt: string;
-    votes: number;
-    user: { name: string; isAnonymous: boolean };
-}
+export type FilterType = 'all' | 'current' | 'past';
 
-export interface CommentData {
-    id: string;
-    text: string;
-    createdAt: string;
-    votes: number;
-    user: { name: string; isAnonymous: boolean };
-    replies?: ReplyData[];
-}
+export type TopicsData = Pick<TopicDetail, 'id' | 'name' | 'description' | 'status' | 'discussionCount'>;
 
 export type ProfileCardData = Pick<UserProfile, 
   'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'headerImage' | 'postCount' | 'commentCount' | 'isAnonymous'
 >;
-
-export type TopicsData = Pick<TopicDetail, 'id' | 'name' | 'description' | 'status' | 'discussionCount'>;
-
-export type UserHistory = PostHistory | CommentHistory;
-
-export type FilterType = 'all' | 'current' | 'past';
