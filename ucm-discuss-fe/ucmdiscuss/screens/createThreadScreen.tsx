@@ -9,12 +9,15 @@ import BottomBar from '@/components/bottomBar/bottomBar';
 import UploadImg from '@/components/buttons/uploadImg';
 import TagAI from '@/components/buttons/tagAI';
 import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
-import { createThreadUpload } from '@/controllers/hooks/createThreadService';
+import { createThreadUpload } from '@/controllers/thread/createThreadService';
 import TopicSelector from '@/components/topic/topicSelector';
+import { RETRY_COOLDOWN_MS, usePendingUploads } from '@/context/PendingUploadsContext';
+import { AuthorSnippet } from '@/models/user';
 
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
     const router = useRouter();
+    const { addLocalPost, markPostPublished, markPostRetryable } = usePendingUploads();
     const [selectedTopic, setSelectedTopic] = useState<{ id: string, name: string } | null>(null);
 
     const [title, setTitle] = useState('');
@@ -46,8 +49,45 @@ export default function CreateThreadScreen() {
                 console.error("Gagal mengkompresi gambar, menggunakan gambar asli:", error);
             }
         }
-        createThreadUpload(title, content, finalImageUri);
-        router.replace('/(tabs)/(home)');
+
+        const localPostId = `local-${Date.now()}`;
+        const optimisticTopic = selectedTopic ?? { id: 'local-topic', name: 'General' };
+        const optimisticUser: AuthorSnippet = {
+            id: 'local-user',
+            name: currentUsername,
+            isAnonymous: isAnonymous,
+        };
+
+        await addLocalPost({
+            id: localPostId,
+            title,
+            description: content,
+            image: finalImageUri,
+            createdAt: 'now',
+            votes: 0,
+            comments: 0,
+            topic: optimisticTopic,
+            user: optimisticUser,
+            userVoteStatus: false,
+            retryAvailableAt: Date.now() + RETRY_COOLDOWN_MS,
+            createdAtTimestamp: Date.now(),
+        });
+
+        // router.replace('/(tabs)/(home)');
+        if (router.canGoBack()) {
+            router.back();
+        }
+
+        (async () => {
+            try {
+                await createThreadUpload(title, content, finalImageUri);
+                await markPostPublished(localPostId);
+                console.log("Thread background upload sukses!");
+            } catch (error) {
+                await markPostRetryable(localPostId, error instanceof Error ? error.message : 'Upload gagal');
+                console.log("Thread background upload gagal, masuk mode retry.");
+            }
+        })();
     };
 
     const isButtonDisabled = title.trim().length === 0 || selectedTopic === null;
