@@ -38,13 +38,13 @@ public class CourseSeeder implements CommandLineRunner {
             database.setYear("2026");
 
             CourseModel algoDes = new CourseModel();
-            algoDes.setCourse_code("AD101");
-            algoDes.setCourse_name("Algorithm Design");
+            algoDes.setCourse_code("EGI101");
+            algoDes.setCourse_name("Entrepreneurship Global Innovation");
             algoDes.setYear("2026");
 
             CourseModel softwareEng = new CourseModel();
-            softwareEng.setCourse_code("SE101");
-            softwareEng.setCourse_name("Software Engineering");
+            softwareEng.setCourse_code("AC101");
+            softwareEng.setCourse_name("Accounting");
             softwareEng.setYear("2026");
             mobileDev.setYear("2026");
 
