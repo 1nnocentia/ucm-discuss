@@ -13,6 +13,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LottieView from 'lottie-react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { AuthProvider } from '@/context/AuthContext';
+import { PendingUploadsProvider } from '@/context/PendingUploadsContext';
 
 
 export default function RootLayout() {
@@ -59,7 +60,9 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider>
         <AuthProvider>
-          <MainLayout />
+           <PendingUploadsProvider>
+            <MainLayout />
+          </PendingUploadsProvider>
         </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>
