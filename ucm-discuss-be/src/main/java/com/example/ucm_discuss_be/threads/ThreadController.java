@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,10 +36,9 @@ public class ThreadController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@threadService.isOwner(#id, authentication.name)")
     public ResponseEntity<Void> deleteThread(@PathVariable Long id) {
         threadService.deleteThread(id);
         return ResponseEntity.noContent().build();
     }
-
-    // PATCH/PUT method can be added here later following the Course entity pattern
 }
