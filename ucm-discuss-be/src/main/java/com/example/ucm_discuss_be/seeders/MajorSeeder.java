@@ -27,16 +27,16 @@ public class MajorSeeder implements CommandLineRunner {
         if (majorRepository.count() == 0) {
             System.out.println("Seeding Majors...");
 
-            MajorModel informatics = new MajorModel();
-            informatics.setName("Informatics");
+            MajorModel imt = new MajorModel();
+            imt.setName("Informatics");
 
-            MajorModel visualComm = new MajorModel();
-            visualComm.setName("Visual Communication Design");
+            MajorModel vcd = new MajorModel();
+            vcd.setName("Visual Communication Design");
 
-            MajorModel accounting = new MajorModel();
-            accounting.setName("Accounting");
+            MajorModel man = new MajorModel();
+            man.setName("Management");
 
-            majorRepository.saveAll(List.of(informatics, visualComm, accounting));
+            majorRepository.saveAll(List.of(imt, vcd, man));
             System.out.println("Majors seeded.");
         }
     }

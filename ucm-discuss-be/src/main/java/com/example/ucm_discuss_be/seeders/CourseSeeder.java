@@ -22,17 +22,33 @@ public class CourseSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (courseRepository.count() == 0) {
             System.out.println("Seeding Courses...");
-            CourseModel progFundamentals = new CourseModel();
-            progFundamentals.setCourse_code("CS101");
-            progFundamentals.setCourse_name("Programming Fundamentals");
-            progFundamentals.setYear("2024");
+            CourseModel ai = new CourseModel();
+            ai.setCourse_code("AI101");
+            ai.setCourse_name("Artificial Intelligence");
+            ai.setYear("2026");
 
-            CourseModel webDesign = new CourseModel();
-            webDesign.setCourse_code("WD202");
-            webDesign.setCourse_name("Web Design");
-            webDesign.setYear("2024");
+            CourseModel mobileDev = new CourseModel();
+            mobileDev.setCourse_code("MD101");
+            mobileDev.setCourse_name("Mobile Development");
+            mobileDev.setYear("2026");
 
-            courseRepository.saveAll(List.of(progFundamentals, webDesign));
+            CourseModel database = new CourseModel();
+            database.setCourse_code("DB101");
+            database.setCourse_name("Database Systems");
+            database.setYear("2026");
+
+            CourseModel algoDes = new CourseModel();
+            algoDes.setCourse_code("AD101");
+            algoDes.setCourse_name("Algorithm Design");
+            algoDes.setYear("2026");
+
+            CourseModel softwareEng = new CourseModel();
+            softwareEng.setCourse_code("SE101");
+            softwareEng.setCourse_name("Software Engineering");
+            softwareEng.setYear("2026");
+            mobileDev.setYear("2026");
+
+            courseRepository.saveAll(List.of(ai, mobileDev, database, algoDes, softwareEng));
             System.out.println("Courses seeded.");
         }
     }
