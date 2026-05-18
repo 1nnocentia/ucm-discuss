@@ -97,8 +97,25 @@ export interface TopicDetail extends Topics {
     discussionCount: number;
 }
 
+export interface ReplyData {
+    id: string;
+    text: string;
+    createdAt: string;
+    votes: number;
+    user: { name: string; isAnonymous: boolean };
+}
+
+export interface CommentData {
+    id: string;
+    text: string;
+    createdAt: string;
+    votes: number;
+    user: { name: string; isAnonymous: boolean };
+    replies?: ReplyData[];
+}
+
 export type ProfileCardData = Pick<UserProfile, 
-  'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'headerImage' | 'postCount' | 'commentCount'
+  'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'headerImage' | 'postCount' | 'commentCount' | 'isAnonymous'
 >;
 
 export type TopicsData = Pick<TopicDetail, 'id' | 'name' | 'description' | 'status' | 'discussionCount'>;
@@ -106,5 +123,3 @@ export type TopicsData = Pick<TopicDetail, 'id' | 'name' | 'description' | 'stat
 export type UserHistory = PostHistory | CommentHistory;
 
 export type FilterType = 'all' | 'current' | 'past';
-
-// recentsearch?
