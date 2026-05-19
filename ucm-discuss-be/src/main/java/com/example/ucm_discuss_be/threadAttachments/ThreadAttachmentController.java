@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/thread-attachments")
+@RequestMapping("/api/threads/attachments")
 public class ThreadAttachmentController {
 
     @Autowired
