@@ -1,28 +1,33 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { UserHistory } from '@/models/user';
 import { useTheme } from '@/context/ThemeContext';
-import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import VoteButton from '../buttons/voteButton';
+import CommentButton from '../buttons/commentButton';
 
 export const HistoryCard = ({ item }: { item: UserHistory }) => {
     const { theme } = useTheme();
+    const router = useRouter();
+
+    const targetId = item.type === 'post' ? item.id : item.postId;
+
+    const handlePress = () => {
+        router.push(`/threads/${targetId}`);
+    };
 
     return (
-        <View style={[styles.container, {backgroundColor: theme.colors.background, borderBottomColor: theme.colors.textSecondary + '33' }]}>
+        <TouchableOpacity activeOpacity={0.7} onPress={handlePress}>
+            <View style={[styles.container, {backgroundColor: theme.colors.background, borderBottomColor: theme.colors.textSecondary + '33' }]}>
             <View style={styles.header}>
                 <Text style={[styles.time, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>
                     {item.createdAt}
                 </Text>
-                <View style={[styles.badge, { backgroundColor: theme.colors.lightSecondary + '22' }]}>
-                    <Text style={[styles.badgeText, { color: theme.colors.secondary }]}>
-                        {item.type.toUpperCase()}
-                    </Text>
-                </View>
             </View>
             
             {item.type === 'post' ? (
                 // Post
-                <Text style={[styles.title, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
+                <Text style={[styles.title, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
                     {item.title}
                 </Text>
             ) : (
@@ -39,16 +44,11 @@ export const HistoryCard = ({ item }: { item: UserHistory }) => {
 
             {/* Stats */}
             <View style={styles.footer}>
-                <View style={styles.iconGroup}>
-                    <Ionicons name="thumbs-up-outline" size={16} color={theme.colors.textSecondary} />
-                    <Text style={[styles.footerText, { color: theme.colors.textSecondary }]}>{item.votesCount}</Text>
-                </View>
-                <View style={styles.iconGroup}>
-                    <Ionicons name="chatbubble-outline" size={16} color={theme.colors.textSecondary} />
-                    <Text style={[styles.footerText, { color: theme.colors.textSecondary }]}>{item.commentCount}</Text>
-                </View>
+                <VoteButton initialVotes={item.votesCount} />
+                <CommentButton count={item.commentCount} targetId={targetId} />
             </View>
-        </View>
+            </View>
+        </TouchableOpacity>
     );
 };
 
@@ -76,9 +76,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold' 
     },
     title: { 
-        fontSize: 16, 
+        fontSize: 14, 
         lineHeight: 22, 
-        marginBottom: 12 
+        marginBottom: 12,
+        fontWeight: 'bold'
     },
     contextText: { 
         fontSize: 12, 
