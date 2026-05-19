@@ -8,6 +8,8 @@ import com.example.ucm_discuss_be.users.UserModel;
 import com.example.ucm_discuss_be.users.UserRepository;
 import com.example.ucm_discuss_be.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,18 +32,17 @@ public class ThreadService {
     private CourseService courseService;
 
     @Transactional(readOnly = true)
-    public List<ThreadResponseDto> getAllThreads(
-        Optional<Long> courseId
+    public Page<ThreadResponseDto> getAllThreads(
+        Optional<Long> courseId,
+        Pageable pageable
     ) {
+        Page<ThreadModel> threadsPage;
         if (courseId.isPresent()) {
-            return threadRepository.findByCourseId(courseId.get()).stream()
-                    .map(this::convertToResponse)
-                    .collect(Collectors.toList());
+            threadsPage = threadRepository.findByCourseId(courseId.get(), pageable);
         } else {
-            return threadRepository.findAll().stream()
-                    .map(this::convertToResponse)
-                    .collect(Collectors.toList());
+            threadsPage = threadRepository.findAll(pageable);
         }
+        return threadsPage.map(this::convertToResponse);
     }
 
     @Transactional(readOnly = true)
