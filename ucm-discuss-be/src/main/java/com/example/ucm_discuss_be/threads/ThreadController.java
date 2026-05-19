@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/threads")
+@RequestMapping("/api/threads/thread")
 public class ThreadController {
 
     @Autowired
