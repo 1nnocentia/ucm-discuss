@@ -2,10 +2,11 @@ import { StyleSheet, Image } from "react-native";
 import { useTheme } from "@/context/ThemeContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoginButton from "@/components/buttons/loginButton";
-import ImgBg from "@/assets/splashscreen/splashMinimal.png";
 
 export default function LoginScreen() {
     const { theme } = useTheme();
+    const ImgBg = require("@/assets/splashscreen/splashMinimal.png");
+
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.primary }]}>
             <Image source={ImgBg} style={styles.backgroundImage} />
