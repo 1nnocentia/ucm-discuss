@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     headerLeft: {
         flexDirection: 'row', 
         alignItems: 'center', 
-        gap: 6,
+        gap: 2,
         flexWrap: 'wrap'
     },
     author: { 
