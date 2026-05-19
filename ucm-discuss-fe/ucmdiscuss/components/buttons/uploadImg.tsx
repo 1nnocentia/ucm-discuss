@@ -56,6 +56,6 @@ export default function UploadImg({ onImagesSelected }: UploadImgProps) {
 
 const styles = {
     toolbarIcon: { 
-        marginRight: 16 
+        marginRight: 4
     },
 }
