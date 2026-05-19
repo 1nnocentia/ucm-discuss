@@ -3,6 +3,7 @@ package com.example.ucm_discuss_be.threads;
 import com.example.ucm_discuss_be.courses.CourseModel;
 import com.example.ucm_discuss_be.courses.CourseRepository;
 import com.example.ucm_discuss_be.courses.CourseService;
+import com.example.ucm_discuss_be.exceptions.ResourceNotFoundException;
 import com.example.ucm_discuss_be.users.UserModel;
 import com.example.ucm_discuss_be.users.UserRepository;
 import com.example.ucm_discuss_be.users.UserService;
@@ -24,9 +25,9 @@ public class ThreadService {
     @Autowired
     private CourseRepository courseRepository;
     @Autowired
-    private UserService userService; // For converting user to DTO
+    private UserService userService;
     @Autowired
-    private CourseService courseService; // For converting course to DTO
+    private CourseService courseService;
 
     @Transactional(readOnly = true)
     public List<ThreadResponseDto> getAllThreads(
@@ -51,9 +52,9 @@ public class ThreadService {
     @Transactional
     public ThreadModel saveThread(ThreadCreationDto dto) {
         UserModel user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User", dto.getUserId()));
         CourseModel course = courseRepository.findById(dto.getCourseId())
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + dto.getCourseId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Course", dto.getCourseId()));
 
         ThreadModel thread = new ThreadModel();
         thread.setTitle(dto.getTitle());
@@ -61,17 +62,22 @@ public class ThreadService {
         thread.setIs_anon(dto.getIs_anon());
         thread.setUser(user);
         thread.setCourse(course);
-        // vote_count defaults to 0
 
         return threadRepository.save(thread);
     }
 
     @Transactional
     public void deleteThread(Long id) {
-        if (!threadRepository.existsById(id)) {
-            throw new RuntimeException("Thread not found with id: " + id);
-        }
-        threadRepository.deleteById(id);
+        ThreadModel thread = threadRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Thread", id));
+        threadRepository.delete(thread);
+    }
+
+    public boolean isOwner(Long threadId, String email) {
+        return threadRepository.findById(threadId)
+                .map(thread -> thread.getUser() != null 
+                    && email.equals(thread.getUser().getEmail()))
+                .orElse(false);
     }
 
     public ThreadResponseDto convertToResponse(ThreadModel thread) {
@@ -83,7 +89,6 @@ public class ThreadService {
         dto.setIs_anon(thread.getIs_anon());
         dto.setCreated_at(thread.getCreated_at());
 
-        // Convert nested entities to their respective DTOs
         if (thread.getUser() != null) {
             dto.setUser(userService.convertToResponse(thread.getUser()));
         }
