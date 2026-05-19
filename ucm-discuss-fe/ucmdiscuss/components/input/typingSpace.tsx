@@ -20,7 +20,6 @@ export type TypingSpaceRef = {
 const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendComment, onCancelReply, replyingTo }, ref) => {
     const { theme } = useTheme();
     const [commentText, setCommentText] = useState('');
-    const [localReplyingTo, setLocalReplyingTo] = useState<string | undefined>(replyingTo);
     const textInputRef = useRef<TextInput>(null);
     const [postImage, setPostImage] = useState<string | null>(null);
     const isTyping = commentText.length > 0 ||  postImage !== null;
@@ -33,10 +32,9 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
         clearInput: () => {
             setCommentText('');
             textInputRef.current?.clear();
+            setPostImage(null);
         },
-        setReplyingTo: (commentId?: string) => {
-            setLocalReplyingTo(commentId);
-        },
+        setReplyingTo: (_commentId?: string) => {},
     }), []);
 
     const handleSendComment = () => {
@@ -46,10 +44,10 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
             console.log('Kirim komentar ke Controller:', commentText);
         }
         setCommentText('');
-        setLocalReplyingTo(undefined);
+        setPostImage(null);
     };
 
-    const placeholder = localReplyingTo ? 'Write a reply...' : 'Write a comment...';
+    const placeholder = replyingTo ? 'Write a reply...' : 'Write a comment...';
 
     return (
         <View style={[ { backgroundColor: theme.colors.background}]}>
@@ -74,10 +72,7 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
                     <TouchableOpacity style={styles.leftBtn} onPress={() => {
                         setCommentText('');
                         setPostImage(null);
-                        if (localReplyingTo) {
-                            onCancelReply?.(localReplyingTo);
-                            setLocalReplyingTo(undefined);
-                        }
+                        if (replyingTo) onCancelReply?.(replyingTo);
                     }}>
                         <Ionicons name="close" size={24} color={theme.colors.textSecondary} />
                     </TouchableOpacity>
