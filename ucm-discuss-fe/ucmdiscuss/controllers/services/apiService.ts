@@ -1,10 +1,17 @@
 import { ApiMock } from '@/constants/dummyData/apiMock';
 import { apiClient } from '@/controllers/services/apiClient';
-import { CreatePostInput, CreateCommentInput } from '@/models/user';
+import { CreatePostInput, CreateCommentInput, ProfileCardData, UserHistory } from '@/models/user';
 
 const USE_MOCK_DATA = true; 
 
 export const ApiService = {
+    isMockMode: () => USE_MOCK_DATA,
+
+    getMockLoginSeed: () => {
+        if (USE_MOCK_DATA && ApiMock.getMockLoginSeed) return ApiMock.getMockLoginSeed();
+        return null;
+    },
+
     // Post
     getPosts: async (page = 1) => {
         if (USE_MOCK_DATA) return ApiMock.getPosts(page);
@@ -89,6 +96,27 @@ export const ApiService = {
         if (USE_MOCK_DATA) return ApiMock.getNotifications();
 
         const response = await apiClient.get('/notifications');
+        return response.data;
+    },
+
+    markNotificationAsRead: async (notificationId: string) => {
+        if (USE_MOCK_DATA) return ApiMock.markNotificationAsRead?.(notificationId);
+        const response = await apiClient.patch(`/notifications/${notificationId}/read`);
+        return response.data;
+    },
+
+    // Profile
+    getUserProfile: async (): Promise<ProfileCardData> => {
+        if (USE_MOCK_DATA) return ApiMock.getUserProfile();
+
+        const response = await apiClient.get('/me/profile');
+        return response.data;
+    },
+
+    getUserHistory: async (): Promise<UserHistory[]> => {
+        if (USE_MOCK_DATA) return ApiMock.getUserHistory();
+
+        const response = await apiClient.get('/me/history');
         return response.data;
     },
 

@@ -1,10 +1,17 @@
-import { MOCK_POSTS, MOCK_THREAD_COMMENTS, TOPICS, MOCK_NOTIFICATIONS, USERS } from '@/constants/dummyData/dummyData';
-import { Post, ThreadComment, CreatePostInput, CreateCommentInput } from '@/models/user';
+import { MOCK_POSTS, MOCK_THREAD_COMMENTS, TOPICS, MOCK_NOTIFICATIONS, USERS, MOCK_PROFILE, MOCK_HISTORY } from '@/constants/dummyData/dummyData';
+import { Post, ThreadComment, CreatePostInput, CreateCommentInput, ProfileCardData, UserHistory } from '@/models/user';
 import { findAndMutateCommentVote } from '@/utils/voteHelper';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const ApiMock = {
+    getMockLoginSeed: () => ({
+        email: 'student@ucm.ac.id',
+        isStudent: true,
+        nim: '0806022410010',
+        name: USERS.current.name,
+    }),
+
     getPosts: async (page = 1, limit = 10): Promise<Post[]> => {
         await delay(800);
         return MOCK_POSTS.slice((page - 1) * limit, page * limit);
@@ -36,6 +43,24 @@ export const ApiMock = {
     getNotifications: async () => {
         await delay(600);
         return MOCK_NOTIFICATIONS;
+    },
+
+    markNotificationAsRead: async (notificationId: string) => {
+        await delay(200);
+        const notif = MOCK_NOTIFICATIONS.find(n => n.id === notificationId);
+        if (notif) {
+            notif.isRead = true;
+        }
+    },
+
+    getUserProfile: async (): Promise<ProfileCardData> => {
+        await delay(500);
+        return MOCK_PROFILE;
+    },
+
+    getUserHistory: async (): Promise<UserHistory[]> => {
+        await delay(500);
+        return MOCK_HISTORY;
     },
 
     createPost: async (payload: CreatePostInput): Promise<Post> => {
@@ -119,7 +144,17 @@ export const ApiMock = {
 
     login: async (email: string, isStudent: boolean, nim: string, name: string) => {
         await delay(500);
-        return USERS.current;
+        const seed = ApiMock.getMockLoginSeed();
+        return {
+            token: 'mock-jwt-token-12345',
+            user: {
+                id: USERS.current.id,
+                email: email || seed.email,
+                isStudent: isStudent ?? seed.isStudent,
+                nim: nim || seed.nim,
+                name: name || seed.name,
+            }
+        };
     },
 
     logout: async () => {
