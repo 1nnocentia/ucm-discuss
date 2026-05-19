@@ -50,6 +50,12 @@ public class ThreadService {
         return threadRepository.findById(id).map(this::convertToResponse);
     }
 
+    @Transactional(readOnly = true)
+    public Page<ThreadResponseDto> getThreadsByUserId(Long userId, Pageable pageable) {
+        Page<ThreadModel> threadsPage = threadRepository.findByUserId(userId, pageable);
+        return threadsPage.map(this::convertToResponse);
+    }
+
     @Transactional
     public ThreadModel saveThread(ThreadCreationDto dto) {
         UserModel user = userRepository.findById(dto.getUserId())

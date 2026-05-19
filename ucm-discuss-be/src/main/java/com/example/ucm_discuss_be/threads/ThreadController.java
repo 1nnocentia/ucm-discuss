@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 // import java.util.List;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/threads/thread")
@@ -34,6 +37,12 @@ public class ThreadController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/user/{id}")
+    public Page<ThreadResponseDto> getThreadsByUserId(@PathVariable Long id, @PageableDefault(size = 10) Pageable pageable) {
+        return threadService.getThreadsByUserId(id, pageable);
+    }
+    
 
     @PostMapping
     public ResponseEntity<ThreadResponseDto> createThread(@Valid @RequestBody ThreadCreationDto request) {

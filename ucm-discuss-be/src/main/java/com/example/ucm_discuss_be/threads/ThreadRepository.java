@@ -14,4 +14,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ThreadRepository extends JpaRepository<ThreadModel, Long> {
     Page<ThreadModel> findByCourseId(Long id, Pageable pageable);
+    Page<ThreadModel> findByUserId(Long id, Pageable pageable);
 }
