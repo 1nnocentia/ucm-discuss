@@ -99,6 +99,8 @@ export interface NotificationProps {
     targetSnippet: string;
     createdAt: string;
     isRead: boolean;
+    postId: string;
+    commentId?: string;
 }
 
 export interface TopicDetail extends Topics {
