@@ -7,6 +7,7 @@ import { useImageManipulator } from 'expo-image-manipulator';
 
 type TypingSpaceProps = {
     onSendComment?: (commentText: string, imageUri:string|null) => void;
+    onCancelReply?: (cancelledCommentId: string) => void;
     replyingTo?: string; 
 };
 
@@ -16,7 +17,7 @@ export type TypingSpaceRef = {
     setReplyingTo: (commentId?: string) => void;
 };
 
-const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendComment, replyingTo }, ref) => {
+const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendComment, onCancelReply, replyingTo }, ref) => {
     const { theme } = useTheme();
     const [commentText, setCommentText] = useState('');
     const [localReplyingTo, setLocalReplyingTo] = useState<string | undefined>(replyingTo);
@@ -70,8 +71,15 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
         
             <View style={[styles.inputContainer, { backgroundColor: theme.colors.background, borderTopColor: theme.colors.textSecondary + '33' }]}>
                 {isTyping && (
-                    <TouchableOpacity style={styles.leftBtn} onPress={() => setLocalReplyingTo(undefined)}>
-                        <Ionicons name="close" size={28} color={theme.colors.textSecondary} />
+                    <TouchableOpacity style={styles.leftBtn} onPress={() => {
+                        setCommentText('');
+                        setPostImage(null);
+                        if (localReplyingTo) {
+                            onCancelReply?.(localReplyingTo);
+                            setLocalReplyingTo(undefined);
+                        }
+                    }}>
+                        <Ionicons name="close" size={24} color={theme.colors.textSecondary} />
                     </TouchableOpacity>
                 )}
                 
@@ -161,9 +169,9 @@ const styles = StyleSheet.create({
     },
     
     leftBtn: { 
-        marginRight: 8, 
+        marginRight: 4, 
         marginBottom: 6,
-        padding: 4 
+        padding: 2
     },
     
     textInput: { 
