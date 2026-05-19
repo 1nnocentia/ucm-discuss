@@ -57,10 +57,13 @@ export const notificationsScreen = () => {
         });
     }, [notifications]);
 
-    const handlePressNotification = (id: string) => {
-        console.log("Notification pressed");
-        markAsReadMutation.mutate(id);
-        router.push('/(tabs)/(topics)/[id]');
+    const handlePressNotification = (item: NotificationProps) => {
+        markAsReadMutation.mutate(item.id);
+        if (item.actionType === 'reply_comment' && item.commentId) {
+            router.push(`/threads/${item.postId}?focusComment=${item.commentId}`);
+        } else {
+            router.push(`/threads/${item.postId}`);
+        }
     };
 
     return (
@@ -72,7 +75,7 @@ export const notificationsScreen = () => {
                     renderItem={({ item }) => (
                         <NotificationCard 
                             item={item} 
-                            onPress={() => handlePressNotification(item.id)} 
+                            onPress={() => handlePressNotification(item)} 
                         />
                     )}
                     ListEmptyComponent={() => (
