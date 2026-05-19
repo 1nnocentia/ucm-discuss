@@ -9,22 +9,22 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { Post } from "@/models/user";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
-import { dummyHomePosts } from "@/constants/dummyData/dummyData";
 import { usePendingUploads } from "@/context/PendingUploadsContext";
 import { createThreadUpload } from "@/controllers/thread/createThreadService";
 import { Ionicons } from "@expo/vector-icons";
+import { ApiService } from "@/controllers/services/apiService";
 
 export default function homeScreen() {
     const { theme } = useTheme();
     const router = useRouter();
     const { localPosts, markPostPublished, markPostRetryable, removeLocalPost } = usePendingUploads();
 
-    const [posts, setPosts] = useState<Post[]>(dummyHomePosts);
+    const [posts, setPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [now, setNow] = useState(Date.now());
 
     const fetchPostsData = async (): Promise<Post[]> => {
-        return new Promise((resolve) => setTimeout(() => resolve(dummyHomePosts), 1000));
+        return ApiService.getPosts();
     };
 
     useEffect(() => {
