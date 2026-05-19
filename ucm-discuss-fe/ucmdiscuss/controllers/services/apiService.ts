@@ -5,7 +5,7 @@ import { CreatePostInput, CreateCommentInput } from '@/models/user';
 const USE_MOCK_DATA = true; 
 
 export const ApiService = {
-    // --- POSTS ---
+    // Post
     getPosts: async (page = 1) => {
         if (USE_MOCK_DATA) return ApiMock.getPosts(page);
         
@@ -34,7 +34,7 @@ export const ApiService = {
         return response.data;
     },
 
-    // --- COMMENTS ---
+    // Comments
     getComments: async (postId: string) => {
         if (USE_MOCK_DATA) return ApiMock.getComments(postId);
 
@@ -56,7 +56,21 @@ export const ApiService = {
         return response.data;
     },
 
-    // --- TOPICS & NOTIFICATIONS ---
+    // Votes
+    votePost: async (postId: string, isVoted: boolean) => {
+        if (USE_MOCK_DATA) return ApiMock.votePost?.(postId, isVoted) || { success: true, isVoted };
+        const response = await apiClient.post(`/posts/${postId}/vote`, { isVoted });
+        return response.data;
+    },
+
+    voteComment: async (commentId: string, isVoted: boolean) => {
+        if (USE_MOCK_DATA) return ApiMock.voteComment?.(commentId, isVoted) || { success: true, isVoted };
+
+        const response = await apiClient.post(`/comments/${commentId}/vote`, { isVoted });
+        return response.data;
+    },
+
+    // Topics
     getTopics: async () => {
         if (USE_MOCK_DATA) return ApiMock.getTopics();
 
@@ -64,6 +78,13 @@ export const ApiService = {
         return response.data;
     },
 
+    getTopicStats: async (topicId: string) => {
+        if (USE_MOCK_DATA) return ApiMock.getTopicStats?.(topicId) || { discussionCount: 0 };
+        const response = await apiClient.get(`/topics/${topicId}/stats`);
+        return response.data;
+    },
+
+    // Notifications
     getNotifications: async () => {
         if (USE_MOCK_DATA) return ApiMock.getNotifications();
 
@@ -71,7 +92,7 @@ export const ApiService = {
         return response.data;
     },
 
-    // --- AUTHENTICATION ---
+    // Auth
     login: async (email: string, isStudent: boolean, nim: string, name: string, token: string) => {
         if (USE_MOCK_DATA) return ApiMock.login?.(email, isStudent, nim, name) || { token: 'mock-token', user: { id: '1', email, name: 'Mock User', nim: '12345', isStudent: true } };
 
@@ -86,7 +107,7 @@ export const ApiService = {
         return response.data;
     },
 
-    // --- SEARCH ---
+    // Search
     search: async (query: string) => {
         if (USE_MOCK_DATA) return ApiMock.search?.(query) || { posts: [], comments: [] };
 
