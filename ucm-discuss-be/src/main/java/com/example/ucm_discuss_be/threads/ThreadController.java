@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/threads")
@@ -16,8 +17,8 @@ public class ThreadController {
     private ThreadService threadService;
 
     @GetMapping
-    public List<ThreadResponseDto> getAllThreads() {
-        return threadService.getAllThreads();
+    public List<ThreadResponseDto> getAllThreads(@RequestParam(required = false) Long courseId) {
+        return threadService.getAllThreads(Optional.ofNullable(courseId));
     }
 
     @GetMapping("/{id}")

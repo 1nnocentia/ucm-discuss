@@ -29,10 +29,18 @@ public class ThreadService {
     private CourseService courseService; // For converting course to DTO
 
     @Transactional(readOnly = true)
-    public List<ThreadResponseDto> getAllThreads() {
-        return threadRepository.findAll().stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
+    public List<ThreadResponseDto> getAllThreads(
+        Optional<Long> courseId
+    ) {
+        if (courseId.isPresent()) {
+            return threadRepository.findByCourseId(courseId.get()).stream()
+                    .map(this::convertToResponse)
+                    .collect(Collectors.toList());
+        } else {
+            return threadRepository.findAll().stream()
+                    .map(this::convertToResponse)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Transactional(readOnly = true)
