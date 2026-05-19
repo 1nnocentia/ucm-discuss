@@ -51,10 +51,10 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
     const placeholder = localReplyingTo ? 'Write a reply...' : 'Write a comment...';
 
     return (
-        <View style={[styles.mainWrapper, { backgroundColor: theme.colors.background, borderTopColor: theme.colors.textSecondary + '33' }]}>
+        <View style={[ { backgroundColor: theme.colors.background}]}>
 
             {postImage && (
-                <View style={styles.imagePreviewWrapper}>
+                <View style={[styles.mainWrapper, styles.imagePreviewWrapper, {borderTopColor: theme.colors.textSecondary + '33' }]}>
                     <View style={styles.imagePreviewContainer}>
                         <Image source={{ uri: postImage }} style={styles.imagePreview} />
                         <TouchableOpacity 
@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     imagePreviewContainer: {
-        width: 80,
-        height: 80,
+        width: 40,
+        height: 40,
         borderRadius: 12,
         position: 'relative',
     },
@@ -180,13 +180,13 @@ const styles = StyleSheet.create({
     rightActionGroup: { 
         flexDirection: 'row', 
         alignItems: 'center',
-        marginLeft: 8,
-        marginBottom: 6,
+        marginLeft: 6,
+        marginBottom: 4,
     },
     
     actionBtn: { 
-        padding: 6,
-        marginLeft: 4,
+        padding: 4,
+        // marginLeft: 6,
     },
     
     sendBtn: { 
