@@ -1,118 +1,211 @@
-import { TopicsData, Post, ThreadComment, CreatePostInput, CreateCommentInput } from '@/models/user';
-import { TopicsDummyData, dummyHomePosts, MOCK_POST } from './dummyData';
+import { MOCK_POSTS, MOCK_THREAD_COMMENTS, TOPICS, MOCK_NOTIFICATIONS, USERS } from '@/constants/dummyData/dummyData';
+import { Post, ThreadComment, CreatePostInput, CreateCommentInput } from '@/models/user';
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const ApiMock = {
-  // Topics
-  getTopics: {
-    request: { method: 'GET', path: '/api/topics', query: { filter: 'all', page: 1, limit: 20 } },
-    response: {
-      total: TopicsDummyData.length,
-      topics: TopicsDummyData as TopicsData[],
+    getPosts: async (page = 1, limit = 10): Promise<Post[]> => {
+        await delay(800);
+        return MOCK_POSTS.slice((page - 1) * limit, page * limit);
     },
-  },
 
-  getTopicDetail: (topicId: string) => ({
-    request: { method: 'GET', path: `/api/topics/${topicId}` },
-    response: {
-      id: topicId,
-      name: TopicsDummyData.find(t => t.id === topicId)?.name ?? 'Unknown Topic',
-      description: TopicsDummyData.find(t => t.id === topicId)?.description ?? '',
-      status: TopicsDummyData.find(t => t.id === topicId)?.status ?? 'current',
-      discussionCount: TopicsDummyData.find(t => t.id === topicId)?.discussionCount ?? 0,
-      membersCount: '1.2k',
-      onlineCount: 42,
-      bannerUrl: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1080&auto=format&fit=crop',
-      iconUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=200&auto=format&fit=crop',
-      isJoined: false,
+    getPostDetail: async (postId: string): Promise<Post | undefined> => {
+        await delay(500);
+        return MOCK_POSTS.find(p => p.id === postId) || MOCK_POSTS[0];
     },
-  }),
 
-  // Posts
-  listPosts: {
-    request: { method: 'GET', path: '/api/posts', query: { topicId: null, page: 1, limit: 20 } },
-    response: {
-      total: dummyHomePosts.length,
-      posts: dummyHomePosts as Post[],
-      page: 1,
-      limit: 20,
+    getComments: async (postId: string): Promise<ThreadComment[]> => {
+        await delay(800);
+        return postId === 'p-001' ? MOCK_THREAD_COMMENTS : [];
     },
-  },
 
-  getPost: (postId: string) => ({
-    request: { method: 'GET', path: `/api/posts/${postId}` },
-    response: {
-      post: postId === MOCK_POST.id ? MOCK_POST : dummyHomePosts.find(p => p.id === postId) ?? MOCK_POST,
+    getTopics: async () => {
+        await delay(500);
+        return TOPICS;
     },
-  }),
 
-  createPostExample: {
-    request: {
-      method: 'POST',
-      path: '/api/posts',
-      body: {
-        title: 'Contoh judul post dari mock',
-        description: 'Deskripsi panjang yang menjelaskan konteks post.',
-        image: null,
-        topicId: TopicsDummyData[0].id,
-        isAnonymous: false,
-      } as CreatePostInput,
+    getNotifications: async () => {
+        await delay(600);
+        return MOCK_NOTIFICATIONS;
     },
-    response: {
-      ...dummyHomePosts[0],
-      id: 'post-new-123',
-      createdAt: new Date().toISOString(),
-      votes: 0,
-      comments: 0,
-    },
-  },
 
-  // Comments
-  listComments: (postId: string) => ({
-    request: { method: 'GET', path: `/api/posts/${postId}/comments` },
-    response: {
-      total: 0,
-      comments: [] as ThreadComment[],
+    createPost: async (payload: CreatePostInput): Promise<Post> => {
+        await delay(1200);
+        return {
+            id: `p-new-${Date.now()}`,
+            title: payload.title,
+            description: payload.description,
+            image: payload.image || null,
+            createdAt: 'Baru saja',
+            votes: 0,
+            comments: 0,
+            topic: TOPICS.find(t => t.id === payload.topicId) || { id: payload.topicId, name: 'Unknown' },
+            user: payload.isAnonymous ? USERS.anon1 : USERS.current,
+            userVoteStatus: undefined,
+        };
     },
-  }),
 
-  createCommentExample: {
-    request: {
-      method: 'POST',
-      path: '/api/comments',
-      body: {
-        postId: MOCK_POST.id,
-        parentCommentId: null,
-        content: 'Ini adalah contoh komentar yang dibuat melalui API mock.',
-        image: null,
-        isAnonymous: false,
-      } as CreateCommentInput,
+    createComment: async (payload: CreateCommentInput): Promise<ThreadComment> => {
+        await delay(1000);
+        return {
+            id: `c-new-${Date.now()}`,
+            postId: payload.postId,
+            parentPostId: payload.parentCommentId || null,
+            content: payload.content,
+            image: payload.image || null,
+            createdAt: 'Baru saja',
+            votes: 0,
+            user: payload.isAnonymous ? USERS.anon1 : USERS.current,
+            replies: []
+        };
     },
-    response: {
-      id: 'comment-new-123',
-      createdAt: new Date().toISOString(),
-      votes: 0,
-      user: { id: 'user-001', name: 'Han Inno', isAnonymous: false },
-      content: 'Ini adalah contoh komentar yang dibuat melalui API mock.',
-    },
-  },
 
-  // Notifications
-  listNotifications: {
-    request: { method: 'GET', path: '/api/notifications' },
-    response: {
-      total: 4,
-      notifications: [
-        { id: 'notif-001', actorName: 'Mifey', actionType: 'reply_post', targetSnippet: 'Sharing: Pengalaman styling...', createdAt: '10 menit yang lalu', isRead: false },
-        { id: 'notif-002', actorName: 'Andi', actionType: 'reply_comment', targetSnippet: 'Wah mantap Han...', createdAt: '1 jam yang lalu', isRead: false },
-      ],
+    getUserPosts: async (userId: string): Promise<Post[]> => {
+        await delay(800);
+        return MOCK_POSTS.filter(p => p.user.id === userId);
     },
-  },
 
-  // Common errors
-  errors: {
-    validationError: { status: 422, body: { message: 'Validation failed', details: [{ field: 'title', message: 'Title is required' }] } },
-    unauthorized: { status: 401, body: { message: 'Unauthorized' } },
-  },
+    getUserComments: async (userId: string): Promise<ThreadComment[]> => {
+        await delay(800);
+        return MOCK_THREAD_COMMENTS.filter(c => c.user.id === userId);
+    },
+
+    login: async (email: string, isStudent: boolean, nim: string, name: string) => {
+        await delay(500);
+        return USERS.current;
+    },
+
+    logout: async () => {
+        await delay(300);
+        return true;
+    },
+
+    search: async (query: string): Promise<{ posts: Post[]; comments: ThreadComment[] }> => {
+        await delay(600);
+        return {
+            posts: MOCK_POSTS.filter(p => p.title.includes(query) || p.description?.includes(query)),
+            comments: MOCK_THREAD_COMMENTS.filter(c => c.content.includes(query))
+        };
+    }
 };
 
-export default ApiMock;
+
+
+// import { TopicsData, Post, ThreadComment, CreatePostInput, CreateCommentInput } from '@/models/user';
+// import { TopicsDummyData, dummyHomePosts, MOCK_POST } from './dummyData';
+
+// export const ApiMock = {
+//   // Topics
+//   getTopics: {
+//     request: { method: 'GET', path: '/api/topics', query: { filter: 'all', page: 1, limit: 20 } },
+//     response: {
+//       total: TopicsDummyData.length,
+//       topics: TopicsDummyData as TopicsData[],
+//     },
+//   },
+
+//   getTopicDetail: (topicId: string) => ({
+//     request: { method: 'GET', path: `/api/topics/${topicId}` },
+//     response: {
+//       id: topicId,
+//       name: TopicsDummyData.find(t => t.id === topicId)?.name ?? 'Unknown Topic',
+//       description: TopicsDummyData.find(t => t.id === topicId)?.description ?? '',
+//       status: TopicsDummyData.find(t => t.id === topicId)?.status ?? 'current',
+//       discussionCount: TopicsDummyData.find(t => t.id === topicId)?.discussionCount ?? 0,
+//       membersCount: '1.2k',
+//       onlineCount: 42,
+//       bannerUrl: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1080&auto=format&fit=crop',
+//       iconUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=200&auto=format&fit=crop',
+//       isJoined: false,
+//     },
+//   }),
+
+//   // Posts
+//   listPosts: {
+//     request: { method: 'GET', path: '/api/posts', query: { topicId: null, page: 1, limit: 20 } },
+//     response: {
+//       total: dummyHomePosts.length,
+//       posts: dummyHomePosts as Post[],
+//       page: 1,
+//       limit: 20,
+//     },
+//   },
+
+//   getPost: (postId: string) => ({
+//     request: { method: 'GET', path: `/api/posts/${postId}` },
+//     response: {
+//       post: postId === MOCK_POST.id ? MOCK_POST : dummyHomePosts.find(p => p.id === postId) ?? MOCK_POST,
+//     },
+//   }),
+
+//   createPostExample: {
+//     request: {
+//       method: 'POST',
+//       path: '/api/posts',
+//       body: {
+//         title: 'Contoh judul post dari mock',
+//         description: 'Deskripsi panjang yang menjelaskan konteks post.',
+//         image: null,
+//         topicId: TopicsDummyData[0].id,
+//         isAnonymous: false,
+//       } as CreatePostInput,
+//     },
+//     response: {
+//       ...dummyHomePosts[0],
+//       id: 'post-new-123',
+//       createdAt: new Date().toISOString(),
+//       votes: 0,
+//       comments: 0,
+//     },
+//   },
+
+//   // Comments
+//   listComments: (postId: string) => ({
+//     request: { method: 'GET', path: `/api/posts/${postId}/comments` },
+//     response: {
+//       total: 0,
+//       comments: [] as ThreadComment[],
+//     },
+//   }),
+
+//   createCommentExample: {
+//     request: {
+//       method: 'POST',
+//       path: '/api/comments',
+//       body: {
+//         postId: MOCK_POST.id,
+//         parentCommentId: null,
+//         content: 'Ini adalah contoh komentar yang dibuat melalui API mock.',
+//         image: null,
+//         isAnonymous: false,
+//       } as CreateCommentInput,
+//     },
+//     response: {
+//       id: 'comment-new-123',
+//       createdAt: new Date().toISOString(),
+//       votes: 0,
+//       user: { id: 'user-001', name: 'Han Inno', isAnonymous: false },
+//       content: 'Ini adalah contoh komentar yang dibuat melalui API mock.',
+//     },
+//   },
+
+//   // Notifications
+//   listNotifications: {
+//     request: { method: 'GET', path: '/api/notifications' },
+//     response: {
+//       total: 4,
+//       notifications: [
+//         { id: 'notif-001', actorName: 'Mifey', actionType: 'reply_post', targetSnippet: 'Sharing: Pengalaman styling...', createdAt: '10 menit yang lalu', isRead: false },
+//         { id: 'notif-002', actorName: 'Andi', actionType: 'reply_comment', targetSnippet: 'Wah mantap Han...', createdAt: '1 jam yang lalu', isRead: false },
+//       ],
+//     },
+//   },
+
+//   // Common errors
+//   errors: {
+//     validationError: { status: 422, body: { message: 'Validation failed', details: [{ field: 'title', message: 'Title is required' }] } },
+//     unauthorized: { status: 401, body: { message: 'Unauthorized' } },
+//   },
+// };
+
+// export default ApiMock;

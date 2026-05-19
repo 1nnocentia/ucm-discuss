@@ -1,16 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
-import { AuthorSnippet, Post } from '@/models/user';
+import { ApiService } from '@/controllers/services/apiService';
 
-const fetchSearchResults = async (query: string): Promise<Post[]> => {
-    if (!query) return [];
-    
-    const response = await fetch(`https://api.ucmdiscuss.com/v1/search?q=${encodeURIComponent(query)}`);
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-    return response.json();
-};
 
 export const useSearchThreads = (searchQuery: string, delayMs: number = 500) => {
     const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
@@ -25,7 +16,7 @@ export const useSearchThreads = (searchQuery: string, delayMs: number = 500) => 
 
     const query = useQuery({
         queryKey: ['search', 'threads', debouncedQuery],
-        queryFn: () => fetchSearchResults(debouncedQuery),
+        queryFn: () => ApiService.search(debouncedQuery),
         enabled: debouncedQuery.length > 2,
         staleTime: 1000 * 60,
     });

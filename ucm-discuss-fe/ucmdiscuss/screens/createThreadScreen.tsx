@@ -9,17 +9,19 @@ import BottomBar from '@/components/bottomBar/bottomBar';
 import UploadImg from '@/components/buttons/uploadImg';
 import TagAI from '@/components/buttons/tagAI';
 import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
-import { createThreadUpload } from '@/controllers/thread/createThreadService';
 import TopicSelector from '@/components/topic/topicSelector';
 import { RETRY_COOLDOWN_MS, usePendingUploads } from '@/context/PendingUploadsContext';
 import { AuthorSnippet } from '@/models/user';
+import { ApiService } from '@/controllers/services/apiService';
+import { useAuth } from '@/context/AuthContext';
 
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
     const router = useRouter();
+    const { user } = useAuth();
     const { addLocalPost, markPostPublished, markPostRetryable } = usePendingUploads();
-    const [selectedTopic, setSelectedTopic] = useState<{ id: string, name: string } | null>(null);
 
+    const [selectedTopic, setSelectedTopic] = useState<{ id: string, name: string } | null>(null);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isAnonymous, setIsAnonymous] = useState(false);
@@ -28,22 +30,17 @@ export default function CreateThreadScreen() {
     const imageContext = useImageManipulator(postImage || '');
     const contentInputRef = useRef<TextInput | null>(null);
 
-    const currentUsername = "Innocentia";
-
     const handlePost = async () => {
         let finalImageUri = postImage;
 
         if (postImage && imageContext) {
             try {
                 imageContext.resize({ width: 1080 });
-                
                 const imageRef = await imageContext.renderAsync();
-                
                 const result = await imageRef.saveAsync({
                     compress: 0.6,
                     format: SaveFormat.JPEG,
                 });
-                
                 finalImageUri = result.uri;
             } catch (error) {
                 console.error("Gagal mengkompresi gambar, menggunakan gambar asli:", error);
@@ -53,8 +50,8 @@ export default function CreateThreadScreen() {
         const localPostId = `local-${Date.now()}`;
         const optimisticTopic = selectedTopic ?? { id: 'local-topic', name: 'General' };
         const optimisticUser: AuthorSnippet = {
-            id: 'local-user',
-            name: currentUsername,
+            id: user?.id || 'local-user',
+            name: user?.name || 'Anonymous',
             isAnonymous: isAnonymous,
         };
 
@@ -80,7 +77,14 @@ export default function CreateThreadScreen() {
 
         (async () => {
             try {
-                await createThreadUpload(title, content, finalImageUri);
+                const payload = {
+                    title: title,
+                    description: content.trim() === ' ' ? null : content,
+                    image: finalImageUri,
+                    topicId: selectedTopic!.id,
+                    isAnonymous: isAnonymous,
+                };
+                await ApiService.createPost(payload);
                 await markPostPublished(localPostId);
                 console.log("Thread background upload sukses!");
             } catch (error) {
@@ -104,7 +108,7 @@ export default function CreateThreadScreen() {
                     
                         <View style={styles.topicSelector}>
                             <Text style={[styles.topicText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
-                                {isAnonymous ? 'anonymous' : currentUsername}
+                                {isAnonymous ? 'anonymous' : user?.name}
                             </Text>
                             <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} style={styles.topicIcon} />
                             <TopicSelector 
