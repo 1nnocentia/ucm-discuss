@@ -2,14 +2,48 @@ import { View, StyleSheet, FlatList, Text } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NotificationCard from "@/components/threadCard/notificationCard";
 import { router } from "expo-router";
-import { dummyNotifications } from "@/constants/dummyData/dummyData";
 import { useState, useMemo } from "react";
 import Header from "@/components/header/header";
 import { useTheme } from "@/context/ThemeContext";
+import { ApiService } from "@/controllers/services/apiService";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { NotificationProps } from "@/models/user";
 
 export const notificationsScreen = () => {
     const { theme } = useTheme();
-    const [notifications, setNotifications] = useState(dummyNotifications);
+    const queryClient = useQueryClient();
+
+    const { 
+        data: notifications = [], 
+        isLoading, 
+        isError 
+    } = useQuery<NotificationProps[]>({
+        queryKey: ['notifications'],
+        queryFn: async (): Promise<NotificationProps[]> => {
+            return await ApiService.getNotifications();
+        },
+    });
+
+    const markAsReadMutation = useMutation({
+        mutationFn: async (id: string) => {
+            return await ApiService.markNotificationAsRead(id);
+        },
+        onMutate: async (clickedId) => {
+            await queryClient.cancelQueries({ queryKey: ['notifications'] });
+            const previousNotifications = queryClient.getQueryData<NotificationProps[]>(['notifications']);
+            queryClient.setQueryData<NotificationProps[]>(['notifications'], (old) => {
+                if (!old) return [];
+                return old.map((notif) => 
+                    notif.id === clickedId ? { ...notif, isRead: true } : notif
+                );
+            });
+            return { previousNotifications };
+        },
+        onError: (err, newTodo, context) => {
+            queryClient.setQueryData(['notifications'], context?.previousNotifications);
+            console.error("Gagal update notifikasi:", err);
+        },
+    });
 
     const sortedNotifications = useMemo(() => {
         return [...notifications].sort((a, b) => {
@@ -25,12 +59,8 @@ export const notificationsScreen = () => {
 
     const handlePressNotification = (id: string) => {
         console.log("Notification pressed");
-        setNotifications((prevNotifications) => 
-            prevNotifications.map((notif) => 
-                notif.id === id ? { ...notif, isRead: true } : notif
-            )
-        );
-        // router.push('thread/${postId}')
+        markAsReadMutation.mutate(id);
+        router.push('/(tabs)/(topics)/[id]');
     };
 
     return (
