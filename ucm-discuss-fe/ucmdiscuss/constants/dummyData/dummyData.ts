@@ -12,7 +12,7 @@ import {
 export const USERS = {
     current: { id: 'u-001', name: 'Han Inno', isAnonymous: false } as AuthorSnippet,
     peer1: { id: 'u-002', name: 'Mifey', isAnonymous: false } as AuthorSnippet,
-    peer2: { id: 'u-003', name: 'Andi', isAnonymous: false } as AuthorSnippet,
+    peer2: { id: 'u-003', name: 'Arichan', isAnonymous: false } as AuthorSnippet,
     anon1: { id: 'u-a01', name: 'Anonymous', isAnonymous: true } as AuthorSnippet,
     anon2: { id: 'u-a02', name: 'Anonymous', isAnonymous: true } as AuthorSnippet,
 };
@@ -167,11 +167,12 @@ export const MOCK_THREAD_COMMENTS: ThreadComment[] = [
 // ==========================================
 
 export const MOCK_NOTIFICATIONS: NotificationProps[] = [
-    { id: 'n-001', actorName: USERS.peer1.name, actionType: 'reply_post', targetSnippet: 'Sharing: Pengalaman styling pakai Material 3...', createdAt: '10 menit yang lalu', isRead: false },
-    { id: 'n-002', actorName: 'Anonymous', actionType: 'vote', targetSnippet: 'SIAKAD lambat banget kalau lagi masa KRS-an', createdAt: '1 jam yang lalu', isRead: false },
-    { id: 'n-003', actorName: USERS.peer2.name, actionType: 'reply_comment', targetSnippet: 'Wah mantap Inno, kebetulan lagi nyari...', createdAt: 'Kemarin', isRead: true },
-    { id: 'n-004', actorName: USERS.anon2.name, actionType: 'reply_post', targetSnippet: 'Bagaimana cara mengatasi error ADB...', createdAt: '2 hari yang lalu', isRead: true },
+    { id: 'n-001', actorName: USERS.peer1.name, actionType: 'reply_post', targetSnippet: 'Sharing: Pengalaman styling pakai Material 3...', createdAt: '10 menit yang lalu', isRead: false, postId: 'p-001' },
+    { id: 'n-002', actorName: 'Anonymous', actionType: 'vote', targetSnippet: 'SIAKAD lambat banget kalau lagi masa KRS-an', createdAt: '1 jam yang lalu', isRead: false, postId: 'p-003' },
+    { id: 'n-003', actorName: USERS.peer2.name, actionType: 'reply_comment', targetSnippet: 'Wah mantap Inno, kebetulan lagi nyari...', createdAt: 'Kemarin', isRead: true, postId: 'p-001', commentId: 'c-001' },
+    { id: 'n-004', actorName: USERS.anon2.name, actionType: 'reply_post', targetSnippet: 'Bagaimana cara mengatasi error ADB...', createdAt: '2 hari yang lalu', isRead: true, postId: 'p-002' },
 ];
+
 
 export const MOCK_PROFILE: ProfileCardData = {
     name: USERS.current.name,
