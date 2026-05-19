@@ -19,6 +19,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export default function RootLayout() {
   const [lottieFinished, setLottieFinished] = React.useState(false);
+  const [queryClient] = useState<QueryClient>(() => {
+    return new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: 2,
+          refetchOnWindowFocus: false,
+          staleTime: 1000 * 60,
+        },
+      },
+    });
+  });
 
   const [fontsLoaded, fontsError] = useFonts({
     'Inter-Regular': Inter_400Regular,
@@ -56,18 +67,6 @@ export default function RootLayout() {
       </View>
     );
   }
-
-  const [ queryClient ] = useState<QueryClient>( () => {
-    return new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: 2,
-          refetchOnWindowFocus: false,
-          staleTime: 1000 * 60,
-        }
-      }
-    })
-  });
 
   return (
     <QueryClientProvider client={queryClient}>
