@@ -1,6 +1,6 @@
 import { ApiMock } from '@/constants/dummyData/apiMock';
 import { apiClient } from '@/controllers/services/apiClient';
-import { CreatePostInput, CreateCommentInput, ProfileCardData, UserHistory } from '@/models/user';
+import { CreatePostInput, CreateCommentInput, ProfileCardData, UserHistory, TopicsData } from '@/models/user';
 
 const USE_MOCK_DATA = true; 
 
@@ -85,10 +85,20 @@ export const ApiService = {
         return response.data;
     },
 
-    getTopicStats: async (topicId: string) => {
-        if (USE_MOCK_DATA) return ApiMock.getTopicStats?.(topicId) || { discussionCount: 0 };
-        const response = await apiClient.get(`/topics/${topicId}/stats`);
-        return response.data;
+    // getTopicStats: async (topicId: string) => {
+    //     if (USE_MOCK_DATA) return ApiMock.getTopicStats?.(topicId) || { discussionCount: 0 };
+    //     const response = await apiClient.get(`/topics/${topicId}/stats`);
+    //     return response.data;
+    // },
+    getCurrentTopicSelectorData: async (): Promise<{id: string, name: string}[]> => {
+        const topics = await ApiService.getTopics();
+        
+        return topics
+            .filter((topic: TopicsData) => topic.status === 'current')
+            .map((topic: TopicsData) => ({
+                id: topic.id,
+                name: topic.name
+            }));
     },
 
     // Notifications
