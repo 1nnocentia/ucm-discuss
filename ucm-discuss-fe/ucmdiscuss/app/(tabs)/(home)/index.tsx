@@ -10,7 +10,6 @@ import { Post } from "@/models/user";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { usePendingUploads } from "@/context/PendingUploadsContext";
-import { createThreadUpload } from "@/controllers/thread/createThreadService";
 import { Ionicons } from "@expo/vector-icons";
 import { ApiService } from "@/controllers/services/apiService";
 
@@ -102,7 +101,7 @@ export default function homeScreen() {
         }
 
         try {
-            await createThreadUpload(target.title, target.description ?? '', target.image);
+            // await createThreadUpload(target.title, target.description ?? '', target.image);
             await markPostPublished(target.id);
             Alert.alert("Upload berhasil", "Thread sudah berhasil dikirim.");
         } catch (error) {
