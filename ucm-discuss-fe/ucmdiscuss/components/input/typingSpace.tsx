@@ -7,6 +7,7 @@ import { useImageManipulator } from 'expo-image-manipulator';
 
 type TypingSpaceProps = {
     onSendComment?: (commentText: string, imageUri:string|null) => void;
+    onCancelReply?: (cancelledCommentId: string) => void;
     replyingTo?: string; 
 };
 
@@ -16,10 +17,9 @@ export type TypingSpaceRef = {
     setReplyingTo: (commentId?: string) => void;
 };
 
-const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendComment, replyingTo }, ref) => {
+const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendComment, onCancelReply, replyingTo }, ref) => {
     const { theme } = useTheme();
     const [commentText, setCommentText] = useState('');
-    const [localReplyingTo, setLocalReplyingTo] = useState<string | undefined>(replyingTo);
     const textInputRef = useRef<TextInput>(null);
     const [postImage, setPostImage] = useState<string | null>(null);
     const isTyping = commentText.length > 0 ||  postImage !== null;
@@ -32,10 +32,9 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
         clearInput: () => {
             setCommentText('');
             textInputRef.current?.clear();
+            setPostImage(null);
         },
-        setReplyingTo: (commentId?: string) => {
-            setLocalReplyingTo(commentId);
-        },
+        setReplyingTo: (_commentId?: string) => {},
     }), []);
 
     const handleSendComment = () => {
@@ -45,16 +44,16 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
             console.log('Kirim komentar ke Controller:', commentText);
         }
         setCommentText('');
-        setLocalReplyingTo(undefined);
+        setPostImage(null);
     };
 
-    const placeholder = localReplyingTo ? 'Write a reply...' : 'Write a comment...';
+    const placeholder = replyingTo ? 'Write a reply...' : 'Write a comment...';
 
     return (
-        <View style={[styles.mainWrapper, { backgroundColor: theme.colors.background, borderTopColor: theme.colors.textSecondary + '33' }]}>
+        <View style={[ { backgroundColor: theme.colors.background}]}>
 
             {postImage && (
-                <View style={styles.imagePreviewWrapper}>
+                <View style={[styles.mainWrapper, styles.imagePreviewWrapper, {borderTopColor: theme.colors.textSecondary + '33' }]}>
                     <View style={styles.imagePreviewContainer}>
                         <Image source={{ uri: postImage }} style={styles.imagePreview} />
                         <TouchableOpacity 
@@ -70,8 +69,12 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
         
             <View style={[styles.inputContainer, { backgroundColor: theme.colors.background, borderTopColor: theme.colors.textSecondary + '33' }]}>
                 {isTyping && (
-                    <TouchableOpacity style={styles.leftBtn} onPress={() => setLocalReplyingTo(undefined)}>
-                        <Ionicons name="close" size={28} color={theme.colors.textSecondary} />
+                    <TouchableOpacity style={styles.leftBtn} onPress={() => {
+                        setCommentText('');
+                        setPostImage(null);
+                        if (replyingTo) onCancelReply?.(replyingTo);
+                    }}>
+                        <Ionicons name="close" size={24} color={theme.colors.textSecondary} />
                     </TouchableOpacity>
                 )}
                 
@@ -135,8 +138,8 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     imagePreviewContainer: {
-        width: 80,
-        height: 80,
+        width: 40,
+        height: 40,
         borderRadius: 12,
         position: 'relative',
     },
@@ -161,9 +164,9 @@ const styles = StyleSheet.create({
     },
     
     leftBtn: { 
-        marginRight: 8, 
+        marginRight: 4, 
         marginBottom: 6,
-        padding: 4 
+        padding: 2
     },
     
     textInput: { 
@@ -180,13 +183,13 @@ const styles = StyleSheet.create({
     rightActionGroup: { 
         flexDirection: 'row', 
         alignItems: 'center',
-        marginLeft: 8,
-        marginBottom: 6,
+        marginLeft: 6,
+        marginBottom: 4,
     },
     
     actionBtn: { 
-        padding: 6,
-        marginLeft: 4,
+        padding: 4,
+        // marginLeft: 6,
     },
     
     sendBtn: { 

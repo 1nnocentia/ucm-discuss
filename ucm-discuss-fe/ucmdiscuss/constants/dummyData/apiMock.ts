@@ -1,9 +1,17 @@
-import { MOCK_POSTS, MOCK_THREAD_COMMENTS, TOPICS, MOCK_NOTIFICATIONS, USERS } from '@/constants/dummyData/dummyData';
-import { Post, ThreadComment, CreatePostInput, CreateCommentInput } from '@/models/user';
+import { MOCK_POSTS, MOCK_THREAD_COMMENTS, TOPICS, MOCK_NOTIFICATIONS, USERS, MOCK_PROFILE, MOCK_HISTORY } from '@/constants/dummyData/dummyData';
+import { Post, ThreadComment, CreatePostInput, CreateCommentInput, ProfileCardData, UserHistory } from '@/models/user';
+import { findAndMutateCommentVote } from '@/utils/voteHelper';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const ApiMock = {
+    getMockLoginSeed: () => ({
+        email: 'student@ucm.ac.id',
+        isStudent: true,
+        nim: '0806022410010',
+        name: USERS.current.name,
+    }),
+
     getPosts: async (page = 1, limit = 10): Promise<Post[]> => {
         await delay(800);
         return MOCK_POSTS.slice((page - 1) * limit, page * limit);
@@ -11,12 +19,12 @@ export const ApiMock = {
 
     getPostDetail: async (postId: string): Promise<Post | undefined> => {
         await delay(500);
-        return MOCK_POSTS.find(p => p.id === postId) || MOCK_POSTS[0];
+        return MOCK_POSTS.find(p => p.id === postId);
     },
 
     getComments: async (postId: string): Promise<ThreadComment[]> => {
         await delay(800);
-        return postId === 'p-001' ? MOCK_THREAD_COMMENTS : [];
+        return MOCK_THREAD_COMMENTS.filter((c) => c.postId === postId);
     },
 
     getTopics: async () => {
@@ -24,14 +32,40 @@ export const ApiMock = {
         return TOPICS;
     },
 
+    getTopicStats: async (topicId: string) => {
+        await delay(300);
+        const topic = TOPICS.find(t => t.id === topicId);
+        return {
+            discussionCount: topic ? Math.floor(Math.random() * 1000) : 0,
+        };
+    },
+
     getNotifications: async () => {
         await delay(600);
         return MOCK_NOTIFICATIONS;
     },
 
+    markNotificationAsRead: async (notificationId: string) => {
+        await delay(200);
+        const notif = MOCK_NOTIFICATIONS.find(n => n.id === notificationId);
+        if (notif) {
+            notif.isRead = true;
+        }
+    },
+
+    getUserProfile: async (): Promise<ProfileCardData> => {
+        await delay(500);
+        return MOCK_PROFILE;
+    },
+
+    getUserHistory: async (): Promise<UserHistory[]> => {
+        await delay(500);
+        return MOCK_HISTORY;
+    },
+
     createPost: async (payload: CreatePostInput): Promise<Post> => {
-        await delay(1200);
-        return {
+        await delay(1000);
+        const newPost: Post = {
             id: `p-new-${Date.now()}`,
             title: payload.title,
             description: payload.description,
@@ -41,13 +75,15 @@ export const ApiMock = {
             comments: 0,
             topic: TOPICS.find(t => t.id === payload.topicId) || { id: payload.topicId, name: 'Unknown' },
             user: payload.isAnonymous ? USERS.anon1 : USERS.current,
-            userVoteStatus: undefined,
+            userVoteStatus: false,
         };
+        MOCK_POSTS.unshift(newPost);
+        return newPost;
     },
 
     createComment: async (payload: CreateCommentInput): Promise<ThreadComment> => {
         await delay(1000);
-        return {
+        const newComment: ThreadComment = {
             id: `c-new-${Date.now()}`,
             postId: payload.postId,
             parentPostId: payload.parentCommentId || null,
@@ -58,6 +94,26 @@ export const ApiMock = {
             user: payload.isAnonymous ? USERS.anon1 : USERS.current,
             replies: []
         };
+        if (payload.parentCommentId) {
+            const insertReply = (comments: ThreadComment[]): boolean => {
+                for (let c of comments) {
+                    if (c.id === payload.parentCommentId) {
+                        c.replies = c.replies || [];
+                        c.replies.push(newComment);
+                        return true;
+                    }
+                    if (c.replies && insertReply(c.replies)) return true;
+                }
+                return false;
+            };
+            insertReply(MOCK_THREAD_COMMENTS);
+        } else {
+            MOCK_THREAD_COMMENTS.push(newComment);
+        }
+        const targetPost = MOCK_POSTS.find((p) => p.id === payload.postId);
+        if (targetPost) targetPost.comments += 1;
+
+        return newComment;
     },
 
     getUserPosts: async (userId: string): Promise<Post[]> => {
@@ -70,9 +126,35 @@ export const ApiMock = {
         return MOCK_THREAD_COMMENTS.filter(c => c.user.id === userId);
     },
 
+    votePost: async (postId: string, isVoted: boolean) => {
+        await delay(200);
+        const post = MOCK_POSTS.find((p) => p.id === postId);
+        if (post) {
+            post.userVoteStatus = isVoted;
+            post.votes = isVoted ? post.votes + 1 : Math.max(0, post.votes - 1);
+        }
+        return { success: true, isVoted };
+    },
+
+    voteComment: async (commentId: string, isVoted: boolean) => {
+        await delay(200);
+        findAndMutateCommentVote(MOCK_THREAD_COMMENTS, commentId, isVoted);
+        return { success: true, isVoted };
+    },
+
     login: async (email: string, isStudent: boolean, nim: string, name: string) => {
         await delay(500);
-        return USERS.current;
+        const seed = ApiMock.getMockLoginSeed();
+        return {
+            token: 'mock-jwt-token-12345',
+            user: {
+                id: USERS.current.id,
+                email: email || seed.email,
+                isStudent: isStudent ?? seed.isStudent,
+                nim: nim || seed.nim,
+                name: name || seed.name,
+            }
+        };
     },
 
     logout: async () => {
@@ -82,6 +164,7 @@ export const ApiMock = {
 
     search: async (query: string): Promise<{ posts: Post[]; comments: ThreadComment[] }> => {
         await delay(600);
+        
         return {
             posts: MOCK_POSTS.filter(p => p.title.includes(query) || p.description?.includes(query)),
             comments: MOCK_THREAD_COMMENTS.filter(c => c.content.includes(query))

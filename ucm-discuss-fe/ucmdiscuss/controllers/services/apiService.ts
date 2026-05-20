@@ -1,11 +1,18 @@
 import { ApiMock } from '@/constants/dummyData/apiMock';
 import { apiClient } from '@/controllers/services/apiClient';
-import { CreatePostInput, CreateCommentInput } from '@/models/user';
+import { CreatePostInput, CreateCommentInput, ProfileCardData, UserHistory, TopicsData } from '@/models/user';
 
 const USE_MOCK_DATA = true; 
 
 export const ApiService = {
-    // --- POSTS ---
+    isMockMode: () => USE_MOCK_DATA,
+
+    getMockLoginSeed: () => {
+        if (USE_MOCK_DATA && ApiMock.getMockLoginSeed) return ApiMock.getMockLoginSeed();
+        return null;
+    },
+
+    // Post
     getPosts: async (page = 1) => {
         if (USE_MOCK_DATA) return ApiMock.getPosts(page);
         
@@ -34,7 +41,7 @@ export const ApiService = {
         return response.data;
     },
 
-    // --- COMMENTS ---
+    // Comments
     getComments: async (postId: string) => {
         if (USE_MOCK_DATA) return ApiMock.getComments(postId);
 
@@ -56,7 +63,21 @@ export const ApiService = {
         return response.data;
     },
 
-    // --- TOPICS & NOTIFICATIONS ---
+    // Votes
+    votePost: async (postId: string, isVoted: boolean) => {
+        if (USE_MOCK_DATA) return ApiMock.votePost?.(postId, isVoted) || { success: true, isVoted };
+        const response = await apiClient.post(`/posts/${postId}/vote`, { isVoted });
+        return response.data;
+    },
+
+    voteComment: async (commentId: string, isVoted: boolean) => {
+        if (USE_MOCK_DATA) return ApiMock.voteComment?.(commentId, isVoted) || { success: true, isVoted };
+
+        const response = await apiClient.post(`/comments/${commentId}/vote`, { isVoted });
+        return response.data;
+    },
+
+    // Topics
     getTopics: async () => {
         if (USE_MOCK_DATA) return ApiMock.getTopics();
 
@@ -64,6 +85,23 @@ export const ApiService = {
         return response.data;
     },
 
+    // getTopicStats: async (topicId: string) => {
+    //     if (USE_MOCK_DATA) return ApiMock.getTopicStats?.(topicId) || { discussionCount: 0 };
+    //     const response = await apiClient.get(`/topics/${topicId}/stats`);
+    //     return response.data;
+    // },
+    getCurrentTopicSelectorData: async (): Promise<{id: string, name: string}[]> => {
+        const topics = await ApiService.getTopics();
+        
+        return topics
+            .filter((topic: TopicsData) => topic.status === 'current')
+            .map((topic: TopicsData) => ({
+                id: topic.id,
+                name: topic.name
+            }));
+    },
+
+    // Notifications
     getNotifications: async () => {
         if (USE_MOCK_DATA) return ApiMock.getNotifications();
 
@@ -71,7 +109,28 @@ export const ApiService = {
         return response.data;
     },
 
-    // --- AUTHENTICATION ---
+    markNotificationAsRead: async (notificationId: string) => {
+        if (USE_MOCK_DATA) return ApiMock.markNotificationAsRead?.(notificationId);
+        const response = await apiClient.patch(`/notifications/${notificationId}/read`);
+        return response.data;
+    },
+
+    // Profile
+    getUserProfile: async (): Promise<ProfileCardData> => {
+        if (USE_MOCK_DATA) return ApiMock.getUserProfile();
+
+        const response = await apiClient.get('/me/profile');
+        return response.data;
+    },
+
+    getUserHistory: async (): Promise<UserHistory[]> => {
+        if (USE_MOCK_DATA) return ApiMock.getUserHistory();
+
+        const response = await apiClient.get('/me/history');
+        return response.data;
+    },
+
+    // Auth
     login: async (email: string, isStudent: boolean, nim: string, name: string, token: string) => {
         if (USE_MOCK_DATA) return ApiMock.login?.(email, isStudent, nim, name) || { token: 'mock-token', user: { id: '1', email, name: 'Mock User', nim: '12345', isStudent: true } };
 
@@ -86,7 +145,7 @@ export const ApiService = {
         return response.data;
     },
 
-    // --- SEARCH ---
+    // Search
     search: async (query: string) => {
         if (USE_MOCK_DATA) return ApiMock.search?.(query) || { posts: [], comments: [] };
 
