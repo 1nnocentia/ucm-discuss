@@ -20,8 +20,11 @@ export default function TopicsStackLayout() {
         }} 
       />
       <Stack.Screen 
-        name="[id]" 
-        options={{ title: 'Thread Detail' }} 
+        name="[id]"
+        options={{ 
+          title: 'Topics Discussion',
+          headerShown: false,
+         }} 
       />
     </Stack>
   );
