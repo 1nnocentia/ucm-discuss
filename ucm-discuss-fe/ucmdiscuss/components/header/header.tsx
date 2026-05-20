@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
     headerTitle: { 
         fontSize: 16, 
         fontWeight: 'bold', 
-        flex: 2, 
+        // flex: 2, 
         textAlign: 'center' 
     },
     headerRight: { 
