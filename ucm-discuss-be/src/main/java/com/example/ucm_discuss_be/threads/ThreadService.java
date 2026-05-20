@@ -94,7 +94,7 @@ public class ThreadService {
         dto.setContent(thread.getContent());
         dto.setVote_count(thread.getVote_count());
         dto.setIs_anon(thread.getIs_anon());
-        dto.setCreated_at(thread.getCreated_at());
+        dto.setCreatedAt(thread.getCreatedAt());
 
         if (thread.getUser() != null) {
             dto.setUser(userService.convertToResponse(thread.getUser()));

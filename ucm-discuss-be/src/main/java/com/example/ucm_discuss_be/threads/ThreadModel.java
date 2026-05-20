@@ -141,5 +141,5 @@ public class ThreadModel {
         nullable = false,
         updatable = false
     )
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 }
