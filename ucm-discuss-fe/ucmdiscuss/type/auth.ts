@@ -1,10 +1,12 @@
-import { User } from "@/models/user";
+import { ProfileCardData, User } from "@/models/user";
 
 export interface AuthcontextType {
     user: User | null;
+    userDetails: ProfileCardData | null;
     token: string | null;
     isAuthenticated: boolean;
     loading: boolean;
-    login: (email: string) => Promise<boolean>;
+    refreshUserDetails: () => Promise<void>;
+    login: (email?: string, isStudent?: boolean, nim?: string, name?: string) => Promise<boolean>;
     logout: () => Promise<void>;
 }

@@ -71,9 +71,9 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
             {/* Footer: Votes & Comments */}
             <View style={styles.footer}>
                 <VoteButton initialVotes={post.votes} initialIsVoted={post.userVoteStatus} />
-                
+
                 <View style={styles.commentGroup}>
-                    <CommentButton post={post} onPress={() => {}} />
+                    <CommentButton count={post.comments} targetId={post.id} />
                 </View>
 
             </View>
@@ -83,7 +83,9 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
 
 const styles = StyleSheet.create({
     card: { 
-        padding: 16, 
+        padding: 16,
+        marginLeft: 4,
+        marginRight: 4,
         borderBottomWidth: 1 
     },
     header: { 
@@ -134,7 +136,7 @@ const styles = StyleSheet.create({
     footer: { 
         flexDirection: 'row', 
         alignItems: 'center', 
-        gap: 16,
+        gap: 22,
         flexWrap: 'wrap' 
     },
     commentGroup: { 

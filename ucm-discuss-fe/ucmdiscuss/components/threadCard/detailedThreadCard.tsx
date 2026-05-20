@@ -50,9 +50,11 @@ export default function DetailedThreadCard({ post, onCommentPress }: DetailedThr
             {/* Footer */}
             <View style={styles.footer}>
                 <VoteButton initialVotes={post.votes} initialIsVoted={post.userVoteStatus} />
-                <CommentButton 
-                post={post} 
-                onPress={onCommentPress} />
+                <CommentButton
+                    count={post.comments}
+                    targetId={post.id}
+                    onPress={onCommentPress}
+                />
             </View>
         </View>
     );
@@ -110,6 +112,6 @@ const styles = StyleSheet.create({
     footer: { 
         flexDirection: 'row', 
         alignItems: 'center', 
-        gap: 16 
+        gap: 22
     },
 });
