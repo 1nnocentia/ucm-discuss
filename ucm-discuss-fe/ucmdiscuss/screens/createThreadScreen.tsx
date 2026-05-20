@@ -1,6 +1,5 @@
-// src/app/(tabs)/(home)/create.tsx (Atau letak rute modamu)
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
@@ -10,22 +9,26 @@ import BottomBar from '@/components/bottomBar/bottomBar';
 import UploadImg from '@/components/buttons/uploadImg';
 import TagAI from '@/components/buttons/tagAI';
 import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
-import { createThreadUpload } from '@/controllers/hooks/createThreadService';
 import TopicSelector from '@/components/topic/topicSelector';
+import { RETRY_COOLDOWN_MS, usePendingUploads } from '@/context/PendingUploadsContext';
+import { AuthorSnippet } from '@/models/user';
+import { ApiService } from '@/controllers/services/apiService';
+import { useAuth } from '@/context/AuthContext';
 
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
     const router = useRouter();
-    const [selectedTopic, setSelectedTopic] = useState<{ id: string, name: string } | null>(null);
+    const { user } = useAuth();
+    const { addLocalPost, markPostPublished, markPostRetryable } = usePendingUploads();
 
+    const [selectedTopic, setSelectedTopic] = useState<{ id: string, name: string } | null>(null);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isAnonymous, setIsAnonymous] = useState(false);
     const [postImage, setPostImage] = useState<string | null>(null);
 
     const imageContext = useImageManipulator(postImage || '');
-
-    const currentUsername = "Innocentia";
+    const contentInputRef = useRef<TextInput | null>(null);
 
     const handlePost = async () => {
         let finalImageUri = postImage;
@@ -33,21 +36,62 @@ export default function CreateThreadScreen() {
         if (postImage && imageContext) {
             try {
                 imageContext.resize({ width: 1080 });
-                
                 const imageRef = await imageContext.renderAsync();
-                
                 const result = await imageRef.saveAsync({
                     compress: 0.6,
                     format: SaveFormat.JPEG,
                 });
-                
                 finalImageUri = result.uri;
             } catch (error) {
                 console.error("Gagal mengkompresi gambar, menggunakan gambar asli:", error);
             }
         }
-        createThreadUpload(title, content, finalImageUri);
-        router.replace('/(tabs)/(home)');
+
+        const localPostId = `local-${Date.now()}`;
+        const optimisticTopic = selectedTopic ?? { id: 'local-topic', name: 'General' };
+        const optimisticUser: AuthorSnippet = {
+            id: user?.id || 'local-user',
+            name: user?.name || 'Anonymous',
+            isAnonymous: isAnonymous,
+        };
+
+        await addLocalPost({
+            id: localPostId,
+            title,
+            description: content,
+            image: finalImageUri,
+            createdAt: 'now',
+            votes: 0,
+            comments: 0,
+            topic: optimisticTopic,
+            user: optimisticUser,
+            userVoteStatus: false,
+            retryAvailableAt: Date.now() + RETRY_COOLDOWN_MS,
+            createdAtTimestamp: Date.now(),
+        });
+
+        // router.replace('/(tabs)/(home)');
+        if (router.canGoBack()) {
+            router.back();
+        }
+
+        (async () => {
+            try {
+                const payload = {
+                    title: title,
+                    description: content.trim() === ' ' ? null : content,
+                    image: finalImageUri,
+                    topicId: selectedTopic!.id,
+                    isAnonymous: isAnonymous,
+                };
+                await ApiService.createPost(payload);
+                await markPostPublished(localPostId);
+                console.log("Thread background upload sukses!");
+            } catch (error) {
+                await markPostRetryable(localPostId, error instanceof Error ? error.message : 'Upload gagal');
+                console.log("Thread background upload gagal, masuk mode retry.");
+            }
+        })();
     };
 
     const isButtonDisabled = title.trim().length === 0 || selectedTopic === null;
@@ -64,7 +108,7 @@ export default function CreateThreadScreen() {
                     
                         <View style={styles.topicSelector}>
                             <Text style={[styles.topicText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
-                                {isAnonymous ? 'anonymous' : currentUsername}
+                                {isAnonymous ? 'anonymous' : user?.name}
                             </Text>
                             <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} style={styles.topicIcon} />
                             <TopicSelector 
@@ -98,6 +142,7 @@ export default function CreateThreadScreen() {
                         )}
 
                         <TextInput
+                            ref={contentInputRef}
                             style={[styles.contentInput, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}
                             placeholder={`Before you post, please make sure to:\n1. Add a clear title that describe your question.\n2. Add all required option below (Course name and Topic)\n3. Write a detailed description of your issue\n\nNote: Screenshots are welcome, but please do not posts full assignment.`}
                             placeholderTextColor={theme.colors.textSecondary}
@@ -115,7 +160,7 @@ export default function CreateThreadScreen() {
                                         console.log("Gambar berhasil dipilih:", images[0].uri);
                                     }
                                 }} 
-                            />
+                            />  
                             <TagAI />
                         </View>
                 </ScrollView>
@@ -143,6 +188,9 @@ const styles = StyleSheet.create({
         flex: 1, 
         paddingHorizontal: 20
     },
+    scrollContent: {
+        flexGrow: 1,
+    },
     topicSelector: { 
         flexDirection: 'row', 
         alignItems: 'center', 
@@ -165,7 +213,7 @@ const styles = StyleSheet.create({
     },
     contentInput: { 
         fontSize: 14, 
-        minHeight: 200, 
+        // minHeight: 200, 
         lineHeight: 22 
     },
     toolbar: { 

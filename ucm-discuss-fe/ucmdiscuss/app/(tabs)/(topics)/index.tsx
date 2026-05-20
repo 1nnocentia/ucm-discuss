@@ -23,7 +23,7 @@ export default function TopicsScreen() {
 
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
-            <Header title="Communities" />
+            <Header title="Topics" />
 
             <TopicFilterChips 
                 activeFilter={activeFilter} 

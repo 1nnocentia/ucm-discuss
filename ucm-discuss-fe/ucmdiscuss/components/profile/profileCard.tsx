@@ -5,8 +5,14 @@ import { useTheme } from '@/context/ThemeContext';
 import { ProfileCardData } from '@/models/user';
 import { ProfileChip } from './profileChip';
 import { ContributionTrigger } from './contributionTrigger';
+import AnonymousButton from '@/components/buttons/anonymousButton';
 
-export const ProfileCard = ({ user }: { user: ProfileCardData }) => {
+interface ProfileCardProps {
+    user: ProfileCardData;
+    onAnonymousToggle?: (isAnonymous: boolean) => void;
+}
+
+export const ProfileCard = ({ user, onAnonymousToggle }: ProfileCardProps) => {
     const { theme } = useTheme();
     const headerSource = typeof user.headerImage === 'string' 
         ? { uri: user.headerImage } 
@@ -27,9 +33,6 @@ export const ProfileCard = ({ user }: { user: ProfileCardData }) => {
                         {user.name}
                     </Text>
                     <ProfileChip faculty={user.faculty} major={user.major} />
-                    {/* <TouchableOpacity style={[styles.editChip, { borderColor: theme.colors.textSecondary }]}>
-                        <Text style={[styles.editText, { color: theme.colors.textPrimary }]}>Edit</Text>
-                    </TouchableOpacity> */}
                 </View>
 
                 {/* NIM */}
@@ -37,11 +40,13 @@ export const ProfileCard = ({ user }: { user: ProfileCardData }) => {
                     {user.nim}
                 </Text>
 
-                {/* Academic Chips */}
-                {/* <View style={[styles.chipRow, { backgroundColor: theme.colors.background }]}> */}
-                    {/* <ProfileChip label={user.faculty} /> */}
-                    {/* <ProfileChip label={user.major} /> */}
-                {/* </View> */}
+                <View style={styles.anonymousToggle}>
+                    <AnonymousButton 
+                        isAnonymous={user.isAnonymous} 
+                        onToggle={(value) => onAnonymousToggle?.(value)}
+                    />
+                </View>
+
 
                 {/* Contribution Stats */}
                 <View style={[styles.statsRow, { borderTopColor: theme.colors.textSecondary + '33' }]}>
@@ -125,5 +130,9 @@ const styles = StyleSheet.create({
         width: 1, 
         height: '80%', 
         alignSelf: 'center' 
+    },
+    anonymousToggle: {
+        alignItems: 'center',
+        marginTop: 12,
     }
 });

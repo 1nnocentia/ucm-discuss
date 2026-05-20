@@ -2,8 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { Post } from '@/models/user';
-import { Ionicons } from '@expo/vector-icons';
 import VoteButton from '../buttons/voteButton';
+import CommentButton from '../buttons/commentButton';
+import { useRouter } from 'expo-router';
 
 interface HomePostCardProps {
     post: Post;
@@ -12,7 +13,21 @@ interface HomePostCardProps {
 
 export default function HomePostCard({ post, onPress }: HomePostCardProps) {
     const { theme } = useTheme();
-    const authorName = post.isAnonymous ? 'anonymous' : post.user.name;
+    const router = useRouter();
+
+    const { isAnonymous, name } = post.user;
+    const authorName = isAnonymous ? 'anonymous' : name;
+    
+    const handleCommentAction = () => {
+        if (onPress) {
+            onPress();
+        } else {
+            router.push({
+                pathname: '/threads/[id]',
+                params: { id: post.id, focusInput: 'true' }
+            });
+        }
+    };
 
     return (
         <TouchableOpacity 
@@ -58,11 +73,9 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
                 <VoteButton initialVotes={post.votes} initialIsVoted={post.userVoteStatus} />
                 
                 <View style={styles.commentGroup}>
-                    <Ionicons name="chatbubble-outline" size={18} color={theme.colors.textSecondary} />
-                    <Text style={[styles.footerText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>
-                        {post.comments}
-                    </Text>
+                    <CommentButton post={post} onPress={() => {}} />
                 </View>
+
             </View>
         </TouchableOpacity>
     );
@@ -82,7 +95,8 @@ const styles = StyleSheet.create({
     headerLeft: {
         flexDirection: 'row', 
         alignItems: 'center', 
-        gap: 6 
+        gap: 2,
+        flexWrap: 'wrap'
     },
     author: { 
         fontSize: 14, 
@@ -120,7 +134,8 @@ const styles = StyleSheet.create({
     footer: { 
         flexDirection: 'row', 
         alignItems: 'center', 
-        gap: 16 
+        gap: 16,
+        flexWrap: 'wrap' 
     },
     commentGroup: { 
         flexDirection: 'row', 

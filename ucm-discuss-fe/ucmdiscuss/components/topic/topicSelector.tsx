@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, FlatList, StyleSheet, TextInput} from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, TextInput, ActivityIndicator} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Topics } from '@/models/user';
-import { TopicsDummyData } from '@/constants/dummyData/dummyData';
-
+import { ApiService } from '@/controllers/services/apiService';
+import { useQuery } from '@tanstack/react-query';
+import { FlashList } from '@shopify/flash-list';
 
 interface TopicSelectorProps {
     selectedTopic: Topics | null;
@@ -17,7 +18,14 @@ export default function TopicSelector({ selectedTopic, onSelectTopic }: TopicSel
     const [isModalVisible, setModalVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const filteredTopics = TopicsDummyData.filter(topic => 
+    const { data: topics = [], isLoading } = useQuery({
+        queryKey: ['topics', 'current-selector'], 
+        queryFn: ApiService.getCurrentTopicSelectorData,
+        staleTime: 1000 * 60 * 60 * 24, 
+        gcTime: 1000 * 60 * 60 * 24 * 7,
+    });
+
+    const filteredTopics = topics.filter(topic => 
         topic.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -82,30 +90,39 @@ export default function TopicSelector({ selectedTopic, onSelectTopic }: TopicSel
                             autoFocus={false}
                         />
                     </View>
-
-                    {/* List Topik */}
-                    <FlatList
-                        data={filteredTopics}
-                        keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity 
-                                style={[styles.topicItem, { borderBottomColor: theme.colors.textSecondary + '11' }]}
-                                onPress={() => handleSelect(item)}
-                            >
-                                <View style={[styles.topicIconContainer, { backgroundColor: theme.colors.lightSecondary + '22' }]}>
-                                    <Text style={{ color: theme.colors.secondary, fontWeight: 'bold' }}>#</Text>
-                                </View>
-                                <Text style={[styles.topicItemText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
-                                    {item.name}
+                    
+                    <View style={styles.listContainer}>
+                    {isLoading ? (
+                        <View style={styles.centerContainer}>
+                            <ActivityIndicator size="large" color={theme.colors.primary} />
+                        </View>
+                    ) : (
+                        <FlashList
+                            data={filteredTopics}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity 
+                                    style={[styles.topicItem, { borderBottomColor: theme.colors.textSecondary + '11' }]}
+                                    onPress={() => handleSelect(item)}
+                                >
+                                    <View style={[styles.topicIconContainer, { backgroundColor: theme.colors.lightSecondary + '22' }]}>
+                                        <Text style={{ color: theme.colors.secondary, fontWeight: 'bold' }}>#</Text>
+                                    </View>
+                                    <Text style={[styles.topicItemText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
+                                        {item.name}
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                            keyboardShouldPersistTaps="handled"
+                            ListEmptyComponent={
+                                <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+                                    No topics found.
                                 </Text>
-                            </TouchableOpacity>
-                        )}
-                        ListEmptyComponent={
-                            <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
-                                No topics found.
-                            </Text>
-                        }
-                    />
+                            }
+                        />
+                    )
+                }
+                    </View>
                 </SafeAreaView>
             </Modal>
         </>
@@ -185,5 +202,13 @@ const styles = StyleSheet.create({
         textAlign: 'center', 
         marginTop: 32, 
         fontSize: 14 
+    },
+    listContainer: {
+        flex: 1,
+    },
+    centerContainer: {
+        flex: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center'
     }
 });

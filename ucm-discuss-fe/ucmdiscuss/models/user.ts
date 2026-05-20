@@ -17,36 +17,41 @@ export interface UserProfile extends User {
     isAnonymous: boolean;
 }
 
+export interface Topics {
+    id: string;
+    name: string;
+}
+
+export interface AuthorSnippet {
+    id: string;
+    name: string;
+    isAnonymous: boolean;
+}
+
 export interface Post  {
     id: string;
     title: string;
+    description: string | null;
+    image: string | null;
     createdAt: string;
     votes: number;
     comments: number;
-    image: string | null;
-    description: string | null;
     topic: Topics;
-    user: User;
+    user: AuthorSnippet;
     userVoteStatus?: boolean;
-    isAnonymous: boolean;
 }
 
 export interface ThreadComment {
     id: string;
     postId: string;
-    userId: string;
     parentPostId: string | null;
-    comment: string;
+    content: string;
+    image: string | null;
     createdAt: string;
     votes: number;
-    user: User;
-    replies: ThreadComment[];
+    user: AuthorSnippet;
     userVoteStatus?: boolean;
-}
-
-export interface Topics {
-    id: string;
-    name: string;
+    replies?: ThreadComment[];
 }
 
 export interface CreatePostInput {
@@ -54,6 +59,14 @@ export interface CreatePostInput {
     description: string | null;
     image?: string | null;
     topicId: string;
+    isAnonymous: boolean;
+}
+
+export interface CreateCommentInput {
+    postId: string;
+    parentCommentId?: string | null;
+    content: string;
+    image?: string | null;
     isAnonymous: boolean;
 }
 
@@ -77,6 +90,8 @@ export interface CommentHistory {
     commentCount: number;
 }
 
+export type UserHistory = PostHistory | CommentHistory;
+
 export interface NotificationProps {
     id: string;
     actorName: string;
@@ -84,11 +99,8 @@ export interface NotificationProps {
     targetSnippet: string;
     createdAt: string;
     isRead: boolean;
-}
-
-export interface Topics {
-    id: string;
-    name: string;
+    postId: string;
+    commentId?: string;
 }
 
 export interface TopicDetail extends Topics {
@@ -97,14 +109,10 @@ export interface TopicDetail extends Topics {
     discussionCount: number;
 }
 
-export type ProfileCardData = Pick<UserProfile, 
-  'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'headerImage' | 'postCount' | 'commentCount'
->;
+export type FilterType = 'all' | 'current' | 'past';
 
 export type TopicsData = Pick<TopicDetail, 'id' | 'name' | 'description' | 'status' | 'discussionCount'>;
 
-export type UserHistory = PostHistory | CommentHistory;
-
-export type FilterType = 'all' | 'current' | 'past';
-
-// recentsearch?
+export type ProfileCardData = Pick<UserProfile, 
+  'name' | 'nim' | 'major' | 'faculty' | 'votesCount' | 'headerImage' | 'postCount' | 'commentCount' | 'isAnonymous'
+>;

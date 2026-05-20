@@ -1,14 +1,39 @@
-import React from "react";
-import {  ScrollView, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { ScrollView, StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from "@/context/ThemeContext";
 import { ProfileTabs } from "@/components/history/profileTabs";
-import { dummyHistoryData, dummyProfileData } from "@/constants/dummyData/dummyData";
 import { ProfileCard } from "@/components/profile/profileCard";
+import { ApiService } from "@/controllers/services/apiService";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/context/AuthContext";
+import { UserHistory } from "@/models/user";
 
 
 export const profileScreen = () => {
     const { theme } = useTheme();
+    const { user, userDetails, refreshUserDetails, loading: authLoading } = useAuth();
+
+    useEffect(() => {
+        if (user && !userDetails) {
+            refreshUserDetails();
+        }
+    }, [user, userDetails, refreshUserDetails]);
+
+    const { data: historyData = [], isLoading: historyLoading, isError: historyError } = useQuery<UserHistory[]>({
+        queryKey: ['profile-history', user?.id],
+        queryFn: async (): Promise<UserHistory[]> => {
+            if (!user?.id) return [];
+            return await ApiService.getUserHistory();
+        },
+        enabled: !!user?.id,
+    });
+
+    const handleAnonymousToggle = (isAnonymous: boolean) => {
+        console.log('Toggle anonymous:', isAnonymous);
+    };
+
+    const isLoading = authLoading || historyLoading;
 
     return (
         <SafeAreaView edges={['top']} style={[styles.viewStyle, { backgroundColor: theme.colors.primary }]}>
@@ -16,8 +41,31 @@ export const profileScreen = () => {
                 style={[styles.scrollContainer, { backgroundColor: theme.colors.background }]}
                 contentContainerStyle={[styles.scrollContent, { backgroundColor: theme.colors.background }]}
             >
-                <ProfileCard user={dummyProfileData} />
-                <ProfileTabs data={dummyHistoryData} />
+                {isLoading ? (
+                    <View style={styles.centerContent}>
+                        <ActivityIndicator size="large" color={theme.colors.primary} />
+                        <Text style={{ marginTop: 10, color: theme.colors.textSecondary }}>Memuat profil...</Text>
+                    </View>
+                ) : !user ? (
+                    <View style={styles.centerContent}>
+                        <Text style={{ color: theme.colors.textSecondary }}>You are not logged in.</Text>
+                    </View>
+                ) : historyError || !userDetails ? (
+                    <View style={styles.centerContent}>
+                        <Text style={{ color: theme.colors.textSecondary }}>Failed to load profile.</Text>
+                    </View>
+                ) : (
+                    <>
+                        <ProfileCard 
+                            user={{
+                                ...userDetails,
+                                isAnonymous: userDetails.isAnonymous ?? false,
+                            }} 
+                            onAnonymousToggle={handleAnonymousToggle}
+                        />
+                        <ProfileTabs data={historyData} />
+                    </>
+                )}
             </ScrollView>
         </SafeAreaView>
     );
@@ -34,5 +82,11 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         flexGrow: 1,
+    },
+    centerContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 40,
     }
 })
