@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 // import java.util.List;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/threads/thread")
@@ -23,7 +27,7 @@ public class ThreadController {
     @GetMapping
     public Page<ThreadResponseDto> getAllThreads(
             @RequestParam(required = false) Long courseId,
-            @PageableDefault(size = 10)Pageable pageable
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable
     ) {
         return threadService.getAllThreads(Optional.ofNullable(courseId), pageable);
     }
@@ -34,6 +38,13 @@ public class ThreadController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/user/{id}")
+    public Page<ThreadResponseDto> getThreadsByUserId(@PathVariable Long id, 
+        @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return threadService.getThreadsByUserId(id, pageable);
+    }
+    
 
     @PostMapping
     public ResponseEntity<ThreadResponseDto> createThread(@Valid @RequestBody ThreadCreationDto request) {

@@ -50,6 +50,12 @@ public class ThreadService {
         return threadRepository.findById(id).map(this::convertToResponse);
     }
 
+    @Transactional(readOnly = true)
+    public Page<ThreadResponseDto> getThreadsByUserId(Long userId, Pageable pageable) {
+        Page<ThreadModel> threadsPage = threadRepository.findByUserId(userId, pageable);
+        return threadsPage.map(this::convertToResponse);
+    }
+
     @Transactional
     public ThreadModel saveThread(ThreadCreationDto dto) {
         UserModel user = userRepository.findById(dto.getUserId())
@@ -88,7 +94,7 @@ public class ThreadService {
         dto.setContent(thread.getContent());
         dto.setVote_count(thread.getVote_count());
         dto.setIs_anon(thread.getIs_anon());
-        dto.setCreated_at(thread.getCreated_at());
+        dto.setCreatedAt(thread.getCreatedAt());
 
         if (thread.getUser() != null) {
             dto.setUser(userService.convertToResponse(thread.getUser()));
