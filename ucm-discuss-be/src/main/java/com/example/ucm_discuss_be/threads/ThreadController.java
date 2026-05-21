@@ -45,7 +45,6 @@ public class ThreadController {
         return threadService.getThreadsByUserId(id, pageable);
     }
 
-    // NEW for Card 11
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<List<ThreadResponseDto>>> getMyThreads(
             @AuthenticationPrincipal Jwt jwt) {
@@ -69,6 +68,52 @@ public class ThreadController {
         ThreadModel createdThread = threadService.saveThread(request);
         ThreadResponseDto response = threadService.convertToResponse(createdThread);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // NEW for Card 14
+    @PostMapping("/{id}/upvote")
+    public ResponseEntity<ApiResponse<ThreadResponseDto>> upvoteThread(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        ThreadResponseDto response = threadService.upvoteThread(id, email);
+        return ResponseEntity.ok(ApiResponse.success(response, "Thread vote toggled"));
+    }
+
+    @DeleteMapping("/{id}/vote")
+    public ResponseEntity<ApiResponse<ThreadResponseDto>> removeVote(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        ThreadResponseDto response = threadService.removeVote(id, email);
+        return ResponseEntity.ok(ApiResponse.success(response, "Thread vote removed"));
+    }
+
+    // NEW for Card 14
+    @GetMapping("/{id}/vote-count")
+    public ResponseEntity<ApiResponse<Integer>> getVoteCount(
+            @PathVariable Long id) {
+        int count = threadService.getVoteCount(id);
+        return ResponseEntity.ok(ApiResponse.success(count, "Thread vote count retrieved"));
+    }
+
+    // NEW for Card 14
+    @GetMapping("/{id}/has-voted")
+    public ResponseEntity<ApiResponse<Boolean>> hasVoted(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        boolean voted = threadService.hasVoted(id, email);
+        return ResponseEntity.ok(ApiResponse.success(voted, "Thread vote status retrieved"));
     }
 
     @PostMapping("/{id}/view")
