@@ -31,6 +31,14 @@ export default function CommentItem({ comment, onReplyPress }: CommentItemProps)
                         {comment.content}
                     </Text>
 
+                    {comment.image && (
+                        <Image
+                            source={{ uri: comment.image }}
+                            style={styles.commentImage}
+                            resizeMode="contain"
+                        />
+                    )}
+
                     <View style={styles.actions}>
                         <VoteButton initialVotes={comment.votes} />
                         <TouchableOpacity onPress={() => onReplyPress(comment.id, null)} style={styles.replyBtn}>
@@ -84,6 +92,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 20, 
         marginBottom: 8 
+    },
+    commentImage: {
+        width: '100%',
+        height: 180,
+        borderRadius: 8,
+        marginBottom: 8,
     },
     
     actions: { 
