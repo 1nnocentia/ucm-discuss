@@ -45,9 +45,9 @@ export default function CreateThreadScreen() {
         }
     };
 
-    // const handleClearAiResult = () => {
-    //     setAiResult(null);
-    // };
+    const handleClearAiResult = () => {
+        setAiResult(null);
+    };
 
     const handlePost = async () => {
         let finalImageUri = postImage;
@@ -188,8 +188,7 @@ export default function CreateThreadScreen() {
                                         {aiResult.answer}
                                     </Text>
                                 </View>
-r
-                                {/* <View style={styles.aiResultActions}>
+                                <View style={styles.aiResultActions}>
                                     <TouchableOpacity 
                                         style={[styles.aiActionBtn, { backgroundColor: theme.colors.primary }]}
                                         onPress={handleUseAiResult}
@@ -205,7 +204,7 @@ r
                                         <Ionicons name="close" size={16} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
                                         <Text style={[styles.aiActionText, { color: theme.colors.textSecondary }]}>Dismiss</Text>
                                     </TouchableOpacity>
-                                </View> */}
+                                </View>
                             </View>
                         )}
                         
