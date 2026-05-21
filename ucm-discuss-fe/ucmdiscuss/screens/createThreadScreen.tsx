@@ -8,6 +8,7 @@ import Header from '@/components/header/header';
 import BottomBar from '@/components/bottomBar/bottomBar';
 import UploadImg from '@/components/buttons/uploadImg';
 import TagAI from '@/components/buttons/tagAI';
+import AICard from '@/components/threadCard/aiCard';
 import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
 import TopicSelector from '@/components/topic/topicSelector';
 import { RETRY_COOLDOWN_MS, usePendingUploads } from '@/context/PendingUploadsContext';
@@ -26,9 +27,27 @@ export default function CreateThreadScreen() {
     const [content, setContent] = useState('');
     const [isAnonymous, setIsAnonymous] = useState(false);
     const [postImage, setPostImage] = useState<string | null>(null);
+    const [aiResult, setAiResult] = useState<{ question: string; answer: string } | null>(null);
 
     const imageContext = useImageManipulator(postImage || '');
     const contentInputRef = useRef<TextInput | null>(null);
+
+    const handleAiSuccess = (question: string, answer: string) => {
+        setAiResult({ question, answer });
+    };
+
+    const handleUseAiResult = () => {
+        if (aiResult) {
+            const aiFormatted = `\n\n[AI Insight]\nQ: ${aiResult.question}\nA: ${aiResult.answer}`;
+            setContent(prev => prev + aiFormatted);
+            setAiResult(null);
+            contentInputRef.current?.focus();
+        }
+    };
+
+    // const handleClearAiResult = () => {
+    //     setAiResult(null);
+    // };
 
     const handlePost = async () => {
         let finalImageUri = postImage;
@@ -151,6 +170,44 @@ export default function CreateThreadScreen() {
                             value={content}
                             onChangeText={setContent}
                         />
+
+                        {aiResult && (
+                            <View style={[styles.aiResultContainer, { borderColor: theme.colors.primary + '44', backgroundColor: theme.colors.primary + '11' }]}>
+                                <View style={styles.aiResultHeader}>
+                                    <AICard variant="onCreate" />
+                                </View>
+                                
+                                <View style={styles.aiResultContent}>
+                                    <Text style={[styles.aiLabel, { color: theme.colors.textSecondary }]}>Q:</Text>
+                                    <Text style={[styles.aiQuestion, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
+                                        {aiResult.question}
+                                    </Text>
+                                    
+                                    <Text style={[styles.aiLabel, { color: theme.colors.textSecondary, marginTop: 8 }]}>A:</Text>
+                                    <Text style={[styles.aiAnswer, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
+                                        {aiResult.answer}
+                                    </Text>
+                                </View>
+r
+                                {/* <View style={styles.aiResultActions}>
+                                    <TouchableOpacity 
+                                        style={[styles.aiActionBtn, { backgroundColor: theme.colors.primary }]}
+                                        onPress={handleUseAiResult}
+                                    >
+                                        <Ionicons name="checkmark" size={16} color="#FFF" style={{ marginRight: 4 }} />
+                                        <Text style={[styles.aiActionText, { color: '#FFF' }]}>Use</Text>
+                                    </TouchableOpacity>
+                                    
+                                    <TouchableOpacity 
+                                        style={[styles.aiActionBtn, { backgroundColor: theme.colors.textSecondary + '30' }]}
+                                        onPress={handleClearAiResult}
+                                    >
+                                        <Ionicons name="close" size={16} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
+                                        <Text style={[styles.aiActionText, { color: theme.colors.textSecondary }]}>Dismiss</Text>
+                                    </TouchableOpacity>
+                                </View> */}
+                            </View>
+                        )}
                         
                         <View style={styles.toolbar}>
                             <UploadImg 
@@ -161,7 +218,7 @@ export default function CreateThreadScreen() {
                                     }
                                 }} 
                             />  
-                            <TagAI />
+                            <TagAI onAiSuccess={handleAiSuccess} />
                         </View>
                 </ScrollView>
 
@@ -243,5 +300,48 @@ const styles = StyleSheet.create({
         right: 8,
         padding: 6,
         borderRadius: 20,
+    },
+    aiResultContainer: {
+        borderWidth: 1,
+        borderRadius: 12,
+        padding: 12,
+        marginVertical: 12,
+    },
+    aiResultHeader: {
+        marginBottom: 10,
+    },
+    aiResultContent: {
+        marginBottom: 12,
+    },
+    aiLabel: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        marginBottom: 4,
+    },
+    aiQuestion: {
+        fontSize: 13,
+        lineHeight: 18,
+        fontWeight: '500',
+    },
+    aiAnswer: {
+        fontSize: 13,
+        lineHeight: 18,
+    },
+    aiResultActions: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    aiActionBtn: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 8,
+    },
+    aiActionText: {
+        fontSize: 12,
+        fontWeight: '600',
     },
 });
