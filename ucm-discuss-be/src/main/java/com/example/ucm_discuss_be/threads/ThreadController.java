@@ -11,11 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-// import java.util.List;
 import java.util.Optional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping("/api/threads/thread")
@@ -27,7 +23,7 @@ public class ThreadController {
     @GetMapping
     public Page<ThreadResponseDto> getAllThreads(
             @RequestParam(required = false) Long courseId,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return threadService.getAllThreads(Optional.ofNullable(courseId), pageable);
     }
@@ -44,7 +40,14 @@ public class ThreadController {
         @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return threadService.getThreadsByUserId(id, pageable);
     }
-    
+
+    // NEW for Card 9
+    @GetMapping("/search")
+    public Page<ThreadResponseDto> searchThreads(
+            @RequestParam String q,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return threadService.searchThreads(q, pageable);
+    }
 
     @PostMapping
     public ResponseEntity<ThreadResponseDto> createThread(@Valid @RequestBody ThreadCreationDto request) {

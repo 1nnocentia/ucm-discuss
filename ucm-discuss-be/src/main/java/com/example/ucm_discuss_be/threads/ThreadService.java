@@ -13,9 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-// import java.util.List;
 import java.util.Optional;
-// import java.util.stream.Collectors;
 
 @Service
 public class ThreadService {
@@ -81,10 +79,19 @@ public class ThreadService {
     }
 
     public boolean isOwner(Long threadId, String email) {
-        return threadRepository.findById(threadId)
+        return threadRepository.findByIdWithUser(threadId)
                 .map(thread -> thread.getUser() != null 
                     && email.equals(thread.getUser().getEmail()))
                 .orElse(false);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ThreadResponseDto> searchThreads(String query, Pageable pageable) {
+        if (query == null || query.trim().isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return threadRepository.searchByTitleOrContent(query.trim(), pageable)
+                .map(this::convertToResponse);
     }
 
     public ThreadResponseDto convertToResponse(ThreadModel thread) {
