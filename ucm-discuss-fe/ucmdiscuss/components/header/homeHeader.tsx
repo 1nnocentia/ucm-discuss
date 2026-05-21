@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 20,
-    fontFamily: 'Merienda-Bold',
+    fontSize: 24,
+    fontFamily: 'Montserrat-Bold',
   },
   triggerBtn: { 
     padding: 4 
