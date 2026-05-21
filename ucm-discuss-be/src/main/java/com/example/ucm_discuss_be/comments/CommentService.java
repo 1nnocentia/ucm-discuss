@@ -105,6 +105,25 @@ public class CommentService {
     }
 
     @Transactional
+    public CommentResponseDto removeVote(Long commentId, String userEmail) {
+        UserModel user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new BusinessException("User not found for email: " + userEmail, HttpStatus.NOT_FOUND));
+
+        CommentModel comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", commentId));
+
+        UserVotesCommentModel vote = userVotesCommentRepository
+                .findByUserIdAndCommentId(user.getId(), commentId)
+                .orElseThrow(() -> new BusinessException("Vote not found", HttpStatus.NOT_FOUND));
+
+        userVotesCommentRepository.delete(vote);
+        comment.setVote_count(Math.max(0, comment.getVote_count() - 1));
+
+        CommentModel saved = commentRepository.save(comment);
+        return convertToResponse(saved);
+    }
+
+    @Transactional
     public void deleteComment(Long id) {
         CommentModel comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment", id));

@@ -54,6 +54,18 @@ public class CommentController {
         return ResponseEntity.ok(ApiResponse.success(response, "Vote toggled"));
     }
 
+    @DeleteMapping("/{commentId}/vote")
+    public ResponseEntity<ApiResponse<CommentResponseDto>> removeVote(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        CommentResponseDto response = commentService.removeVote(commentId, email);
+        return ResponseEntity.ok(ApiResponse.success(response, "Vote removed"));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("@commentService.isOwner(#id, authentication.name)")
     public ResponseEntity<ApiResponse<Void>> deleteComment(@PathVariable Long id) {
