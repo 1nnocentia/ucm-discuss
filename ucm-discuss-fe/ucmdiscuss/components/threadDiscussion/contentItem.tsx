@@ -5,12 +5,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 import VoteButton from '@/components/buttons/voteButton';
 import ReplyItem from '@/components/threadDiscussion/replyItem';
-import { Comment } from '@/models/user';
+import { ThreadComment } from '@/models/user';
 
 
 
 interface CommentItemProps {
-    comment: Comment;
+    comment: ThreadComment;
     onReplyPress: (commentId: string, imageUri: string | null) => void;
 }
 
