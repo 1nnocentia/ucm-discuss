@@ -27,10 +27,6 @@ export default function CommentItem({ comment, onReplyPress }: CommentItemProps)
                         <Text style={[styles.metaText, { color: theme.colors.textSecondary }]}>• {comment.createdAt}</Text>
                     </View>
 
-                    <Text style={[styles.text, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
-                        {comment.content}
-                    </Text>
-
                     {comment.image && (
                         <Image
                             source={{ uri: comment.image }}
@@ -38,6 +34,10 @@ export default function CommentItem({ comment, onReplyPress }: CommentItemProps)
                             resizeMode="contain"
                         />
                     )}
+
+                    <Text style={[styles.text, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
+                        {comment.content}
+                    </Text>
 
                     <View style={styles.actions}>
                         <VoteButton initialVotes={comment.votes} />
