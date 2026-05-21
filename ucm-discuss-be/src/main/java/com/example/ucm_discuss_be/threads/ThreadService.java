@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ThreadService {
@@ -59,6 +61,16 @@ public class ThreadService {
         return threadsPage.map(this::convertToResponse);
     }
 
+    // NEW for Card 11
+    @Transactional(readOnly = true)
+    public List<ThreadResponseDto> getMyThreads(String email) {
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return threadRepository.findByUserId(user.getId()).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public ThreadModel saveThread(ThreadCreationDto dto) {
         UserModel user = userRepository.findById(dto.getUserId())
@@ -99,7 +111,6 @@ public class ThreadService {
                 .map(this::convertToResponse);
     }
 
-    // NEW for Card 11
     @Transactional
     public void recordView(Long threadId, String email) {
         UserModel user = userRepository.findByEmail(email)

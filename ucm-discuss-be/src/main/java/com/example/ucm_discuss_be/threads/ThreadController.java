@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -44,6 +45,18 @@ public class ThreadController {
         return threadService.getThreadsByUserId(id, pageable);
     }
 
+    // NEW for Card 11
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<List<ThreadResponseDto>>> getMyThreads(
+            @AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        List<ThreadResponseDto> threads = threadService.getMyThreads(email);
+        return ResponseEntity.ok(ApiResponse.success(threads, "My threads retrieved"));
+    }
+
     @GetMapping("/search")
     public Page<ThreadResponseDto> searchThreads(
             @RequestParam String q,
@@ -58,7 +71,6 @@ public class ThreadController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // NEW for Card 11
     @PostMapping("/{id}/view")
     public ResponseEntity<ApiResponse<Void>> recordView(
             @PathVariable Long id,
