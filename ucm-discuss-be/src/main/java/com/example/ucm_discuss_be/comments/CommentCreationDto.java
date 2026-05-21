@@ -21,4 +21,7 @@ public class CommentCreationDto {
 
     @NotNull(message = "User ID is required")
     private Long userId;
+
+    private String fileUrl;
+    private String fileType;
 }

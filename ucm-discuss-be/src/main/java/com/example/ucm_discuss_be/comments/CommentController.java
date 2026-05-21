@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController {
@@ -16,11 +18,19 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CommentModel>> createComment(
+    public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
             @Valid @RequestBody CommentCreationDto request) {
         CommentModel created = commentService.saveComment(request);
+        CommentResponseDto response = commentService.convertToResponse(created);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(created, "Comment created"));
+                .body(ApiResponse.success(response, "Comment created"));
+    }
+
+    @GetMapping("/thread/{threadId}")
+    public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getCommentsByThread(
+            @PathVariable Long threadId) {
+        List<CommentResponseDto> comments = commentService.getCommentsByThreadId(threadId);
+        return ResponseEntity.ok(ApiResponse.success(comments, "Comments retrieved"));
     }
 
     @DeleteMapping("/{id}")

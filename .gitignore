@@ -1,1 +1,16 @@
-ucm-discuss-be/src/main/java/com/example/ucm_discuss_be/security/SecurityConfigDev.java
+﻿# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
