@@ -1,13 +1,10 @@
 // src/components/lists/CommentItem.tsx
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 import VoteButton from '@/components/buttons/voteButton';
 import ReplyItem from '@/components/threadDiscussion/replyItem';
 import { ThreadComment } from '@/models/user';
-
-
 
 interface CommentItemProps {
     comment: ThreadComment;
@@ -60,7 +57,8 @@ const styles = StyleSheet.create({
     container: { 
         paddingHorizontal: 16,
         paddingVertical: 12, 
-        borderBottomWidth: 0.5 
+        borderBottomWidth: 0.5,
+        flex: 1
     },
     mainCommentRow: { 
         flexDirection: 'row' 
