@@ -191,4 +191,17 @@ public class CommentService {
 
         return dto;
     }
+
+    @Transactional(readOnly = true)
+    public CommentResponseDto getCommentWithReplies(Long commentId) {
+        CommentModel comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", commentId));
+        return convertToResponseWithReplies(comment);
+    }
+
+    public CommentResponseDto convertToResponseWithReplies(CommentModel comment) {
+    CommentResponseDto dto = convertToResponse(comment);
+    // Replies are loaded via ReplyController, not embedded here to avoid circular JSON
+    return dto;
+}
 }

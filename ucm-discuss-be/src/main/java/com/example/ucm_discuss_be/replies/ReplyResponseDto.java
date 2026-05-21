@@ -1,0 +1,27 @@
+package com.example.ucm_discuss_be.replies;
+
+import com.example.ucm_discuss_be.users.UserResponseDto;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@JsonPropertyOrder({
+    "id",
+    "content",
+    "is_anon",
+    "created_at",
+    "user",
+    "parent_comment_id"
+})
+public class ReplyResponseDto {
+    private Long id;
+    private String content;
+    private Boolean is_anon;
+    private LocalDateTime created_at;
+    private UserResponseDto user;
+    private Long parent_comment_id;
+}
