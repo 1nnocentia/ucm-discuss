@@ -89,6 +89,14 @@ function MainLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false}} />
+      <Stack.Screen
+        name="createPostTopics"
+        options={{
+          presentation: 'modal',
+          headerShown: false,
+        }}
+      />
     </Stack>
+
   );
 }

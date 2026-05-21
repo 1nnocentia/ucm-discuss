@@ -111,10 +111,10 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
                     <TouchableOpacity 
                         style={[
                             styles.sendBtn, 
-                            { opacity: commentText.trim().length > 0 ? 1 : 0.5 }
+                            { opacity: (commentText.trim().length > 0 || postImage) ? 1 : 0.5 }
                         ]}
                         onPress={handleSendComment}
-                        disabled={commentText.trim().length === 0}
+                        disabled={commentText.trim().length === 0 && !postImage}
                     >
                         <Ionicons name="send" size={20} color={theme.colors.primary} />
                     </TouchableOpacity>

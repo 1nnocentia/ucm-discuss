@@ -11,16 +11,22 @@ export default function NewPostButton({ currentTopic }: NewPostButtonProps) {
     const { theme } = useTheme();
     const handleOnPress = () => {
         if (currentTopic) {
-            router.push(`/create-thread?topicId=${currentTopic.id}&topicName=${encodeURIComponent(currentTopic.name)}`);
+            router.push({
+                pathname: '/createPostTopics',
+                params: { 
+                    topicId: currentTopic.id, 
+                    topicName: currentTopic.name 
+                }
+            });
         } else {
-            router.push('/create-thread');
+            router.push('/createPostTopics');
         }
     }
     return (
         <View>
-            <TouchableOpacity style={styles.button} onPress={handleOnPress} activeOpacity={0.7}>
-                <Text style={[styles.buttonText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.montserrat }]}>
-                    + New Thread
+            <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary }]} onPress={handleOnPress} activeOpacity={0.7}>
+                <Text style={[styles.buttonText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
+                    + Thread
                 </Text>
             </TouchableOpacity>
         </View>
@@ -29,9 +35,10 @@ export default function NewPostButton({ currentTopic }: NewPostButtonProps) {
 
 const styles = StyleSheet.create({
     button: {
-        position: 'absolute',
-        bottom: 16,
-        right: 16,
+        borderRadius: 999,
+        padding: 8,
+        maxWidth: 110,
+        paddingRight: 10,
     },
     buttonText: {
         fontSize: 14,
