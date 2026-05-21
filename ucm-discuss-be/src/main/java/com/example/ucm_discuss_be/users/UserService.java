@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.ucm_discuss_be.faculties.FacultyModel;
 import com.example.ucm_discuss_be.majors.MajorModel;
@@ -162,6 +163,14 @@ public class UserService {
         }
 
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public UserResponseDto toggleAnonMode(String email) {
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setIs_anon(!user.getIs_anon());
+        return convertToResponse(userRepository.save(user));
     }
 
     public void deleteUser(Long id) {

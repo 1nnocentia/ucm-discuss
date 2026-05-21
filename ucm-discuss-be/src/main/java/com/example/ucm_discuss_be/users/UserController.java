@@ -9,6 +9,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.ucm_discuss_be.responses.ApiResponse;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -52,6 +54,16 @@ public class UserController {
         UserModel user = userService.updateUser(id, userDetails);
         UserResponseDto response = userService.convertToResponse(user);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/me/anon")
+    public ResponseEntity<ApiResponse<UserResponseDto>> toggleAnonMode(@AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        UserResponseDto response = userService.toggleAnonMode(email);
+        return ResponseEntity.ok(ApiResponse.success(response, "Anonymous mode toggled"));
     }
 
     @DeleteMapping("/{id}")
