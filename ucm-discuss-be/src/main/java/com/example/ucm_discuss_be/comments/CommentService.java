@@ -130,7 +130,6 @@ public class CommentService {
         return comment.getVote_count();
     }
 
-    // NEW for Card 7
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getMyComments(String email) {
         UserModel user = userRepository.findByEmail(email)
@@ -138,6 +137,14 @@ public class CommentService {
         return commentRepository.findByUserId(user.getId()).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    // NEW for Card 10
+    @Transactional(readOnly = true)
+    public boolean hasVoted(Long commentId, String userEmail) {
+        UserModel user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new BusinessException("User not found for email: " + userEmail, HttpStatus.NOT_FOUND));
+        return userVotesCommentRepository.findByUserIdAndCommentId(user.getId(), commentId).isPresent();
     }
 
     @Transactional

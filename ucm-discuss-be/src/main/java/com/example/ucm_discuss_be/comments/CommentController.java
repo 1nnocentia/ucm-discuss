@@ -73,7 +73,6 @@ public class CommentController {
         return ResponseEntity.ok(ApiResponse.success(count, "Vote count retrieved"));
     }
 
-    // NEW for Card 7
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getMyComments(
             @AuthenticationPrincipal Jwt jwt) {
@@ -83,6 +82,19 @@ public class CommentController {
         String email = jwt.getClaimAsString("email");
         List<CommentResponseDto> comments = commentService.getMyComments(email);
         return ResponseEntity.ok(ApiResponse.success(comments, "My comments retrieved"));
+    }
+
+    // NEW for Card 10
+    @GetMapping("/{commentId}/has-voted")
+    public ResponseEntity<ApiResponse<Boolean>> hasVoted(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        boolean voted = commentService.hasVoted(commentId, email);
+        return ResponseEntity.ok(ApiResponse.success(voted, "Vote status retrieved"));
     }
 
     @DeleteMapping("/{id}")
