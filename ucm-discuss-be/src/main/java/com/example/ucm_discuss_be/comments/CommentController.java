@@ -66,12 +66,23 @@ public class CommentController {
         return ResponseEntity.ok(ApiResponse.success(response, "Vote removed"));
     }
 
-    // NEW for Card 6
     @GetMapping("/{commentId}/vote-count")
     public ResponseEntity<ApiResponse<Integer>> getVoteCount(
             @PathVariable Long commentId) {
         int count = commentService.getVoteCount(commentId);
         return ResponseEntity.ok(ApiResponse.success(count, "Vote count retrieved"));
+    }
+
+    // NEW for Card 7
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getMyComments(
+            @AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        List<CommentResponseDto> comments = commentService.getMyComments(email);
+        return ResponseEntity.ok(ApiResponse.success(comments, "My comments retrieved"));
     }
 
     @DeleteMapping("/{id}")

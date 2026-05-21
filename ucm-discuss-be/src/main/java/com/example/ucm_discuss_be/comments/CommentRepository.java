@@ -17,6 +17,10 @@ public interface CommentRepository extends JpaRepository<CommentModel, Long> {
     @Query("SELECT c FROM CommentModel c WHERE c.thread.id = :threadId ORDER BY c.vote_count DESC")
     List<CommentModel> findByThreadIdOrderByVoteCountDesc(@Param("threadId") Long threadId);
 
+    // NEW for Card 7
+    @Query("SELECT c FROM CommentModel c WHERE c.user.id = :userId")
+    List<CommentModel> findByUserId(@Param("userId") Long userId);
+
     @Query("SELECT c FROM CommentModel c JOIN FETCH c.user WHERE c.id = :id")
     Optional<CommentModel> findByIdWithUser(@Param("id") Long id);
 }

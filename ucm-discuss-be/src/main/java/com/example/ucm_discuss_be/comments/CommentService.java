@@ -123,12 +123,21 @@ public class CommentService {
         return convertToResponse(saved);
     }
 
-    // NEW for Card 6
     @Transactional(readOnly = true)
     public int getVoteCount(Long commentId) {
         CommentModel comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment", commentId));
         return comment.getVote_count();
+    }
+
+    // NEW for Card 7
+    @Transactional(readOnly = true)
+    public List<CommentResponseDto> getMyComments(String email) {
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException("User not found for email: " + email, HttpStatus.NOT_FOUND));
+        return commentRepository.findByUserId(user.getId()).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional
