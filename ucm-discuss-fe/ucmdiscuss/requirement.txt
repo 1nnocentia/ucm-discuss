@@ -15,3 +15,5 @@ npx expo install axios
 npx expo install @tanstack/react-query
 
 npx expo install react-native-auth0
+
+npx expo install @google/genai
