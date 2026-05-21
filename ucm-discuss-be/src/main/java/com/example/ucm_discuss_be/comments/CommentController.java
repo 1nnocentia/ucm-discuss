@@ -16,11 +16,12 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CommentModel>> createComment(
+    public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
             @Valid @RequestBody CommentCreationDto request) {
         CommentModel created = commentService.saveComment(request);
+        CommentResponseDto response = commentService.convertToResponse(created);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(created, "Comment created"));
+                .body(ApiResponse.success(response, "Comment created"));
     }
 
     @DeleteMapping("/{id}")

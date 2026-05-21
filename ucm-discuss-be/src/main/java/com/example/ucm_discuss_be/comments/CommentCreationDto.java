@@ -21,4 +21,8 @@ public class CommentCreationDto {
 
     @NotNull(message = "User ID is required")
     private Long userId;
+
+    // Optional: attach 1 image when creating a comment
+    private String fileUrl;
+    private String fileType;
 }
