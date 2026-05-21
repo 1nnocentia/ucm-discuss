@@ -123,6 +123,14 @@ public class CommentService {
         return convertToResponse(saved);
     }
 
+    // NEW for Card 6
+    @Transactional(readOnly = true)
+    public int getVoteCount(Long commentId) {
+        CommentModel comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", commentId));
+        return comment.getVote_count();
+    }
+
     @Transactional
     public void deleteComment(Long id) {
         CommentModel comment = commentRepository.findById(id)

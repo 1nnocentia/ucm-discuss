@@ -66,6 +66,14 @@ public class CommentController {
         return ResponseEntity.ok(ApiResponse.success(response, "Vote removed"));
     }
 
+    // NEW for Card 6
+    @GetMapping("/{commentId}/vote-count")
+    public ResponseEntity<ApiResponse<Integer>> getVoteCount(
+            @PathVariable Long commentId) {
+        int count = commentService.getVoteCount(commentId);
+        return ResponseEntity.ok(ApiResponse.success(count, "Vote count retrieved"));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("@commentService.isOwner(#id, authentication.name)")
     public ResponseEntity<ApiResponse<Void>> deleteComment(@PathVariable Long id) {
