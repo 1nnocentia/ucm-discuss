@@ -9,6 +9,7 @@ import com.example.ucm_discuss_be.comments.CommentModel;
 import com.example.ucm_discuss_be.courses.CourseModel;
 import com.example.ucm_discuss_be.threadAttachments.ThreadAttachmentModel;
 import com.example.ucm_discuss_be.userVotesThread.UserVotesThreadModel;
+import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadModel;
 import com.example.ucm_discuss_be.users.UserModel;
 
 import lombok.AllArgsConstructor;
@@ -24,7 +25,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -129,11 +129,13 @@ public class ThreadModel {
     )
     private ThreadAttachmentModel thread_attachment;
 
-    @ManyToMany(
-        mappedBy = "viewed_threads",
-        fetch = FetchType.LAZY
+    // REFACTORED for Card 11: replaced @ManyToMany with @OneToMany entity
+    @OneToMany(
+        mappedBy = "thread",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
     )
-    private List<UserModel> viewers;
+    private List<UserViewedThreadModel> thread_views;
 
     @CreationTimestamp
     @Column(

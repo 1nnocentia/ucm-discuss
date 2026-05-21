@@ -1,22 +1,24 @@
 package com.example.ucm_discuss_be.users;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.ucm_discuss_be.faculties.FacultyModel;
+import com.example.ucm_discuss_be.faculties.FacultyRepository;
+import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
 import com.example.ucm_discuss_be.majors.MajorModel;
 import com.example.ucm_discuss_be.majors.MajorRepository;
 import com.example.ucm_discuss_be.majors.MajorResponseDto;
-import com.example.ucm_discuss_be.faculties.FacultyRepository;
-import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
-
-// import com.example.ucm_discuss_be.majors.UserModel;
-// import com.example.ucm_discuss_be.majors.UserRepository;
+import com.example.ucm_discuss_be.threads.ThreadModel;
+import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadModel;
+import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadRepository;
 
 @Service
 public class UserService {
@@ -29,6 +31,9 @@ public class UserService {
     @Autowired
     private FacultyRepository facultyRepository;
 
+    @Autowired
+    private UserViewedThreadRepository userViewedThreadRepository;
+
     public List<UserResponseDto> getAllUsers() {
         List<UserModel> users = userRepository.findAll();
         List<UserResponseDto> responseList = new ArrayList<>();
@@ -36,7 +41,6 @@ public class UserService {
             responseList.add(convertToResponse(user));
         }
         return responseList;
-        // return users;
     }
 
     public Optional<UserResponseDto> getUserById(Long id) {
@@ -46,9 +50,6 @@ public class UserService {
             return Optional.of(response);
         }
         return Optional.empty();
-        // UserResponseDto response = convertToResponse(userOpt.orElse(null));
-        // return Optional.of(response);
-        // return userRepository.findById(id);
     }
 
     public UserResponseDto getUserByEmail(String email) {
@@ -59,11 +60,8 @@ public class UserService {
 
     public UserResponseDto profileResponse(UserModel user) {
         UserResponseDto response = new UserResponseDto();
-        // response.setId(user.getId());
         response.setNim_or_nisn(user.getNim_or_nisn());
         response.setName(user.getName());
-        // response.setEmail(user.getEmail());
-        // response.setIs_lecturer(user.getIs_lecturer());
         response.setIs_anon(user.getIs_anon());
 
         if (user.getMajor() != null) {
@@ -91,20 +89,16 @@ public class UserService {
         user.setPassword(request.getPassword());
         user.setIs_lecturer(request.getIs_lecturer());
         user.setIs_anon(request.getIs_anon());
-        // Set major and faculty if provided
         if (request.getMajor_id() != null) {
             MajorModel major = majorRepository.findById(request.getMajor_id())
                     .orElseThrow(() -> new RuntimeException("Major not found"));
             user.setMajor(major);
         }
-
-        // Look up and set the faculty
         if (request.getFaculty_id() != null) {
             FacultyModel faculty = facultyRepository.findById(request.getFaculty_id())
                     .orElseThrow(() -> new RuntimeException("Faculty not found"));
             user.setFaculty(faculty);
         }
-
         return userRepository.save(user);
     }
 
@@ -161,7 +155,6 @@ public class UserService {
                     .orElseThrow(() -> new RuntimeException("Faculty not found"));
             user.setFaculty(faculty);
         }
-
         return userRepository.save(user);
     }
 
@@ -171,6 +164,40 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setIs_anon(!user.getIs_anon());
         return convertToResponse(userRepository.save(user));
+    }
+
+    // NEW for Card 11
+    @Transactional(readOnly = true)
+    public List<ThreadModel> getRecentlyVisitedThreads(String email) {
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userViewedThreadRepository.findRecentlyViewedByUserId(user.getId()).stream()
+                .map(UserViewedThreadModel::getThread)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    // NEW for Card 11
+    @Transactional
+    public void recordThreadView(String email, Long threadId) {
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        Optional<UserViewedThreadModel> existing = userViewedThreadRepository
+                .findByUserIdAndThreadId(user.getId(), threadId);
+
+        if (existing.isPresent()) {
+            existing.get().setViewed_at(LocalDateTime.now());
+            userViewedThreadRepository.save(existing.get());
+        } else {
+            ThreadModel thread = new ThreadModel();
+            thread.setId(threadId);
+            UserViewedThreadModel view = new UserViewedThreadModel();
+            view.setUser(user);
+            view.setThread(thread);
+            view.setViewed_at(LocalDateTime.now());
+            userViewedThreadRepository.save(view);
+        }
     }
 
     public void deleteUser(Long id) {

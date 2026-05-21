@@ -7,12 +7,15 @@ import com.example.ucm_discuss_be.exceptions.ResourceNotFoundException;
 import com.example.ucm_discuss_be.users.UserModel;
 import com.example.ucm_discuss_be.users.UserRepository;
 import com.example.ucm_discuss_be.users.UserService;
+import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadModel;
+import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -28,6 +31,8 @@ public class ThreadService {
     private UserService userService;
     @Autowired
     private CourseService courseService;
+    @Autowired
+    private UserViewedThreadRepository userViewedThreadRepository;
 
     @Transactional(readOnly = true)
     public Page<ThreadResponseDto> getAllThreads(
@@ -92,6 +97,29 @@ public class ThreadService {
         }
         return threadRepository.searchByTitleOrContent(query.trim(), pageable)
                 .map(this::convertToResponse);
+    }
+
+    // NEW for Card 11
+    @Transactional
+    public void recordView(Long threadId, String email) {
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        ThreadModel thread = threadRepository.findById(threadId)
+                .orElseThrow(() -> new ResourceNotFoundException("Thread", threadId));
+
+        Optional<UserViewedThreadModel> existing = userViewedThreadRepository
+                .findByUserIdAndThreadId(user.getId(), threadId);
+
+        if (existing.isPresent()) {
+            existing.get().setViewed_at(LocalDateTime.now());
+            userViewedThreadRepository.save(existing.get());
+        } else {
+            UserViewedThreadModel view = new UserViewedThreadModel();
+            view.setUser(user);
+            view.setThread(thread);
+            view.setViewed_at(LocalDateTime.now());
+            userViewedThreadRepository.save(view);
+        }
     }
 
     public ThreadResponseDto convertToResponse(ThreadModel thread) {
