@@ -1,17 +1,22 @@
 package com.example.ucm_discuss_be.comments;
 
 import com.example.ucm_discuss_be.commentAttachments.CommentAttachmentModel;
+import com.example.ucm_discuss_be.exceptions.BusinessException;
 import com.example.ucm_discuss_be.exceptions.ResourceNotFoundException;
 import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.threads.ThreadRepository;
+import com.example.ucm_discuss_be.userVotesComment.UserVotesCommentModel;
+import com.example.ucm_discuss_be.userVotesComment.UserVotesCommentRepository;
 import com.example.ucm_discuss_be.users.UserModel;
 import com.example.ucm_discuss_be.users.UserRepository;
 import com.example.ucm_discuss_be.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +33,9 @@ public class CommentService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserVotesCommentRepository userVotesCommentRepository;
 
     @Transactional
     public CommentModel saveComment(CommentCreationDto dto) {
@@ -68,6 +76,32 @@ public class CommentService {
         return commentRepository.findByThreadIdOrderByVoteCountDesc(threadId).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public CommentResponseDto upvoteComment(Long commentId, String userEmail) {
+        UserModel user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new BusinessException("User not found for email: " + userEmail, HttpStatus.NOT_FOUND));
+
+        CommentModel comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", commentId));
+
+        Optional<UserVotesCommentModel> existingVote = userVotesCommentRepository
+                .findByUserIdAndCommentId(user.getId(), commentId);
+
+        if (existingVote.isPresent()) {
+            userVotesCommentRepository.delete(existingVote.get());
+            comment.setVote_count(Math.max(0, comment.getVote_count() - 1));
+        } else {
+            UserVotesCommentModel vote = new UserVotesCommentModel();
+            vote.setUser(user);
+            vote.setComment(comment);
+            userVotesCommentRepository.save(vote);
+            comment.setVote_count(comment.getVote_count() + 1);
+        }
+
+        CommentModel saved = commentRepository.save(comment);
+        return convertToResponse(saved);
     }
 
     @Transactional

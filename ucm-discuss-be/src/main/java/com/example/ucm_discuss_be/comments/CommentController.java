@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +40,18 @@ public class CommentController {
             @PathVariable Long threadId) {
         List<CommentResponseDto> comments = commentService.getCommentsByThreadIdOrderedByUpvote(threadId);
         return ResponseEntity.ok(ApiResponse.success(comments, "Comments ordered by upvote count"));
+    }
+
+    @PostMapping("/{commentId}/upvote")
+    public ResponseEntity<ApiResponse<CommentResponseDto>> upvoteComment(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        CommentResponseDto response = commentService.upvoteComment(commentId, email);
+        return ResponseEntity.ok(ApiResponse.success(response, "Vote toggled"));
     }
 
     @DeleteMapping("/{id}")
