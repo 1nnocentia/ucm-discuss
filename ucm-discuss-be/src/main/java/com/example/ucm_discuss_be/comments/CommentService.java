@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class CommentService {
 
@@ -46,11 +49,25 @@ public class CommentService {
             CommentAttachmentModel attachment = new CommentAttachmentModel();
             attachment.setFile_url(dto.getFileUrl());
             attachment.setFile_type(dto.getFileType() != null ? dto.getFileType() : "image");
-            attachment.setComment(comment);          // owning side
-            comment.setComment_attachment(attachment); // inverse side (cascade saves it)
+            attachment.setComment(comment);
+            comment.setComment_attachment(attachment);
         }
 
         return commentRepository.save(comment);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponseDto> getCommentsByThreadId(Long threadId) {
+        return commentRepository.findByThreadId(threadId).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponseDto> getCommentsByThreadIdOrderedByUpvote(Long threadId) {
+        return commentRepository.findByThreadIdOrderByVoteCountDesc(threadId).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -60,8 +77,6 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
-    // Fixed: uses JOIN FETCH so getUser() doesn't trigger LazyInitializationException
-    // when called from @PreAuthorize SpEL
     public boolean isOwner(Long commentId, String email) {
         return commentRepository.findByIdWithUser(commentId)
                 .map(comment -> comment.getUser() != null
