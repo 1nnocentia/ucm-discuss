@@ -3,6 +3,7 @@ package com.example.ucm_discuss_be.comments;
 import com.example.ucm_discuss_be.commentAttachments.CommentAttachmentModel;
 import com.example.ucm_discuss_be.exceptions.BusinessException;
 import com.example.ucm_discuss_be.exceptions.ResourceNotFoundException;
+import com.example.ucm_discuss_be.notifications.NotificationService;
 import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.threads.ThreadRepository;
 import com.example.ucm_discuss_be.userVotesComment.UserVotesCommentModel;
@@ -37,6 +38,9 @@ public class CommentService {
     @Autowired
     private UserVotesCommentRepository userVotesCommentRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Transactional
     public CommentModel saveComment(CommentCreationDto dto) {
         UserModel user = userRepository.findById(dto.getUserId())
@@ -61,7 +65,14 @@ public class CommentService {
             comment.setComment_attachment(attachment);
         }
 
-        return commentRepository.save(comment);
+        CommentModel saved = commentRepository.save(comment);
+
+        // NEW for Card 12: Create notification if commenting on someone else's thread
+        if (!thread.getUser().getId().equals(user.getId())) {
+            notificationService.createNotification(thread.getUser(), saved);
+        }
+
+        return saved;
     }
 
     @Transactional(readOnly = true)
@@ -139,7 +150,6 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    // NEW for Card 10
     @Transactional(readOnly = true)
     public boolean hasVoted(Long commentId, String userEmail) {
         UserModel user = userRepository.findByEmail(userEmail)
