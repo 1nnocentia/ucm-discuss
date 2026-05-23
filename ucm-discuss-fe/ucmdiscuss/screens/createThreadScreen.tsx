@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,13 +19,13 @@ import { useAuth } from '@/context/AuthContext';
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
     const router = useRouter();
-    const { user } = useAuth();
+    const { user, userDetails } = useAuth();
     const { addLocalPost, markPostPublished, markPostRetryable } = usePendingUploads();
 
     const [selectedTopic, setSelectedTopic] = useState<{ id: string, name: string } | null>(null);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [isAnonymous, setIsAnonymous] = useState(false);
+    const [isAnonymous, setIsAnonymous] = useState(userDetails?.isAnonymous ?? false);
     const [postImage, setPostImage] = useState<string | null>(null);
     const [aiResult, setAiResult] = useState<{ question: string; answer: string } | null>(null);
 
@@ -35,6 +35,10 @@ export default function CreateThreadScreen() {
     const handleAiSuccess = (question: string, answer: string) => {
         setAiResult({ question, answer });
     };
+
+    useEffect(() => {
+        setIsAnonymous(userDetails?.isAnonymous ?? false);
+    }, [userDetails?.isAnonymous]);
 
     const handleUseAiResult = () => {
         if (aiResult) {
