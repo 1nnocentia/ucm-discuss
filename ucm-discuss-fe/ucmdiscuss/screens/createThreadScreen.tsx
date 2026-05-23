@@ -15,10 +15,12 @@ import { RETRY_COOLDOWN_MS, usePendingUploads } from '@/context/PendingUploadsCo
 import { AuthorSnippet } from '@/models/user';
 import { ApiService } from '@/controllers/services/apiService';
 import { useAuth } from '@/context/AuthContext';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
     const router = useRouter();
+    const { topicId, topicName } = useLocalSearchParams<{ topicId?: string; topicName?: string }>();
     const { user, userDetails } = useAuth();
     const { addLocalPost, markPostPublished, markPostRetryable } = usePendingUploads();
 
@@ -39,6 +41,15 @@ export default function CreateThreadScreen() {
     useEffect(() => {
         setIsAnonymous(userDetails?.isAnonymous ?? false);
     }, [userDetails?.isAnonymous]);
+
+    useEffect(() => {
+        const resolvedTopicId = Array.isArray(topicId) ? topicId[0] : topicId;
+        const resolvedTopicName = Array.isArray(topicName) ? topicName[0] : topicName;
+
+        if (resolvedTopicId && resolvedTopicName) {
+            setSelectedTopic({ id: resolvedTopicId, name: resolvedTopicName });
+        }
+    }, [topicId, topicName]);
 
     const handleUseAiResult = () => {
         if (aiResult) {
