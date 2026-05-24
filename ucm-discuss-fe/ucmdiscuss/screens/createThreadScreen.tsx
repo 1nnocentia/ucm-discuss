@@ -219,7 +219,8 @@ const styles = StyleSheet.create({
     toolbar: { 
         flexDirection: 'row', 
         marginTop: 16, 
-        marginBottom: 32 
+        marginBottom: 32,
+        gap: 18,
     },
     toolbarIcon: { 
         marginRight: 16 

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from "@/context/ThemeContext";
@@ -13,12 +13,17 @@ import { UserHistory } from "@/models/user";
 export const profileScreen = () => {
     const { theme } = useTheme();
     const { user, userDetails, refreshUserDetails, loading: authLoading } = useAuth();
+    const [isAnonymous, setIsAnonymous] = useState(false);
 
     useEffect(() => {
         if (user && !userDetails) {
             refreshUserDetails();
         }
     }, [user, userDetails, refreshUserDetails]);
+
+    useEffect(() => {
+        setIsAnonymous(userDetails?.isAnonymous ?? false);
+    }, [userDetails?.isAnonymous]);
 
     const { data: historyData = [], isLoading: historyLoading, isError: historyError } = useQuery<UserHistory[]>({
         queryKey: ['profile-history', user?.id],
@@ -30,6 +35,7 @@ export const profileScreen = () => {
     });
 
     const handleAnonymousToggle = (isAnonymous: boolean) => {
+        setIsAnonymous(isAnonymous);
         console.log('Toggle anonymous:', isAnonymous);
     };
 
@@ -40,6 +46,7 @@ export const profileScreen = () => {
             <ScrollView
                 style={[styles.scrollContainer, { backgroundColor: theme.colors.background }]}
                 contentContainerStyle={[styles.scrollContent, { backgroundColor: theme.colors.background }]}
+                keyboardShouldPersistTaps="handled"
             >
                 {isLoading ? (
                     <View style={styles.centerContent}>
@@ -59,7 +66,7 @@ export const profileScreen = () => {
                         <ProfileCard 
                             user={{
                                 ...userDetails,
-                                isAnonymous: userDetails.isAnonymous ?? false,
+                                isAnonymous,
                             }} 
                             onAnonymousToggle={handleAnonymousToggle}
                         />

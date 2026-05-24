@@ -4,10 +4,10 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 import VoteButton from '@/components/buttons/voteButton';
-import { Comment } from '@/models/user';
+import { ThreadComment } from '@/models/user';
 
 interface ReplyItemProps {
-    reply: Comment;
+    reply: ThreadComment;
 }
 
 export default function ReplyItem({ reply }: ReplyItemProps) {
@@ -33,6 +33,10 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
                 <Text style={[styles.text, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
                     {reply.content}
                 </Text>
+
+                {reply.image && (
+                    <Image source={{ uri: reply.image }} style={styles.replyImage} resizeMode="contain" />
+                )}
 
                 <View style={styles.actions}>
                     <VoteButton initialVotes={reply.votes} />
@@ -84,5 +88,11 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 4, 
         borderRadius: 1 
+    },
+    replyImage: { 
+        width: '100%', 
+        height: 180, 
+        borderRadius: 8, 
+        marginBottom: 8 
     },
 });

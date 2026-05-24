@@ -61,6 +61,11 @@ public class CommentService {
         return commentRepository.findByThreadId(threadId).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+            attachment.setComment(comment);          // owning side
+            comment.setComment_attachment(attachment); // inverse side (cascade saves it)
+        }
+
+        return commentRepository.save(comment);
     }
 
     @Transactional
@@ -70,6 +75,8 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
+    // Fixed: uses JOIN FETCH so getUser() doesn't trigger LazyInitializationException
+    // when called from @PreAuthorize SpEL
     public boolean isOwner(Long commentId, String email) {
         return commentRepository.findByIdWithUser(commentId)
                 .map(comment -> comment.getUser() != null

@@ -14,11 +14,18 @@ import com.example.ucm_discuss_be.majors.MajorResponseDto;
 import com.example.ucm_discuss_be.faculties.FacultyRepository;
 import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
 
+// Security imports
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 // import com.example.ucm_discuss_be.majors.UserModel;
 // import com.example.ucm_discuss_be.majors.UserRepository;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
@@ -166,5 +173,23 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserModel user = userRepository.findByEmail(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+    
+        // Create a list of authorities based on whether the user is a lecturer
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        if (user.getIs_lecturer()) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_DOSEN"));
+        } else {
+            authorities.add(new SimpleGrantedAuthority("ROLE_MAHASISWA"));
+        }
+        
+        // Return a Spring Security User object
+        // The password is empty since you don't use passwords in your login flow
+        return new User(user.getEmail(), "", authorities);
     }
 }

@@ -4,11 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/context/ThemeContext';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { FlashList } from '@shopify/flash-list';
-import HomeThreadCard from '@/components/threadCard/detailedThreadCard';
 import { Post, TopicsData } from '@/models/user';
 import { ApiService } from '@/controllers/services/apiService';
 import HomePostCard from '@/components/threadCard/homePostCard';
 import Header from '@/components/header/header';
+import NewPostButton from '@/components/buttons/newPostButton';
 
 const TopicHeader = ({ 
     topicInfo, 
@@ -24,7 +24,7 @@ const TopicHeader = ({
     return (
             <View style={[styles.infoArea, { backgroundColor: theme.colors.lightSecondary + '44' }]}>
                 <Text style={[styles.topicTitle, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
-                    c/{topicInfo.name}
+                    t/ {topicInfo.name}
                 </Text>
 
                 <Text style={[styles.statsText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
@@ -34,6 +34,9 @@ const TopicHeader = ({
                 <Text style={[styles.description, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>
                     {topicInfo.description}
                 </Text>
+                <View style={styles.createThreadButton}>
+                    <NewPostButton currentTopic={topicInfo} />
+                </View>
             </View>
     );
 };
@@ -177,6 +180,12 @@ const styles = StyleSheet.create({
         paddingBottom: 18,
         borderBottomWidth: 1,
         borderBottomColor: 'rgba(255,255,255,0.1)',
+        flexDirection: 'column',
+        gap: 6,
+    },
+    createThreadButton: {
+        marginTop: 12,
+        alignSelf: 'flex-end',
     },
     topicTitle: {
         fontSize: 22,
@@ -191,4 +200,5 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 20,
     },
+    
 });
