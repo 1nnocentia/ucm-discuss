@@ -26,6 +26,8 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-api:0.13.0")
 	implementation("io.jsonwebtoken:jjwt-impl:0.13.0")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
+	implementation("com.cloudinary:cloudinary-http5:2.0.0")
+	implementation("com.cloudinary:cloudinary-taglib:2.0.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
