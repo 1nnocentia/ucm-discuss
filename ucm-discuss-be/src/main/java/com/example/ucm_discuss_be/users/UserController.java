@@ -1,6 +1,7 @@
 package com.example.ucm_discuss_be.users;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.ucm_discuss_be.responses.ApiResponse;
+import com.example.ucm_discuss_be.threads.ThreadModel;
+import com.example.ucm_discuss_be.threads.ThreadResponseDto;
+import com.example.ucm_discuss_be.threads.ThreadService;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -16,6 +22,9 @@ import jakarta.validation.Valid;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ThreadService threadService;
 
     @GetMapping
     public List<UserResponseDto> getAllUsers() {
@@ -52,6 +61,31 @@ public class UserController {
         UserModel user = userService.updateUser(id, userDetails);
         UserResponseDto response = userService.convertToResponse(user);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/me/anon")
+    public ResponseEntity<ApiResponse<UserResponseDto>> toggleAnonMode(@AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        UserResponseDto response = userService.toggleAnonMode(email);
+        return ResponseEntity.ok(ApiResponse.success(response, "Anonymous mode toggled"));
+    }
+
+    // NEW for Card 11
+    @GetMapping("/me/viewed-threads")
+    public ResponseEntity<ApiResponse<List<ThreadResponseDto>>> getRecentlyVisitedThreads(
+            @AuthenticationPrincipal Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = jwt.getClaimAsString("email");
+        List<ThreadModel> threads = userService.getRecentlyVisitedThreads(email);
+        List<ThreadResponseDto> response = threads.stream()
+                .map(threadService::convertToResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(ApiResponse.success(response, "Recently visited threads retrieved"));
     }
 
     @DeleteMapping("/{id}")

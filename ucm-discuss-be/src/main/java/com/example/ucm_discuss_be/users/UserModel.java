@@ -13,6 +13,7 @@ import com.example.ucm_discuss_be.notifications.NotificationModel;
 import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.userVotesComment.UserVotesCommentModel;
 import com.example.ucm_discuss_be.userVotesThread.UserVotesThreadModel;
+import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -183,19 +184,12 @@ public class UserModel {
     )
     private List<CourseModel> courses;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "user_views_thread",
-        joinColumns = @JoinColumn(
-            name = "user_id",
-            referencedColumnName = "id"
-        ),
-        inverseJoinColumns = @JoinColumn(
-            name = "thread_id",
-            referencedColumnName = "id"
-        )
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
     )
-    private List<ThreadModel> viewed_threads;
+    private List<UserViewedThreadModel> viewed_threads;
 
     @CreationTimestamp
     @Column(
