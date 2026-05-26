@@ -10,17 +10,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @JsonPropertyOrder({
-    "id", "content", "vote_count", "asked_ai", "is_anon",
-    "created_at", "user", "file_url", "file_type"
+    "id", "content", "vote_count", "asked_ai", "is_anon", "image", 
+    "created_at", "user"
 })
 public class CommentResponseDto {
     private Long id;
     private String content;
     private int vote_count;
+    private String image;
     private Boolean asked_ai;
     private Boolean is_anon;
     private LocalDateTime created_at;
     private UserResponseDto user;
-    private String file_url;
-    private String file_type;
 }

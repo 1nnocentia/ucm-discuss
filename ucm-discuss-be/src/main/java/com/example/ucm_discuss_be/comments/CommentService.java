@@ -1,6 +1,6 @@
 package com.example.ucm_discuss_be.comments;
 
-import com.example.ucm_discuss_be.commentAttachments.CommentAttachmentModel;
+// import com.example.ucm_discuss_be.commentAttachments.CommentAttachmentModel;
 import com.example.ucm_discuss_be.exceptions.BusinessException;
 import com.example.ucm_discuss_be.exceptions.ResourceNotFoundException;
 import com.example.ucm_discuss_be.notifications.NotificationService;
@@ -56,14 +56,15 @@ public class CommentService {
         comment.setVote_count(0);
         comment.setUser(user);
         comment.setThread(thread);
+        comment.setImage(dto.getImage());
 
-        if (dto.getFileUrl() != null && !dto.getFileUrl().isBlank()) {
-            CommentAttachmentModel attachment = new CommentAttachmentModel();
-            attachment.setFile_url(dto.getFileUrl());
-            attachment.setFile_type(dto.getFileType() != null ? dto.getFileType() : "image");
-            attachment.setComment(comment);
-            comment.setComment_attachment(attachment);
-        }
+        // if (dto.getFileUrl() != null && !dto.getFileUrl().isBlank()) {
+        //     CommentAttachmentModel attachment = new CommentAttachmentModel();
+        //     attachment.setFile_url(dto.getFileUrl());
+        //     attachment.setFile_type(dto.getFileType() != null ? dto.getFileType() : "image");
+        //     attachment.setComment(comment);
+        //     comment.setComment_attachment(attachment);
+        // }
 
         CommentModel saved = commentRepository.save(comment);
 
@@ -179,15 +180,16 @@ public class CommentService {
         dto.setAsked_ai(comment.getAsked_ai());
         dto.setIs_anon(comment.getIs_anon());
         dto.setCreated_at(comment.getCreated_at());
+        dto.setImage(comment.getImage());
 
         if (comment.getUser() != null) {
             dto.setUser(userService.convertToResponse(comment.getUser()));
         }
 
-        if (comment.getComment_attachment() != null) {
-            dto.setFile_url(comment.getComment_attachment().getFile_url());
-            dto.setFile_type(comment.getComment_attachment().getFile_type());
-        }
+        // if (comment.getComment_attachment() != null) {
+        //     dto.setFile_url(comment.getComment_attachment().getFile_url());
+        //     dto.setFile_type(comment.getComment_attachment().getFile_type());
+        // }
 
         return dto;
     }

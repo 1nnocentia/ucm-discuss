@@ -25,4 +25,11 @@ public class ThreadCreationDto {
 
     @NotNull(message = "Course ID is required")
     private Long courseId;
+
+    // Optional: attach 1 image when creating a thread
+    @Size(
+        max = 1000,
+        message = "Image URL must be at most 1000 characters"
+    )
+    private String image;
 }
