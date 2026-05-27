@@ -1,9 +1,10 @@
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 import UploadImg from '../buttons/uploadImg';
 import { useImageManipulator } from 'expo-image-manipulator';
+import ZoomableImage from '@/components/common/zoomableImage';
 
 type TypingSpaceProps = {
     onSendComment?: (commentText: string, imageUri:string|null) => void;
@@ -55,7 +56,7 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
             {postImage && (
                 <View style={[styles.mainWrapper, styles.imagePreviewWrapper, {borderTopColor: theme.colors.textSecondary + '33' }]}>
                     <View style={styles.imagePreviewContainer}>
-                        <Image source={{ uri: postImage }} style={styles.imagePreview} />
+                        <ZoomableImage uri={postImage} style={styles.imagePreview} resizeMode="cover" />
                         <TouchableOpacity 
                             style={styles.removeImageBtn} 
                             onPress={() => setPostImage(null)}
