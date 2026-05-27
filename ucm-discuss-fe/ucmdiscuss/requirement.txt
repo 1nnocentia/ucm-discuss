@@ -17,3 +17,5 @@ npx expo install @tanstack/react-query
 npx expo install react-native-auth0
 
 npx expo install @google/genai
+
+npm install --save react-native-image-viewing
