@@ -1,9 +1,10 @@
 // src/components/lists/CommentItem.tsx
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import VoteButton from '@/components/buttons/voteButton';
 import ReplyItem from '@/components/threadDiscussion/replyItem';
+import ZoomableImage from '@/components/common/zoomableImage';
 import { ThreadComment } from '@/models/user';
 
 interface CommentItemProps {
@@ -28,8 +29,8 @@ export default function CommentItem({ comment, onReplyPress }: CommentItemProps)
                     </View>
 
                     {comment.image && (
-                        <Image
-                            source={{ uri: comment.image }}
+                        <ZoomableImage
+                            uri={comment.image}
                             style={styles.commentImage}
                             resizeMode="contain"
                         />

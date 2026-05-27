@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
@@ -16,6 +16,7 @@ import { AuthorSnippet } from '@/models/user';
 import { ApiService } from '@/controllers/services/apiService';
 import { useAuth } from '@/context/AuthContext';
 import { useLocalSearchParams } from 'expo-router';
+import ZoomableImage from '@/components/common/zoomableImage';
 
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
@@ -29,7 +30,7 @@ export default function CreateThreadScreen() {
     const [content, setContent] = useState('');
     const [isAnonymous, setIsAnonymous] = useState(userDetails?.isAnonymous ?? false);
     const [postImage, setPostImage] = useState<string | null>(null);
-    const [aiResult, setAiResult] = useState<{ question: string; answer: string } | null>(null);
+    const [aiResult, setAiResult] = useState<{ question: string; answer: string; isUsed?: boolean } | null>(null);
 
     const imageContext = useImageManipulator(postImage || '');
     const contentInputRef = useRef<TextInput | null>(null);
@@ -53,9 +54,9 @@ export default function CreateThreadScreen() {
 
     const handleUseAiResult = () => {
         if (aiResult) {
-            const aiFormatted = `\n\n[AI Insight]\nQ: ${aiResult.question}\nA: ${aiResult.answer}`;
-            setContent(prev => prev + aiFormatted);
-            setAiResult(null);
+            // const aiFormatted = `\n\n[AI Insight]\nQ: ${aiResult.question}\nA: ${aiResult.answer}`;
+            // setContent(prev => prev + aiFormatted);
+            setAiResult({ ...aiResult, isUsed: true });
             contentInputRef.current?.focus();
         }
     };
@@ -161,11 +162,7 @@ export default function CreateThreadScreen() {
                         
                         {postImage && (
                             <View style={styles.imagePreviewContainer}>
-                                <Image 
-                                    source={{ uri: postImage }} 
-                                    style={styles.imagePreview} 
-                                    resizeMode="cover"
-                                />
+                                <ZoomableImage uri={postImage} style={styles.imagePreview} resizeMode="cover" />
                                 <TouchableOpacity 
                                     style={[styles.removeImageBtn, { backgroundColor: 'rgba(0,0,0,0.6)' }]} 
                                     onPress={() => setPostImage(null)}
@@ -174,17 +171,6 @@ export default function CreateThreadScreen() {
                                 </TouchableOpacity>
                             </View>
                         )}
-
-                        <TextInput
-                            ref={contentInputRef}
-                            style={[styles.contentInput, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}
-                            placeholder={`Before you post, please make sure to:\n1. Add a clear title that describe your question.\n2. Add all required option below (Course name and Topic)\n3. Write a detailed description of your issue\n\nNote: Screenshots are welcome, but please do not posts full assignment.`}
-                            placeholderTextColor={theme.colors.textSecondary}
-                            multiline
-                            textAlignVertical="top"
-                            value={content}
-                            onChangeText={setContent}
-                        />
 
                         {aiResult && (
                             <View style={[styles.aiResultContainer, { borderColor: theme.colors.primary + '44', backgroundColor: theme.colors.primary + '11' }]}>
@@ -203,11 +189,12 @@ export default function CreateThreadScreen() {
                                         {aiResult.answer}
                                     </Text>
                                 </View>
-                                <View style={styles.aiResultActions}>
-                                    <TouchableOpacity 
-                                        style={[styles.aiActionBtn, { backgroundColor: theme.colors.primary }]}
-                                        onPress={handleUseAiResult}
-                                    >
+                                {!aiResult.isUsed && (
+                                    <View style={styles.aiResultActions}>
+                                        <TouchableOpacity 
+                                            style={[styles.aiActionBtn, { backgroundColor: theme.colors.primary }]}
+                                            onPress={handleUseAiResult}
+                                        >
                                         <Ionicons name="checkmark" size={16} color="#FFF" style={{ marginRight: 4 }} />
                                         <Text style={[styles.aiActionText, { color: '#FFF' }]}>Use</Text>
                                     </TouchableOpacity>
@@ -220,8 +207,22 @@ export default function CreateThreadScreen() {
                                         <Text style={[styles.aiActionText, { color: theme.colors.textSecondary }]}>Dismiss</Text>
                                     </TouchableOpacity>
                                 </View>
+                                )}
                             </View>
                         )}
+
+                        <TextInput
+                            ref={contentInputRef}
+                            style={[styles.contentInput, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}
+                            placeholder={`Before you post, please make sure to:\n1. Add a clear title that describe your question.\n2. Add all required option below (Course name and Topic)\n3. Write a detailed description of your issue\n\nNote: Screenshots are welcome, but please do not posts full assignment.`}
+                            placeholderTextColor={theme.colors.textSecondary}
+                            multiline
+                            textAlignVertical="top"
+                            value={content}
+                            onChangeText={setContent}
+                        />
+
+                        
                         
                         <View style={styles.toolbar}>
                             <UploadImg 
