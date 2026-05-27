@@ -3,7 +3,7 @@ import React from 'react'
 import { useTheme } from '@/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 
-type AIVariant = 'post' | 'comment' | 'reply';
+type AIVariant = 'post' | 'comment' | 'reply' | 'onCreate';
 
 interface AICardProps {
     variant: AIVariant;
@@ -38,6 +38,14 @@ export default function AICard({ variant, style }: AICardProps) {
                     fontSize: 10,
                     iconSize: 12,
                     borderRadius: 4,
+                };
+            case 'onCreate':
+                return {
+                    paddingVertical: 6,
+                    paddingHorizontal: 12,
+                    fontSize: 12,
+                    iconSize: 16,
+                    borderRadius: 8,
                 };
         }
     }

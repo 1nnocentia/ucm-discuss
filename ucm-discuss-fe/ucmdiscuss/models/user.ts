@@ -39,6 +39,7 @@ export interface Post  {
     topic: Topics;
     user: AuthorSnippet;
     userVoteStatus?: boolean;
+    aiInteraction?: AiInteraction;
 }
 
 export interface ThreadComment {
@@ -52,6 +53,7 @@ export interface ThreadComment {
     user: AuthorSnippet;
     userVoteStatus?: boolean;
     replies?: ThreadComment[];
+    aiInteraction?: AiInteraction;
 }
 
 export interface CreatePostInput {
@@ -107,6 +109,13 @@ export interface TopicDetail extends Topics {
     description: string;
     status: 'current' | 'past';
     discussionCount: number;
+}
+
+export interface AiInteraction {
+    actorName: AuthorSnippet;
+    question: string;
+    answer: string | null;
+    isGenerating: boolean;
 }
 
 export type FilterType = 'all' | 'current' | 'past';

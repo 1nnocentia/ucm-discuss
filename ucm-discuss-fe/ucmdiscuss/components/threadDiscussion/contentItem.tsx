@@ -1,13 +1,10 @@
 // src/components/lists/CommentItem.tsx
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
 import VoteButton from '@/components/buttons/voteButton';
 import ReplyItem from '@/components/threadDiscussion/replyItem';
 import { ThreadComment } from '@/models/user';
-
-
 
 interface CommentItemProps {
     comment: ThreadComment;
@@ -29,6 +26,14 @@ export default function CommentItem({ comment, onReplyPress }: CommentItemProps)
                         </Text>
                         <Text style={[styles.metaText, { color: theme.colors.textSecondary }]}>• {comment.createdAt}</Text>
                     </View>
+
+                    {comment.image && (
+                        <Image
+                            source={{ uri: comment.image }}
+                            style={styles.commentImage}
+                            resizeMode="contain"
+                        />
+                    )}
 
                     <Text style={[styles.text, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
                         {comment.content}
@@ -60,7 +65,8 @@ const styles = StyleSheet.create({
     container: { 
         paddingHorizontal: 16,
         paddingVertical: 12, 
-        borderBottomWidth: 0.5 
+        borderBottomWidth: 0.5,
+        flex: 1
     },
     mainCommentRow: { 
         flexDirection: 'row' 
@@ -86,6 +92,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 20, 
         marginBottom: 8 
+    },
+    commentImage: {
+        width: '100%',
+        height: 180,
+        borderRadius: 8,
+        marginBottom: 8,
     },
     
     actions: { 

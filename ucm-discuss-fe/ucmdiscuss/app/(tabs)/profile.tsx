@@ -34,10 +34,16 @@ export const profileScreen = () => {
         enabled: !!user?.id,
     });
 
-    const handleAnonymousToggle = (isAnonymous: boolean) => {
-        setIsAnonymous(isAnonymous);
-        console.log('Toggle anonymous:', isAnonymous);
-    };
+    // const handleAnonymousToggle = (isAnonymous: boolean) => {
+    //     setIsAnonymous(isAnonymous);
+    //     console.log('Toggle anonymous:', isAnonymous);
+    // };
+    
+    const handleAnonymousToggle = (value: boolean) => {
+        setIsAnonymous(value);
+        console.log('Global anon status diubah menjadi:', value);
+    }
+
 
     const isLoading = authLoading || historyLoading;
 
