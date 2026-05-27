@@ -6,6 +6,7 @@ import VoteButton from '../buttons/voteButton';
 import CommentButton from '../buttons/commentButton';
 import { useRouter } from 'expo-router';
 import ZoomableImage from '@/components/common/zoomableImage';
+import AICard from '@/components/threadCard/aiCard';
 
 interface HomePostCardProps {
     post: Post;
@@ -55,6 +56,9 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
             <Text style={[styles.title, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
                 {post.title}
             </Text>
+            {post.aiInteraction && (
+                <AICard variant="post" />
+            )}
             
             {post.image && (
                 <ZoomableImage uri={post.image} style={styles.postImage} resizeMode="cover" />

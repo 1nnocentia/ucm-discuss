@@ -5,6 +5,7 @@ import { Post } from '@/models/user';
 import VoteButton from '../buttons/voteButton';
 import CommentButton from '../buttons/commentButton';
 import ZoomableImage from '@/components/common/zoomableImage';
+import AICard from '@/components/threadCard/aiCard';
 
 interface DetailedThreadCardProps {
     post: Post;
@@ -40,6 +41,10 @@ export default function DetailedThreadCard({ post, onCommentPress }: DetailedThr
             
             {post.image && (
                 <ZoomableImage uri={post.image} style={styles.postImage} resizeMode="contain" />
+            )}
+
+            {post.aiInteraction && (
+                <AICard variant="post" style={{ marginBottom: 8 }} />
             )}
 
             {post.description && (
