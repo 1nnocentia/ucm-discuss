@@ -8,9 +8,11 @@ type AIVariant = 'post' | 'comment' | 'reply' | 'onCreate';
 interface AICardProps {
     variant: AIVariant;
     style?: StyleProp<ViewStyle>;
+    question?: string | null;
+    answer?: string | null;
 }
 
-export default function AICard({ variant, style }: AICardProps) {
+export default function AICard({ variant, style, question, answer }: AICardProps) {
     const { theme } = useTheme();
     
     const getVariantConfig = (variant: AIVariant) => {
@@ -54,45 +56,74 @@ export default function AICard({ variant, style }: AICardProps) {
 
     return (
         <View style={[
-            styles.container,
+            styles.boxContainer,
             {
-                backgroundColor: theme.colors.primary + '11', 
-                
-                borderColor: theme.colors.primary + '44',
+                backgroundColor: theme.colors.primary + '22',
+                borderColor: theme.colors.primary + '33',
                 borderRadius: config.borderRadius,
-                paddingVertical: config.paddingVertical,
-                paddingHorizontal: config.paddingHorizontal,
-                
-                shadowColor: theme.colors.primary,
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.3,
-                shadowRadius: 4,
-                
-                elevation: 3,
+                padding: config.paddingVertical * 1.5,
             },
             style
         ]}>
-            <Ionicons 
-                name="sparkles"
-                size={config.iconSize} 
-                color={theme.colors.primary} 
-                style={styles.icon} 
-            />
-            <Text style={[
-                styles.text, 
-                { 
-                    color: theme.colors.primary, 
-                    fontSize: config.fontSize,
-                    fontFamily: theme.fonts.montserrat 
-                }
+            <View style={[
+                styles.container,
+                {
+                    backgroundColor: theme.colors.primary + '11', 
+                    
+                    borderColor: theme.colors.primary + '44',
+                    borderRadius: config.borderRadius,
+                    paddingVertical: config.paddingVertical,
+                    paddingHorizontal: config.paddingHorizontal,
+                    
+                    // shadowColor: theme.colors.primary,
+                    // shadowOffset: { width: 0, height: 2 },
+                    // shadowOpacity: 0.3,
+                    // shadowRadius: 4,
+                    
+                    // elevation: 3,
+                },
+                // style
             ]}>
-                AI Generated
-            </Text>
+                <Ionicons 
+                    name="sparkles"
+                    size={config.iconSize} 
+                    color={theme.colors.primary} 
+                    style={styles.icon} 
+                />
+                <Text style={[
+                    styles.text, 
+                    { 
+                        color: theme.colors.primary, 
+                        fontSize: config.fontSize,
+                        fontFamily: theme.fonts.montserrat 
+                    }
+                ]}>
+                    AI Generated
+                </Text>
+            </View>
+            {(question || answer) && (
+                    <View style={styles.qaContainer}>
+                        {question ? (
+                            <Text style={[styles.questionText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]} numberOfLines={2}>
+                                Q: {question}
+                            </Text>
+                        ) : null}
+                        {answer ? (
+                            <Text style={[styles.answerText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]} numberOfLines={2}>
+                                A: {answer}
+                            </Text>
+                        ) : null}
+                    </View>
+                )}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+    boxContainer: {
+        flexDirection: 'column',
+        // alignSelf: 'flex-start',
+    },
     container: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -104,5 +135,19 @@ const styles = StyleSheet.create({
     },
     text: {
         fontWeight: 'bold',
+    }
+    ,
+    qaContainer: {
+        marginLeft: 8,
+        marginTop: 6,
+        maxWidth: 420,
+    },
+    questionText: {
+        fontSize: 13,
+        fontWeight: '600',
+    },
+    answerText: {
+        fontSize: 13,
+        marginTop: 2,
     }
 })

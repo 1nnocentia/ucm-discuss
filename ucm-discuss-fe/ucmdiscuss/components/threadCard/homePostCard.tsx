@@ -57,7 +57,12 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
                 {post.title}
             </Text>
             {post.aiInteraction && (
-                <AICard variant="post" />
+                <AICard 
+                    variant="post" 
+                    question={post.aiInteraction.question}
+                    answer={post.aiInteraction.answer}
+                    style={{ marginBottom: 8 }}
+                />
             )}
             
             {post.image && (
