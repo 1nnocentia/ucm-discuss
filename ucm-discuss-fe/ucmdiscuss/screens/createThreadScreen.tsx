@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
@@ -16,6 +16,7 @@ import { AuthorSnippet } from '@/models/user';
 import { ApiService } from '@/controllers/services/apiService';
 import { useAuth } from '@/context/AuthContext';
 import { useLocalSearchParams } from 'expo-router';
+import ZoomableImage from '@/components/common/zoomableImage';
 
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
@@ -161,11 +162,7 @@ export default function CreateThreadScreen() {
                         
                         {postImage && (
                             <View style={styles.imagePreviewContainer}>
-                                <Image 
-                                    source={{ uri: postImage }} 
-                                    style={styles.imagePreview} 
-                                    resizeMode="cover"
-                                />
+                                <ZoomableImage uri={postImage} style={styles.imagePreview} resizeMode="cover" />
                                 <TouchableOpacity 
                                     style={[styles.removeImageBtn, { backgroundColor: 'rgba(0,0,0,0.6)' }]} 
                                     onPress={() => setPostImage(null)}
