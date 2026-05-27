@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
     "content",
     "vote_count",
     "is_anon",
+    "image",
     "createdAt",
     "user",
     "course"
@@ -26,6 +27,7 @@ public class ThreadResponseDto {
     private String content;
     private int vote_count;
     private Boolean is_anon;
+    private String image;
     private LocalDateTime createdAt;
     private UserResponseDto user;
     private CourseResponseDto course;

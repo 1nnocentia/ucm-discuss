@@ -88,6 +88,8 @@ public class ThreadService {
         thread.setUser(user);
         thread.setCourse(course);
 
+        thread.setImage(dto.getImage());
+
         return threadRepository.save(thread);
     }
 
@@ -206,6 +208,7 @@ public class ThreadService {
         dto.setVote_count(thread.getVote_count());
         dto.setIs_anon(thread.getIs_anon());
         dto.setCreatedAt(thread.getCreatedAt());
+        dto.setImage(thread.getImage());
 
         if (thread.getUser() != null) {
             dto.setUser(userService.convertToResponse(thread.getUser()));

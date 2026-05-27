@@ -23,6 +23,9 @@ public class CommentCreationDto {
     private Long userId;
 
     // Optional: attach 1 image when creating a comment
-    private String fileUrl;
-    private String fileType;
+    @Size(
+        max = 1000,
+        message = "Image URL must be at most 1000 characters"
+    )
+    private String image;
 }

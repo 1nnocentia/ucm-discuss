@@ -7,7 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.example.ucm_discuss_be.comments.CommentModel;
 import com.example.ucm_discuss_be.courses.CourseModel;
-import com.example.ucm_discuss_be.threadAttachments.ThreadAttachmentModel;
+// import com.example.ucm_discuss_be.threadAttachments.ThreadAttachmentModel;
 import com.example.ucm_discuss_be.userVotesThread.UserVotesThreadModel;
 import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadModel;
 import com.example.ucm_discuss_be.users.UserModel;
@@ -27,7 +27,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+// import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import jakarta.validation.constraints.Min;
@@ -73,6 +73,17 @@ public class ThreadModel {
         length = 10000
     )
     private String content;
+
+    @Size(
+        max = 1000,
+        message = "Image URL must be at most 1000 characters"
+    )
+    @Column(
+        name = "image",
+        nullable = true,
+        length = 1000
+    )
+    private String image;
 
     @Min(
         value = 0,
@@ -121,13 +132,13 @@ public class ThreadModel {
     )
     private List<UserVotesThreadModel> user_votes_threads;
 
-    @OneToOne(
-        mappedBy = "thread",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
-    private ThreadAttachmentModel thread_attachment;
+    // @OneToOne(
+    //     mappedBy = "thread",
+    //     cascade = CascadeType.ALL,
+    //     orphanRemoval = true,
+    //     fetch = FetchType.LAZY
+    // )
+    // private ThreadAttachmentModel thread_attachment;
 
     // REFACTORED for Card 11: replaced @ManyToMany with @OneToMany entity
     @OneToMany(

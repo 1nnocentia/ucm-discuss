@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.example.ucm_discuss_be.commentAttachments.CommentAttachmentModel;
+// import com.example.ucm_discuss_be.commentAttachments.CommentAttachmentModel;
 import com.example.ucm_discuss_be.notifications.NotificationModel;
 import com.example.ucm_discuss_be.replies.ReplyModel;
 import com.example.ucm_discuss_be.threads.ThreadModel;
@@ -61,6 +61,17 @@ public class CommentModel {
         length = 5000
     )
     private String content;
+
+    @Size(
+        max = 1000,
+        message = "Image URL must be at most 1000 characters"
+    )
+    @Column(
+        name = "image",
+        nullable = true,
+        length = 1000
+    )
+    private String image;
 
     @Min(
         value = 0,
@@ -115,14 +126,15 @@ public class CommentModel {
         orphanRemoval = true
     )
     private List<NotificationModel> notifications;
+    
 
-    @OneToOne(
-        mappedBy = "comment",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
-    private CommentAttachmentModel comment_attachment;
+    // @OneToOne(
+    //     mappedBy = "comment",
+    //     cascade = CascadeType.ALL,
+    //     orphanRemoval = true,
+    //     fetch = FetchType.LAZY
+    // )
+    // private CommentAttachmentModel comment_attachment;
 
     // Reply transient table relationship
     @OneToOne(
