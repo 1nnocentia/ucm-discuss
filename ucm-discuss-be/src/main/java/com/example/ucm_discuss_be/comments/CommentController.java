@@ -1,17 +1,23 @@
 package com.example.ucm_discuss_be.comments;
 
+import com.example.ucm_discuss_be.cloudinary.CloudinaryUploadService;
 import com.example.ucm_discuss_be.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 // import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.print.attribute.standard.Media;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -20,14 +26,33 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @PostMapping
+    @Autowired
+    private CloudinaryUploadService uploadService;
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
-            @Valid @RequestBody CommentCreationDto request) {
+            @Valid @ModelAttribute CommentCreationDto request,
+            @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+
+        if (file !=null && !file.isEmpty()) {
+            String imageUrl = uploadService.uploadImage(file);
+            request.setImage(imageUrl);
+        }
+                
         CommentModel created = commentService.saveComment(request);
         CommentResponseDto response = commentService.convertToResponse(created);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(response, "Comment created"));
     }
+
+    // @PostMapping
+    // public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
+    //         @Valid @RequestBody CommentCreationDto request) {
+    //     CommentModel created = commentService.saveComment(request);
+    //     CommentResponseDto response = commentService.convertToResponse(created);
+    //     return ResponseEntity.status(HttpStatus.CREATED)
+    //             .body(ApiResponse.success(response, "Comment created"));
+    // }
 
     @GetMapping("/thread/{threadId}")
     public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getCommentsByThread(
