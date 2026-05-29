@@ -49,14 +49,14 @@ export const HomeHeader = ({ isSearchActive, onOpenSearch, onCloseSearch, search
     <View style={[styles.container, { backgroundColor: theme.colors.primary }]}>
 
       {/* Logo */}
-        <Text style={[styles.title, { color: theme.colors.background }]}>
+        <Text style={[styles.title, { color: theme.colors.logo }]}>
           UCM Discuss
         </Text>
 
       {/* Search */}
       <View style={styles.rightContainer}>
         <TouchableOpacity onPress={onOpenSearch} style={styles.triggerBtn}>
-          <Ionicons name="search-outline" size={24} color={theme.colors.icon} />
+          <Ionicons name="search-outline" size={24} color={theme.colors.logo} />
         </TouchableOpacity>
       </View>
     </View>
