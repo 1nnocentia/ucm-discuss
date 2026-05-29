@@ -4,6 +4,22 @@ import { findAndMutateCommentVote } from '@/utils/voteHelper';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+const normalizeAiInteraction = (value: CreatePostInput['aiInteraction']) => {
+    if (!value) {
+        return undefined;
+    }
+
+    if (typeof value === 'string') {
+        try {
+            return JSON.parse(value);
+        } catch {
+            return undefined;
+        }
+    }
+
+    return value;
+};
+
 export const ApiMock = {
     getMockLoginSeed: () => ({
         email: 'student@ucm.ac.id',
@@ -70,6 +86,7 @@ export const ApiMock = {
             title: payload.title,
             description: payload.description,
             image: payload.image || null,
+            aiInteraction: normalizeAiInteraction(payload.aiInteraction),
             createdAt: 'Baru saja',
             votes: 0,
             comments: 0,

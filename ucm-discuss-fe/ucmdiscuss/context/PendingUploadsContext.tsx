@@ -15,6 +15,7 @@ interface PendingUploadsContextType {
     isReady: boolean;
     addLocalPost: (post: Omit<LocalFeedPost, 'syncStatus' | 'retryAvailableAt' | 'retryCount' | 'lastError' | 'createdAtTimestamp'> & { retryAvailableAt?: number; createdAtTimestamp?: number }) => Promise<void>;
     updateLocalPost: (id: string, updates: Partial<LocalFeedPost>) => Promise<void>;
+    replaceLocalPost: (id: string, nextPost: LocalFeedPost) => Promise<void>;
     removeLocalPost: (id: string) => Promise<void>;
     markPostPublished: (id: string) => Promise<void>;
     markPostRetryable: (id: string, error?: string) => Promise<void>;
@@ -99,6 +100,15 @@ export const PendingUploadsProvider: FC<{ children: ReactNode }> = ({ children }
         [modifyPosts]
     );
 
+    const replaceLocalPost = useCallback(
+        async (id: string, nextPost: LocalFeedPost) => {
+            await modifyPosts((prev) => 
+                prev.map((post) => (post.id === id ? nextPost : post))
+            );
+        },
+        [modifyPosts]
+    );
+
     const removeLocalPost = useCallback(
         async (id: string) => {
             await modifyPosts((prev) => prev.filter((post) => post.id !== id));
@@ -144,6 +154,7 @@ export const PendingUploadsProvider: FC<{ children: ReactNode }> = ({ children }
                 isReady,
                 addLocalPost,
                 updateLocalPost,
+                replaceLocalPost,
                 removeLocalPost,
                 markPostPublished,
                 markPostRetryable,
