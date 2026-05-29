@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.security.autoconfigure.SecurityProperties.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -61,11 +62,11 @@ public class ThreadController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<List<ThreadResponseDto>>> getMyThreads(
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         List<ThreadResponseDto> threads = threadService.getMyThreads(email);
         return ResponseEntity.ok(ApiResponse.success(threads, "My threads retrieved"));
     }
