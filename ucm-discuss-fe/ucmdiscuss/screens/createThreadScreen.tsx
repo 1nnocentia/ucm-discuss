@@ -12,7 +12,7 @@ import AICard from '@/components/threadCard/aiCard';
 import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
 import TopicSelector from '@/components/topic/topicSelector';
 import { RETRY_COOLDOWN_MS, usePendingUploads } from '@/context/PendingUploadsContext';
-import { AuthorSnippet } from '@/models/user';
+import { AuthorSnippet, Post } from '@/models/user';
 import { ApiService } from '@/controllers/services/apiService';
 import { useAuth } from '@/context/AuthContext';
 import { useLocalSearchParams } from 'expo-router';
@@ -23,7 +23,7 @@ export default function CreateThreadScreen() {
     const router = useRouter();
     const { topicId, topicName } = useLocalSearchParams<{ topicId?: string; topicName?: string }>();
     const { user, userDetails } = useAuth();
-    const { addLocalPost, markPostPublished, markPostRetryable } = usePendingUploads();
+    const { addLocalPost, replaceLocalPost, markPostRetryable } = usePendingUploads();
 
     const [selectedTopic, setSelectedTopic] = useState<{ id: string, name: string } | null>(null);
     const [title, setTitle] = useState('');
@@ -120,7 +120,7 @@ export default function CreateThreadScreen() {
             try {
                 const payload = {
                     title: title,
-                    description: content.trim() === ' ' ? null : content,
+                    description: content.trim() === '' ? null : content.trim(),
                     image: finalImageUri,
                     topicId: selectedTopic!.id,
                     isAnonymous: isAnonymous,
@@ -131,8 +131,20 @@ export default function CreateThreadScreen() {
                         isGenerating: false,
                     } : undefined,
                 };
-                await ApiService.createPost(payload);
-                await markPostPublished(localPostId);
+                const createdPost = await ApiService.createPost(payload);
+                const publishedPost: Post = {
+                    ...createdPost,
+                    aiInteraction: createdPost.aiInteraction ?? payload.aiInteraction ?? undefined,
+                };
+
+                await replaceLocalPost(localPostId, {
+                    ...publishedPost,
+                    syncStatus: 'published',
+                    retryAvailableAt: Date.now(),
+                    retryCount: 0,
+                    lastError: null,
+                    createdAtTimestamp: Date.now(),
+                });
                 console.log("Thread background upload sukses!");
             } catch (error) {
                 await markPostRetryable(localPostId, error instanceof Error ? error.message : 'Upload gagal');

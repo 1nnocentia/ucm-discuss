@@ -76,7 +76,12 @@ export default function homeScreen() {
             });
         };
 
-        return [...pendingLocalPosts, ...sortByHomeRanking([...publishedLocalPosts, ...posts])];
+        const mergedPublishedPosts = sortByHomeRanking([...publishedLocalPosts, ...posts]);
+        const dedupedPublishedPosts = mergedPublishedPosts.filter((post, index, array) => {
+            return array.findIndex((candidate) => candidate.id === post.id) === index;
+        });
+
+        return [...pendingLocalPosts, ...dedupedPublishedPosts];
     }, [localPosts, posts]);
 
     const pendingBannerPost = useMemo(() => {
@@ -183,7 +188,7 @@ export default function homeScreen() {
                                     localPost.syncStatus === 'published' ? 'Thread lokal' : 'Thread masih upload',
                                     localPost.syncStatus === 'published'
                                         ? 'Thread ini dibuat dari draft lokal.'
-                                        : 'Thread ini sudah tampil di home dan sedang menunggu upload selesai.'
+                                        : 'Thread sedang menunggu upload selesai.'
                                 );
                                 return;
                             }

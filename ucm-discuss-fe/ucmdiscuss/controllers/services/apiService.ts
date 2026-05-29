@@ -4,6 +4,69 @@ import { CreatePostInput, CreateCommentInput, ProfileCardData, UserHistory, Topi
 
 const USE_MOCK_DATA = true; 
 
+const buildImagePart = (imageUri?: string | null) => {
+    if (!imageUri) {
+        return null;
+    }
+
+    const fileName = imageUri.split('/').pop() || `image-${Date.now()}.jpg`;
+    const fileExtension = fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() : 'jpg';
+    const mimeType = fileExtension === 'png'
+        ? 'image/png'
+        : fileExtension === 'webp'
+            ? 'image/webp'
+            : 'image/jpeg';
+
+    return {
+        uri: imageUri,
+        name: fileName,
+        type: mimeType,
+    } as any;
+};
+
+const appendJsonField = (formData: FormData, key: string, value?: unknown) => {
+    if (value === undefined || value === null) {
+        return;
+    }
+
+    formData.append(key, JSON.stringify(value));
+};
+
+const toMultipartPostFormData = (payload: CreatePostInput) => {
+    const formData = new FormData();
+    formData.append('title', payload.title);
+    formData.append('description', payload.description ?? '');
+    formData.append('topicId', payload.topicId);
+    formData.append('isAnonymous', String(payload.isAnonymous));
+
+    appendJsonField(formData, 'aiInteraction', payload.aiInteraction);
+
+    const imagePart = buildImagePart(payload.image ?? null);
+    if (imagePart) {
+        formData.append('image', imagePart);
+    }
+
+    return formData;
+};
+
+const toMultipartCommentFormData = (payload: CreateCommentInput) => {
+    const formData = new FormData();
+    formData.append('postId', payload.postId);
+    formData.append('content', payload.content);
+    formData.append('isAnonymous', String(payload.isAnonymous));
+
+    if (payload.parentCommentId) {
+        formData.append('parentCommentId', payload.parentCommentId);
+    }
+
+    const imagePart = buildImagePart(payload.image ?? null);
+    if (imagePart) {
+        formData.append('image', imagePart);
+    }
+
+    return formData;
+};
+
 export const ApiService = {
     isMockMode: () => USE_MOCK_DATA,
 
@@ -30,7 +93,11 @@ export const ApiService = {
     createPost: async (payload: CreatePostInput) => {
         if (USE_MOCK_DATA) return ApiMock.createPost(payload);
 
-        const response = await apiClient.post('/posts', payload);
+        const response = await apiClient.post('/posts', toMultipartPostFormData(payload), {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return response.data;
     },
 
@@ -52,7 +119,11 @@ export const ApiService = {
     createComment: async (payload: CreateCommentInput) => {
         if (USE_MOCK_DATA) return ApiMock.createComment(payload);
 
-        const response = await apiClient.post('/comments', payload);
+        const response = await apiClient.post('/comments', toMultipartCommentFormData(payload), {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return response.data;
     },
 
