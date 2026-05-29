@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.ucm_discuss_be.responses.ApiResponse;
@@ -32,12 +33,12 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+    public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        
-        String email = jwt.getClaimAsString("email");
+
+        String email = userDetails.getUsername();
         UserResponseDto response = userService.getUserByEmail(email);
         return ResponseEntity.ok(response);
     }
@@ -64,11 +65,11 @@ public class UserController {
     }
 
     @PatchMapping("/me/anon")
-    public ResponseEntity<ApiResponse<UserResponseDto>> toggleAnonMode(@AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+    public ResponseEntity<ApiResponse<UserResponseDto>> toggleAnonMode(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         UserResponseDto response = userService.toggleAnonMode(email);
         return ResponseEntity.ok(ApiResponse.success(response, "Anonymous mode toggled"));
     }
@@ -76,11 +77,11 @@ public class UserController {
     // NEW for Card 11
     @GetMapping("/me/viewed-threads")
     public ResponseEntity<ApiResponse<List<ThreadResponseDto>>> getRecentlyVisitedThreads(
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         List<ThreadModel> threads = userService.getRecentlyVisitedThreads(email);
         List<ThreadResponseDto> response = threads.stream()
                 .map(threadService::convertToResponse)

@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.security.autoconfigure.SecurityProperties.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,15 +14,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.ucm_discuss_be.cloudinary.CloudinaryUploadService;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+// import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-
+// import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,11 +62,11 @@ public class ThreadController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<List<ThreadResponseDto>>> getMyThreads(
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         List<ThreadResponseDto> threads = threadService.getMyThreads(email);
         return ResponseEntity.ok(ApiResponse.success(threads, "My threads retrieved"));
     }
@@ -108,11 +110,11 @@ public class ThreadController {
     @PostMapping("/{id}/upvote")
     public ResponseEntity<ApiResponse<ThreadResponseDto>> upvoteThread(
             @PathVariable Long id,
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         ThreadResponseDto response = threadService.upvoteThread(id, email);
         return ResponseEntity.ok(ApiResponse.success(response, "Thread vote toggled"));
     }
@@ -120,11 +122,11 @@ public class ThreadController {
     @DeleteMapping("/{id}/vote")
     public ResponseEntity<ApiResponse<ThreadResponseDto>> removeVote(
             @PathVariable Long id,
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         ThreadResponseDto response = threadService.removeVote(id, email);
         return ResponseEntity.ok(ApiResponse.success(response, "Thread vote removed"));
     }
@@ -141,11 +143,11 @@ public class ThreadController {
     @GetMapping("/{id}/has-voted")
     public ResponseEntity<ApiResponse<Boolean>> hasVoted(
             @PathVariable Long id,
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         boolean voted = threadService.hasVoted(id, email);
         return ResponseEntity.ok(ApiResponse.success(voted, "Thread vote status retrieved"));
     }
@@ -153,11 +155,11 @@ public class ThreadController {
     @PostMapping("/{id}/view")
     public ResponseEntity<ApiResponse<Void>> recordView(
             @PathVariable Long id,
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         threadService.recordView(id, email);
         return ResponseEntity.ok(ApiResponse.success(null, "Thread view recorded"));
     }

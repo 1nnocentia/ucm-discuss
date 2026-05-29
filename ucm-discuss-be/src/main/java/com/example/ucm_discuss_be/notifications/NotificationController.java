@@ -4,10 +4,12 @@ import com.example.ucm_discuss_be.responses.ApiResponse;
 import com.example.ucm_discuss_be.users.UserModel;
 import com.example.ucm_discuss_be.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.security.autoconfigure.SecurityProperties.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,11 +26,11 @@ public class NotificationController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<NotificationResponseDto>>> getMyNotifications(
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+        @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         List<NotificationResponseDto> notifications = notificationService.getMyNotifications(user.getId());
@@ -37,11 +39,11 @@ public class NotificationController {
 
     @GetMapping("/unread-count")
     public ResponseEntity<ApiResponse<Long>> getUnreadCount(
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         long count = notificationService.getUnreadCount(user.getId());
@@ -51,11 +53,11 @@ public class NotificationController {
     @PatchMapping("/{id}/read")
     public ResponseEntity<ApiResponse<NotificationResponseDto>> markAsRead(
             @PathVariable Long id,
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         NotificationResponseDto response = notificationService.markAsRead(id, user.getId());

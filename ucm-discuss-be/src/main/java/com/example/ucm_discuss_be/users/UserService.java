@@ -19,8 +19,8 @@ import com.example.ucm_discuss_be.majors.MajorResponseDto;
 import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadModel;
 import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadRepository;
-import com.example.ucm_discuss_be.faculties.FacultyRepository;
-import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
+// import com.example.ucm_discuss_be.faculties.FacultyRepository;
+// import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
 
 // Security imports
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -67,14 +67,17 @@ public class UserService implements UserDetailsService {
     public UserResponseDto getUserByEmail(String email) {
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return profileResponse(user);
+        return convertToResponse(user);
     }
 
     public UserResponseDto profileResponse(UserModel user) {
         UserResponseDto response = new UserResponseDto();
+        response.setId(user.getId());
         response.setNim_or_nisn(user.getNim_or_nisn());
         response.setName(user.getName());
         response.setIs_anon(user.getIs_anon());
+        response.setIs_lecturer(user.getIs_lecturer());
+        response.setEmail(user.getEmail());
 
         if (user.getMajor() != null) {
             MajorResponseDto majorResponse = new MajorResponseDto();
