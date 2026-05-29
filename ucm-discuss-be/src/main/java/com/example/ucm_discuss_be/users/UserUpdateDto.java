@@ -10,11 +10,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserUpdateDto {
-    private String nim_or_nisn;
+    private String nimOrNisn;
     private String name;
     private String email;
-    private Boolean is_lecturer;
-    private Boolean is_anon;
+    private Boolean isLecturer;
+    private Boolean isAnon;
     private MajorResponseDto major;
     private FacultyResponseDto faculty;
 }

@@ -73,10 +73,10 @@ public class UserService implements UserDetailsService {
     public UserResponseDto profileResponse(UserModel user) {
         UserResponseDto response = new UserResponseDto();
         response.setId(user.getId());
-        response.setNim_or_nisn(user.getNim_or_nisn());
+        response.setNimOrNisn(user.getNimOrNisn());
         response.setName(user.getName());
-        response.setIs_anon(user.getIs_anon());
-        response.setIs_lecturer(user.getIs_lecturer());
+        response.setIsAnon(user.getIsAnon());
+        response.setIsLecturer(user.getIsLecturer());
         response.setEmail(user.getEmail());
 
         if (user.getMajor() != null) {
@@ -98,12 +98,11 @@ public class UserService implements UserDetailsService {
 
     public UserModel saveUser(UserCreationDto request) {
         UserModel user = new UserModel();
-        user.setNim_or_nisn(request.getNim_or_nisn());
+        user.setNimOrNisn(request.getNimOrNisn());
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        user.setIs_lecturer(request.getIs_lecturer());
-        user.setIs_anon(request.getIs_anon());
+        user.setIsLecturer(request.getIsLecturer());
+        user.setIsAnon(request.getIsAnon());
         if (request.getMajor_id() != null) {
             MajorModel major = majorRepository.findById(request.getMajor_id())
                     .orElseThrow(() -> new RuntimeException("Major not found"));
@@ -120,11 +119,11 @@ public class UserService implements UserDetailsService {
     public UserResponseDto convertToResponse(UserModel user) {
         UserResponseDto response = new UserResponseDto();
         response.setId(user.getId());
-        response.setNim_or_nisn(user.getNim_or_nisn());
+        response.setNimOrNisn(user.getNimOrNisn());
         response.setName(user.getName());
         response.setEmail(user.getEmail());
-        response.setIs_lecturer(user.getIs_lecturer());
-        response.setIs_anon(user.getIs_anon());
+        response.setIsLecturer(user.getIsLecturer());
+        response.setIsAnon(user.getIsAnon());
 
         if (user.getMajor() != null) {
             MajorResponseDto majorResponse = new MajorResponseDto();
@@ -145,8 +144,8 @@ public class UserService implements UserDetailsService {
 
     public UserModel updateUser(Long id, UserUpdateDto userDetails) {
         UserModel user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        if (userDetails.getNim_or_nisn() != null) {
-            user.setNim_or_nisn(userDetails.getNim_or_nisn());
+        if (userDetails.getNimOrNisn() != null) {
+            user.setNimOrNisn(userDetails.getNimOrNisn());
         }
         if (userDetails.getName() != null) {
             user.setName(userDetails.getName());
@@ -154,11 +153,11 @@ public class UserService implements UserDetailsService {
         if (userDetails.getEmail() != null) {
             user.setEmail(userDetails.getEmail());
         }
-        if (userDetails.getIs_lecturer() != null) {
-            user.setIs_lecturer(userDetails.getIs_lecturer());
+        if (userDetails.getIsLecturer() != null) {
+            user.setIsLecturer(userDetails.getIsLecturer());
         }
-        if (userDetails.getIs_anon() != null) {
-            user.setIs_anon(userDetails.getIs_anon());
+        if (userDetails.getIsAnon() != null) {
+            user.setIsAnon(userDetails.getIsAnon());
         }
         if (userDetails.getMajor() != null) {
             MajorModel major = majorRepository.findById(userDetails.getMajor().getId())
@@ -177,7 +176,7 @@ public class UserService implements UserDetailsService {
     public UserResponseDto toggleAnonMode(String email) {
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setIs_anon(!user.getIs_anon());
+        user.setIsAnon(!user.getIsAnon());
         return convertToResponse(userRepository.save(user));
     }
 
@@ -226,7 +225,7 @@ public class UserService implements UserDetailsService {
     
         // Create a list of authorities based on whether the user is a lecturer
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        if (user.getIs_lecturer()) {
+        if (user.getIsLecturer()) {
             authorities.add(new SimpleGrantedAuthority("ROLE_DOSEN"));
         } else {
             authorities.add(new SimpleGrantedAuthority("ROLE_MAHASISWA"));
