@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,11 +46,11 @@ public class CommentController {
     @PostMapping("/{commentId}/upvote")
     public ResponseEntity<ApiResponse<CommentResponseDto>> upvoteComment(
             @PathVariable Long commentId,
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         CommentResponseDto response = commentService.upvoteComment(commentId, email);
         return ResponseEntity.ok(ApiResponse.success(response, "Vote toggled"));
     }
@@ -57,11 +58,11 @@ public class CommentController {
     @DeleteMapping("/{commentId}/vote")
     public ResponseEntity<ApiResponse<CommentResponseDto>> removeVote(
             @PathVariable Long commentId,
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         CommentResponseDto response = commentService.removeVote(commentId, email);
         return ResponseEntity.ok(ApiResponse.success(response, "Vote removed"));
     }
@@ -75,11 +76,11 @@ public class CommentController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getMyComments(
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         List<CommentResponseDto> comments = commentService.getMyComments(email);
         return ResponseEntity.ok(ApiResponse.success(comments, "My comments retrieved"));
     }
@@ -88,11 +89,11 @@ public class CommentController {
     @GetMapping("/{commentId}/has-voted")
     public ResponseEntity<ApiResponse<Boolean>> hasVoted(
             @PathVariable Long commentId,
-            @AuthenticationPrincipal Jwt jwt) {
-        if (jwt == null) {
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String email = jwt.getClaimAsString("email");
+        String email = userDetails.getUsername();
         boolean voted = commentService.hasVoted(commentId, email);
         return ResponseEntity.ok(ApiResponse.success(voted, "Vote status retrieved"));
     }
