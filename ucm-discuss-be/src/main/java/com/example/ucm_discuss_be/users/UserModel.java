@@ -71,7 +71,7 @@ public class UserModel {
         unique = true,
         length = 50
     )
-    private String nim_or_nisn;
+    private String nimOrNisn;
 
     @NotBlank(message = "Name is required")
     @Size(
@@ -100,32 +100,19 @@ public class UserModel {
     )
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(
-        min = 8,
-        max = 255,
-        message = "Password must be between 8 and 255 characters"
-    )
-    @Column(
-        name = "password",
-        nullable = false,
-        length = 255
-    )
-    private String password;
-
     @NotNull(message = "Lecturer status is required")
     @Column(
         name = "is_lecturer",
         nullable = false
     )
-    private Boolean is_lecturer = false;
+    private Boolean isLecturer = false;
 
     @NotNull(message = "Anonymous status is required")
     @Column(
         name = "is_anon",
         nullable = false
     )
-    private Boolean is_anon = false;
+    private Boolean isAnon = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_id")
@@ -197,5 +184,5 @@ public class UserModel {
         nullable = false,
         updatable = false
     )
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 }

@@ -11,24 +11,24 @@ import lombok.Setter;
 @Setter
 @JsonPropertyOrder({
     "id",
-    "nim_or_nisn",
+    "nimOrNisn",
     "name",
     "email",
     "password",
-    "is_lecturer",
-    "is_anon",
+    "isLecturer",
+    "isAnon",
     "major",
     "faculty"
 })
 public class UserResponseDto {
 
     private Long id;
-    private String nim_or_nisn;
+    private String nimOrNisn;
     private String name;
     private String email;
     // private String password;
-    private Boolean is_lecturer;
-    private Boolean is_anon;
+    private Boolean isLecturer;
+    private Boolean isAnon;
     private MajorResponseDto major;
     private FacultyResponseDto faculty;
 }
