@@ -10,7 +10,7 @@ export default function PostButton({ disabled, onPress }: PostButtonProps) {
     const { theme } = useTheme();
 
     const buttonColor = disabled ? theme.colors.textSecondary + '40' : theme.colors.buttonOn ;
-    const textColor = disabled ? theme.colors.textSecondary : theme.colors.textPrimary;
+    const textColor = disabled ? theme.colors.textSecondary : theme.colors.background;
     
     return (
         <TouchableOpacity 

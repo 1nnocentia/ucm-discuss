@@ -40,7 +40,7 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
             {/* Header: User, Time, Topic */}
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
-                    <Text style={[styles.author, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
+                    <Text style={[styles.author, { color: theme.colors.textPrimary + '88', fontFamily: theme.fonts.montserrat }]}>
                         {authorName}
                     </Text>
                     <Text style={[styles.meta, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>

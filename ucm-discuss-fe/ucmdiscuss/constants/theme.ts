@@ -9,6 +9,8 @@ const COMMON_COLORS = {
     
     warning: '#FF6B6B',
     error: '#FF3B30',
+
+    logo: '#FDFDFD'
 } as const;
 
 export const FONTS = {

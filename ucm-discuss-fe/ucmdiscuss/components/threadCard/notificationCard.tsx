@@ -26,7 +26,7 @@ export default function NotificationCard({ item, onPress }: { item: Notification
             style={[
                 styles.container, 
                 { 
-                    backgroundColor: item.isRead ? theme.colors.background : theme.colors.lightSecondary + '11',
+                    backgroundColor: item.isRead ? theme.colors.background : theme.colors.lightSecondary + '33',
                     borderBottomColor: theme.colors.textSecondary + '33',
                 }
             ]}

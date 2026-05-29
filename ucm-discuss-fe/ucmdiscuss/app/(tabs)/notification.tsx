@@ -2,7 +2,7 @@ import { View, StyleSheet, FlatList, Text } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NotificationCard from "@/components/threadCard/notificationCard";
 import { router } from "expo-router";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import Header from "@/components/header/header";
 import { useTheme } from "@/context/ThemeContext";
 import { ApiService } from "@/controllers/services/apiService";
