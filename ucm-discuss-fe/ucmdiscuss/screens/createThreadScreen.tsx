@@ -94,6 +94,12 @@ export default function CreateThreadScreen() {
             id: localPostId,
             title,
             description: content,
+            aiInteraction: aiResult && aiResult.isUsed ? {
+                actorName: optimisticUser,
+                question: aiResult.question,
+                answer: aiResult.answer,
+                isGenerating: false,
+            } : undefined,
             image: finalImageUri,
             createdAt: 'now',
             votes: 0,
@@ -118,6 +124,12 @@ export default function CreateThreadScreen() {
                     image: finalImageUri,
                     topicId: selectedTopic!.id,
                     isAnonymous: isAnonymous,
+                    aiInteraction: aiResult && aiResult.isUsed ? {
+                        actorName: optimisticUser,
+                        question: aiResult.question,
+                        answer: aiResult.answer,
+                        isGenerating: false,
+                    } : undefined,
                 };
                 await ApiService.createPost(payload);
                 await markPostPublished(localPostId);

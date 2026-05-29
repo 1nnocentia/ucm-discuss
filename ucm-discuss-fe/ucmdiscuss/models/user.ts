@@ -62,6 +62,7 @@ export interface CreatePostInput {
     image?: string | null;
     topicId: string;
     isAnonymous: boolean;
+    aiInteraction?: AiInteraction | null;
 }
 
 export interface CreateCommentInput {
