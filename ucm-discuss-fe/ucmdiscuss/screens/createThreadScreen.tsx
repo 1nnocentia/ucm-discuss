@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
@@ -8,27 +8,62 @@ import Header from '@/components/header/header';
 import BottomBar from '@/components/bottomBar/bottomBar';
 import UploadImg from '@/components/buttons/uploadImg';
 import TagAI from '@/components/buttons/tagAI';
+import AICard from '@/components/threadCard/aiCard';
 import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
 import TopicSelector from '@/components/topic/topicSelector';
 import { RETRY_COOLDOWN_MS, usePendingUploads } from '@/context/PendingUploadsContext';
 import { AuthorSnippet } from '@/models/user';
 import { ApiService } from '@/controllers/services/apiService';
 import { useAuth } from '@/context/AuthContext';
+import { useLocalSearchParams } from 'expo-router';
+import ZoomableImage from '@/components/common/zoomableImage';
 
 export default function CreateThreadScreen() {
     const { theme } = useTheme();
     const router = useRouter();
-    const { user } = useAuth();
+    const { topicId, topicName } = useLocalSearchParams<{ topicId?: string; topicName?: string }>();
+    const { user, userDetails } = useAuth();
     const { addLocalPost, markPostPublished, markPostRetryable } = usePendingUploads();
 
     const [selectedTopic, setSelectedTopic] = useState<{ id: string, name: string } | null>(null);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [isAnonymous, setIsAnonymous] = useState(false);
+    const [isAnonymous, setIsAnonymous] = useState(userDetails?.isAnonymous ?? false);
     const [postImage, setPostImage] = useState<string | null>(null);
+    const [aiResult, setAiResult] = useState<{ question: string; answer: string; isUsed?: boolean } | null>(null);
 
     const imageContext = useImageManipulator(postImage || '');
     const contentInputRef = useRef<TextInput | null>(null);
+
+    const handleAiSuccess = (question: string, answer: string) => {
+        setAiResult({ question, answer });
+    };
+
+    useEffect(() => {
+        setIsAnonymous(userDetails?.isAnonymous ?? false);
+    }, [userDetails?.isAnonymous]);
+
+    useEffect(() => {
+        const resolvedTopicId = Array.isArray(topicId) ? topicId[0] : topicId;
+        const resolvedTopicName = Array.isArray(topicName) ? topicName[0] : topicName;
+
+        if (resolvedTopicId && resolvedTopicName) {
+            setSelectedTopic({ id: resolvedTopicId, name: resolvedTopicName });
+        }
+    }, [topicId, topicName]);
+
+    const handleUseAiResult = () => {
+        if (aiResult) {
+            // const aiFormatted = `\n\n[AI Insight]\nQ: ${aiResult.question}\nA: ${aiResult.answer}`;
+            // setContent(prev => prev + aiFormatted);
+            setAiResult({ ...aiResult, isUsed: true });
+            contentInputRef.current?.focus();
+        }
+    };
+
+    const handleClearAiResult = () => {
+        setAiResult(null);
+    };
 
     const handlePost = async () => {
         let finalImageUri = postImage;
@@ -59,6 +94,12 @@ export default function CreateThreadScreen() {
             id: localPostId,
             title,
             description: content,
+            aiInteraction: aiResult && aiResult.isUsed ? {
+                actorName: optimisticUser,
+                question: aiResult.question,
+                answer: aiResult.answer,
+                isGenerating: false,
+            } : undefined,
             image: finalImageUri,
             createdAt: 'now',
             votes: 0,
@@ -83,6 +124,12 @@ export default function CreateThreadScreen() {
                     image: finalImageUri,
                     topicId: selectedTopic!.id,
                     isAnonymous: isAnonymous,
+                    aiInteraction: aiResult && aiResult.isUsed ? {
+                        actorName: optimisticUser,
+                        question: aiResult.question,
+                        answer: aiResult.answer,
+                        isGenerating: false,
+                    } : undefined,
                 };
                 await ApiService.createPost(payload);
                 await markPostPublished(localPostId);
@@ -127,17 +174,52 @@ export default function CreateThreadScreen() {
                         
                         {postImage && (
                             <View style={styles.imagePreviewContainer}>
-                                <Image 
-                                    source={{ uri: postImage }} 
-                                    style={styles.imagePreview} 
-                                    resizeMode="cover"
-                                />
+                                <ZoomableImage uri={postImage} style={styles.imagePreview} resizeMode="cover" />
                                 <TouchableOpacity 
                                     style={[styles.removeImageBtn, { backgroundColor: 'rgba(0,0,0,0.6)' }]} 
                                     onPress={() => setPostImage(null)}
                                 >
                                     <Ionicons name="close" size={20} color="#FDFDFD" />
                                 </TouchableOpacity>
+                            </View>
+                        )}
+
+                        {aiResult && (
+                            <View style={[styles.aiResultContainer, { borderColor: theme.colors.primary + '44', backgroundColor: theme.colors.primary + '11' }]}>
+                                <View style={styles.aiResultHeader}>
+                                    <AICard variant="onCreate" />
+                                </View>
+                                
+                                <View style={styles.aiResultContent}>
+                                    <Text style={[styles.aiLabel, { color: theme.colors.textSecondary }]}>Q:</Text>
+                                    <Text style={[styles.aiQuestion, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
+                                        {aiResult.question}
+                                    </Text>
+                                    
+                                    <Text style={[styles.aiLabel, { color: theme.colors.textSecondary, marginTop: 8 }]}>A:</Text>
+                                    <Text style={[styles.aiAnswer, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
+                                        {aiResult.answer}
+                                    </Text>
+                                </View>
+                                {!aiResult.isUsed && (
+                                    <View style={styles.aiResultActions}>
+                                        <TouchableOpacity 
+                                            style={[styles.aiActionBtn, { backgroundColor: theme.colors.primary }]}
+                                            onPress={handleUseAiResult}
+                                        >
+                                        <Ionicons name="checkmark" size={16} color="#FFF" style={{ marginRight: 4 }} />
+                                        <Text style={[styles.aiActionText, { color: '#FFF' }]}>Use</Text>
+                                    </TouchableOpacity>
+                                    
+                                    <TouchableOpacity 
+                                        style={[styles.aiActionBtn, { backgroundColor: theme.colors.textSecondary + '30' }]}
+                                        onPress={handleClearAiResult}
+                                    >
+                                        <Ionicons name="close" size={16} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
+                                        <Text style={[styles.aiActionText, { color: theme.colors.textSecondary }]}>Dismiss</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                )}
                             </View>
                         )}
 
@@ -151,6 +233,8 @@ export default function CreateThreadScreen() {
                             value={content}
                             onChangeText={setContent}
                         />
+
+                        
                         
                         <View style={styles.toolbar}>
                             <UploadImg 
@@ -161,7 +245,7 @@ export default function CreateThreadScreen() {
                                     }
                                 }} 
                             />  
-                            <TagAI />
+                            <TagAI onAiSuccess={handleAiSuccess} />
                         </View>
                 </ScrollView>
 
@@ -243,5 +327,48 @@ const styles = StyleSheet.create({
         right: 8,
         padding: 6,
         borderRadius: 20,
+    },
+    aiResultContainer: {
+        borderWidth: 1,
+        borderRadius: 12,
+        padding: 12,
+        marginVertical: 12,
+    },
+    aiResultHeader: {
+        marginBottom: 10,
+    },
+    aiResultContent: {
+        marginBottom: 12,
+    },
+    aiLabel: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        marginBottom: 4,
+    },
+    aiQuestion: {
+        fontSize: 13,
+        lineHeight: 18,
+        fontWeight: '500',
+    },
+    aiAnswer: {
+        fontSize: 13,
+        lineHeight: 18,
+    },
+    aiResultActions: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    aiActionBtn: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 8,
+    },
+    aiActionText: {
+        fontSize: 12,
+        fontWeight: '600',
     },
 });

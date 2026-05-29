@@ -1,10 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { Post } from '@/models/user';
 import VoteButton from '../buttons/voteButton';
 import CommentButton from '../buttons/commentButton';
 import { useRouter } from 'expo-router';
+import ZoomableImage from '@/components/common/zoomableImage';
+import AICard from '@/components/threadCard/aiCard';
 
 interface HomePostCardProps {
     post: Post;
@@ -54,9 +56,17 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
             <Text style={[styles.title, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
                 {post.title}
             </Text>
+            {post.aiInteraction && (
+                <AICard 
+                    variant="post" 
+                    question={post.aiInteraction.question}
+                    answer={post.aiInteraction.answer}
+                    style={{ marginBottom: 8 }}
+                />
+            )}
             
             {post.image && (
-                <Image source={{ uri: post.image }} style={styles.postImage} resizeMode="cover" />
+                <ZoomableImage uri={post.image} style={styles.postImage} resizeMode="cover" />
             )}
 
             {post.description && (

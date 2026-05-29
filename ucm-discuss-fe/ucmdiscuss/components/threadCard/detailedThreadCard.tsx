@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { Post } from '@/models/user';
 import VoteButton from '../buttons/voteButton';
 import CommentButton from '../buttons/commentButton';
+import ZoomableImage from '@/components/common/zoomableImage';
+import AICard from '@/components/threadCard/aiCard';
 
 interface DetailedThreadCardProps {
     post: Post;
@@ -38,7 +40,16 @@ export default function DetailedThreadCard({ post, onCommentPress }: DetailedThr
             </Text>
             
             {post.image && (
-                <Image source={{ uri: post.image }} style={styles.postImage} resizeMode="contain" />
+                <ZoomableImage uri={post.image} style={styles.postImage} resizeMode="contain" />
+            )}
+
+            {post.aiInteraction && (
+                <AICard 
+                    variant="post" 
+                    question={post.aiInteraction.question}
+                    answer={post.aiInteraction.answer}
+                    style={{ marginBottom: 8 }}
+                />
             )}
 
             {post.description && (

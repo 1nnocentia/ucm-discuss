@@ -1,9 +1,8 @@
-// src/components/lists/ReplyItem.tsx
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import VoteButton from '@/components/buttons/voteButton';
+import ZoomableImage from '@/components/common/zoomableImage';
 import { ThreadComment } from '@/models/user';
 
 interface ReplyItemProps {
@@ -35,7 +34,7 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
                 </Text>
 
                 {reply.image && (
-                    <Image source={{ uri: reply.image }} style={styles.replyImage} resizeMode="contain" />
+                    <ZoomableImage uri={reply.image} style={styles.replyImage} resizeMode="contain" />
                 )}
 
                 <View style={styles.actions}>
