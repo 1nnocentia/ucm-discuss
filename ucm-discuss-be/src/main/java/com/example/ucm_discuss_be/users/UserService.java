@@ -19,8 +19,8 @@ import com.example.ucm_discuss_be.majors.MajorResponseDto;
 import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadModel;
 import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadRepository;
-import com.example.ucm_discuss_be.faculties.FacultyRepository;
-import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
+// import com.example.ucm_discuss_be.faculties.FacultyRepository;
+// import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
 
 // Security imports
 import org.springframework.security.core.userdetails.UserDetailsService;
