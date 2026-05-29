@@ -14,3 +14,5 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+ucm-discuss-be/src/main/java/com/example/ucm_discuss_be/security/SecurityConfigDev.java
+ucm-discuss-be/.env
