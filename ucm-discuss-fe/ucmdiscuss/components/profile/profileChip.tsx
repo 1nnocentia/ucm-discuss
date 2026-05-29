@@ -13,7 +13,7 @@ export const ProfileChip = ({ faculty, major }: ProfileChipProps) => {
 
     return (
         <View style={[styles.chip]}>
-            <Text style={[styles.text, { color: theme.colors.secondary, fontFamily: theme.fonts.openSans }]}>
+            <Text style={[styles.text, { fontFamily: theme.fonts.openSans }]}>
                 {faculty} - {major}
             </Text>
         </View>
@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     },
     text: { 
         fontSize: 12, 
-        fontWeight: '600' 
+        fontWeight: '600',
+        color: '#0096C7'
     },
 });
