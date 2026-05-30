@@ -25,4 +25,6 @@ public interface ThreadRepository extends JpaRepository<ThreadModel, Long> {
 
     @Query("SELECT t FROM ThreadModel t JOIN FETCH t.user WHERE t.id = :id")
     Optional<ThreadModel> findByIdWithUser(@Param("id") Long id);
+
+    Long countByUserId(Long userId);
 }

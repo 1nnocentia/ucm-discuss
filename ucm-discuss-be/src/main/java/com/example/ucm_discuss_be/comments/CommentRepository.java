@@ -23,4 +23,6 @@ public interface CommentRepository extends JpaRepository<CommentModel, Long> {
 
     @Query("SELECT c FROM CommentModel c JOIN FETCH c.user WHERE c.id = :id")
     Optional<CommentModel> findByIdWithUser(@Param("id") Long id);
+
+    Long countByUserId(Long userId);
 }

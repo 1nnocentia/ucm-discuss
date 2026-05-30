@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.ucm_discuss_be.comments.CommentRepository;
 import com.example.ucm_discuss_be.exceptions.BusinessException;
 import com.example.ucm_discuss_be.faculties.FacultyModel;
 import com.example.ucm_discuss_be.faculties.FacultyRepository;
@@ -19,6 +20,7 @@ import com.example.ucm_discuss_be.majors.MajorModel;
 import com.example.ucm_discuss_be.majors.MajorRepository;
 import com.example.ucm_discuss_be.majors.MajorResponseDto;
 import com.example.ucm_discuss_be.threads.ThreadModel;
+import com.example.ucm_discuss_be.threads.ThreadRepository;
 import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadModel;
 import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadRepository;
 // import com.example.ucm_discuss_be.faculties.FacultyRepository;
@@ -45,6 +47,12 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private FacultyRepository facultyRepository;
+
+    @Autowired
+    private ThreadRepository threadRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private UserViewedThreadRepository userViewedThreadRepository;
@@ -87,6 +95,9 @@ public class UserService implements UserDetailsService {
         if (user.getFaculty() != null) {
             response.setFaculty(user.getFaculty().getName());
         }
+
+        response.setPostCount(threadRepository.countByUserId(user.getId()));
+        response.setCommentCount(commentRepository.countByUserId(user.getId()));
 
         return response;
     }

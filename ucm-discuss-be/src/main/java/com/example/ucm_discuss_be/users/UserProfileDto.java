@@ -1,7 +1,7 @@
 package com.example.ucm_discuss_be.users;
 
-import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
-import com.example.ucm_discuss_be.majors.MajorResponseDto;
+// import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
+// import com.example.ucm_discuss_be.majors.MajorResponseDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -32,14 +32,14 @@ public class UserProfileDto {
 
     private String faculty;
 
-    private int votesCount;
+    private Long votesCount;
 
     private String headerImage;
 
-    private int postCount;
+    private Long postCount;
 
-    private int commentCount;
-    
+    private Long commentCount;
+
     @JsonProperty("isAnonymous")
     private Boolean isAnon;
     
