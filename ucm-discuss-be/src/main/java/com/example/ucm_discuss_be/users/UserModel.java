@@ -114,6 +114,12 @@ public class UserModel {
     )
     private Boolean isAnon = false;
 
+    @Column(
+        name = "header_image",
+        length = 255
+    )
+    private String headerImage;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_id")
     private MajorModel major;
