@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.hc.core5.http.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.ucm_discuss_be.exceptions.BusinessException;
 import com.example.ucm_discuss_be.faculties.FacultyModel;
 import com.example.ucm_discuss_be.faculties.FacultyRepository;
 import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
@@ -28,6 +30,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.http.HttpStatus;
 
 // import com.example.ucm_discuss_be.majors.UserModel;
 // import com.example.ucm_discuss_be.majors.UserRepository;
@@ -55,42 +58,34 @@ public class UserService implements UserDetailsService {
         return responseList;
     }
 
-    public Optional<UserResponseDto> getUserById(Long id) {
+    public Optional<UserProfileDto> getUserById(Long id) {
         Optional<UserModel> userOpt = userRepository.findById(id);
         if (userOpt != null && userOpt.isPresent()) {
-            UserResponseDto response = convertToResponse(userOpt.get());
+            UserProfileDto response = profileResponse(userOpt.get());
             return Optional.of(response);
         }
         return Optional.empty();
     }
 
-    public UserResponseDto getUserByEmail(String email) {
+    public UserProfileDto getUserByEmail(String email) {
         UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return convertToResponse(user);
+                .orElseThrow(() -> new BusinessException("Unauthorized: Invalid token or user does not exist", HttpStatus.UNAUTHORIZED));
+        return profileResponse(user);
     }
 
-    public UserResponseDto profileResponse(UserModel user) {
-        UserResponseDto response = new UserResponseDto();
-        response.setId(user.getId());
+    public UserProfileDto profileResponse(UserModel user) {
+        UserProfileDto response = new UserProfileDto();
         response.setNimOrNisn(user.getNimOrNisn());
         response.setName(user.getName());
         response.setIsAnon(user.getIsAnon());
-        response.setIsLecturer(user.getIsLecturer());
-        response.setEmail(user.getEmail());
+        response.setHeaderImage(user.getHeaderImage());
 
         if (user.getMajor() != null) {
-            MajorResponseDto majorResponse = new MajorResponseDto();
-            majorResponse.setId(user.getMajor().getId());
-            majorResponse.setName(user.getMajor().getName());
-            response.setMajor(majorResponse);
+            response.setMajor(user.getMajor().getName());
         }
 
         if (user.getFaculty() != null) {
-            FacultyResponseDto facultyResponse = new FacultyResponseDto();
-            facultyResponse.setId(user.getFaculty().getId());
-            facultyResponse.setName(user.getFaculty().getName());
-            response.setFaculty(facultyResponse);
+            response.setFaculty(user.getFaculty().getName());
         }
 
         return response;

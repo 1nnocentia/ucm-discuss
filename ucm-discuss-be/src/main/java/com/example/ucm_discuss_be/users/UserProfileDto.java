@@ -2,6 +2,7 @@ package com.example.ucm_discuss_be.users;
 
 import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
 import com.example.ucm_discuss_be.majors.MajorResponseDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import lombok.Getter;
@@ -22,7 +23,7 @@ import lombok.Setter;
 })
 public class UserProfileDto {
 
-    @JsonPropertyOrder("nim")
+    @JsonProperty("nim")
     private String nimOrNisn;
 
     private String name;
@@ -39,7 +40,7 @@ public class UserProfileDto {
 
     private int commentCount;
     
-    @JsonPropertyOrder("isAnonymous")
+    @JsonProperty("isAnonymous")
     private Boolean isAnon;
     
     

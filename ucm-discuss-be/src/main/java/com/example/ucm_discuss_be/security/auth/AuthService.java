@@ -33,7 +33,7 @@ public class AuthService {
         // );
 
         UserModel user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BusinessException("You are not registered in our app yet.", org.springframework.http.HttpStatus.FORBIDDEN));
+                .orElseThrow(() -> new BusinessException("You are not registered in our app yet.", org.springframework.http.HttpStatus.BAD_REQUEST));
 
         String jwtToken = jwtService.generateToken(user.getEmail());
         UserResponseDto userResponseDto = userService.convertToResponse(user);
