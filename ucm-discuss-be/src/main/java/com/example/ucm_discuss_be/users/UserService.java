@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.hc.core5.http.HttpException;
+// import org.apache.hc.core5.http.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +23,10 @@ import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.threads.ThreadRepository;
 import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadModel;
 import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadRepository;
+import com.example.ucm_discuss_be.userVotesComment.UserVotesCommentRepository;
 // import com.example.ucm_discuss_be.faculties.FacultyRepository;
 // import com.example.ucm_discuss_be.faculties.FacultyResponseDto;
+import com.example.ucm_discuss_be.userVotesThread.UserVotesThreadRepository;
 
 // Security imports
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -56,6 +58,12 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserViewedThreadRepository userViewedThreadRepository;
+
+    @Autowired
+    private UserVotesThreadRepository userVotesThreadRepository;
+
+    @Autowired
+    private UserVotesCommentRepository userVotesCommentRepository;
 
     public List<UserResponseDto> getAllUsers() {
         List<UserModel> users = userRepository.findAll();
@@ -98,6 +106,7 @@ public class UserService implements UserDetailsService {
 
         response.setPostCount(threadRepository.countByUserId(user.getId()));
         response.setCommentCount(commentRepository.countByUserId(user.getId()));
+        response.setVotesCount(userVotesThreadRepository.countByUserId(user.getId()) + userVotesCommentRepository.countByUserId(user.getId()));
 
         return response;
     }

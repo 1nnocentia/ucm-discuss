@@ -8,4 +8,6 @@ import java.util.Optional;
 @Repository
 public interface UserVotesCommentRepository extends JpaRepository<UserVotesCommentModel, Long> {
     Optional<UserVotesCommentModel> findByUserIdAndCommentId(Long userId, Long commentId);
+
+    Long countByUserId(Long userId);
 }
