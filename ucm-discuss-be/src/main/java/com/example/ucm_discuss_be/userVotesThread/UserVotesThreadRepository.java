@@ -8,4 +8,6 @@ import java.util.Optional;
 @Repository
 public interface UserVotesThreadRepository extends JpaRepository<UserVotesThreadModel, Long> {
     Optional<UserVotesThreadModel> findByUserIdAndThreadId(Long userId, Long threadId);
+
+    Long countByUserId(Long userId);
 }
