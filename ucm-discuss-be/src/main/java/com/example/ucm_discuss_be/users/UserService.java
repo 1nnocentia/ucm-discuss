@@ -157,6 +157,22 @@ public class UserService implements UserDetailsService {
         return response;
     }
 
+    public UserLoginDto convertToLoginResponse(UserModel user) {
+        UserLoginDto response = new UserLoginDto();
+        response.setId(user.getId());
+        response.setNimOrNisn(user.getNimOrNisn());
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+
+        if (user.getIsLecturer() == false) {
+            response.setIsStudent(true);
+        } else {
+            response.setIsStudent(false);
+        }
+
+        return response;
+    }
+
     public UserModel updateUser(Long id, UserUpdateDto userDetails) {
         UserModel user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         if (userDetails.getNimOrNisn() != null) {
