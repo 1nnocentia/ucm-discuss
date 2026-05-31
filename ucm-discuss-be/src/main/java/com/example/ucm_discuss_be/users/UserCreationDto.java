@@ -23,9 +23,11 @@ public class UserCreationDto {
     @Email(message = "Email format is invalid")
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 255)
-    private String password;
+    @Size(
+        max = 1000,
+        message = "Image URL must be at most 1000 characters"
+    )
+    private String headerImage;
 
     private Boolean isLecturer = false;
 
