@@ -6,20 +6,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
-// import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-// import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import com.example.ucm_discuss_be.security.oauth2.OAuth2SucessHandler;
 import com.example.ucm_discuss_be.exceptions.BusinessException;
 import com.example.ucm_discuss_be.security.jwt.JwtAuthFilter;
+import com.example.ucm_discuss_be.security.oauth2.OAuth2SucessHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -68,13 +65,14 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(req ->
                 req.requestMatchers("/api/auth/**").permitAll()
-                   .anyRequest().authenticated()
+                //    .anyRequest().authenticated()
+                .anyRequest().permitAll() // TOLONG HAPUS INI NANTI
             )
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuth2SuccessHandler)
             )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // TOLONG DI UNCOMMENT!!!
 
         return http.build();
     }
