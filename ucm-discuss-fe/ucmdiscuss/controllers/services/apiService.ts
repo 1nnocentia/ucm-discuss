@@ -161,6 +161,7 @@ export const ApiService = {
     //     const response = await apiClient.get(`/topics/${topicId}/stats`);
     //     return response.data;
     // },
+    
     getCurrentTopicSelectorData: async (): Promise<{id: string, name: string}[]> => {
         const topics = await ApiService.getTopics();
         
