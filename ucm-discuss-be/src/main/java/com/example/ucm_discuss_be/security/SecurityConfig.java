@@ -12,21 +12,20 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import com.example.ucm_discuss_be.exceptions.BusinessException;
 import com.example.ucm_discuss_be.security.jwt.JwtAuthFilter;
-import com.example.ucm_discuss_be.security.oauth2.OAuth2SucessHandler;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-// @EnableWebSecurity
-// @EnableMethodSecurity
+@EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
-@Profile("!dev")
 public class SecurityConfig {
-    // private final JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
     // private final OAuth2SucessHandler oAuth2SuccessHandler;
 
     @Autowired
@@ -34,70 +33,71 @@ public class SecurityConfig {
     private HandlerExceptionResolver exceptionResolver;
 
     // @Bean
-    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    //     http
-    //         .csrf(AbstractHttpConfigurer::disable)
-    //         .authorizeHttpRequests(req ->
-    //             req.requestMatchers("/api/auth/**").permitAll()
-    //                .anyRequest().authenticated()
-    //         )
-    //         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-    //         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
+    // Exception {
+    // http
+    // .csrf(AbstractHttpConfigurer::disable)
+    // .authorizeHttpRequests(req ->
+    // req.requestMatchers("/api/auth/**").permitAll()
+    // .anyRequest().authenticated()
+    // )
+    // .sessionManagement(session ->
+    // session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-    //     return http.build();
+    // return http.build();
     // }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                // .exceptionHandling(exceptions -> exceptions
+                // .authenticationEntryPoint((request, response, authException) -> {
+                // // We throw your BusinessException here!
+                // exceptionResolver.resolveException(
+                // request,
+                // response,
+                // null,
+                // new BusinessException("Unauthorized", HttpStatus.UNAUTHORIZED)
+                // );
+                // })
+                // )
 
-            .exceptionHandling(exceptions -> exceptions
-                .authenticationEntryPoint((request, response, authException) -> {
-                    // We throw your BusinessException here!
-                    exceptionResolver.resolveException(
-                        request, 
-                        response, 
-                        null, 
-                        new BusinessException("Unauthorized", HttpStatus.UNAUTHORIZED)
-                    );
-                })
-            )
-
-            .authorizeHttpRequests(req ->
-                req.requestMatchers("/api/auth/**").permitAll()
-                //    .anyRequest().authenticated()
-                .anyRequest().permitAll() // TOLONG HAPUS INI NANTI
-            )
-            // .oauth2Login(oauth2 -> oauth2
-            //     .successHandler(oAuth2SuccessHandler)
-            // ) // TOLONG DI UNCOMMENT!!!
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-            // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // TOLONG DI UNCOMMENT!!!
+                .authorizeHttpRequests(req -> req.requestMatchers("/api/auth/**", "/error").permitAll()
+                        // .anyRequest().authenticated()
+                        .anyRequest().permitAll() // TOLONG HAPUS INI NANTI
+                )
+                // .oauth2Login(oauth2 -> oauth2
+                // .successHandler(oAuth2SuccessHandler)
+                // ) // TOLONG DI UNCOMMENT!!!
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // TOLONG DI UNCOMMENT!!!
 
         return http.build();
     }
 
-
     // @Bean
-    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    //     http
-    //         .csrf(AbstractHttpConfigurer::disable)
-    //         .authorizeHttpRequests(req ->
-    //             req.requestMatchers("/api/auth/**").permitAll()
-    //                .anyRequest().authenticated()
-    //         )
-    //         .oauth2Login(oauth2 -> oauth2
-    //             .successHandler(oAuth2SuccessHandler)
-    //         )
-    //         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
+    // Exception {
+    // http
+    // .csrf(AbstractHttpConfigurer::disable)
+    // .authorizeHttpRequests(req ->
+    // req.requestMatchers("/api/auth/**").permitAll()
+    // .anyRequest().authenticated()
+    // )
+    // .oauth2Login(oauth2 -> oauth2
+    // .successHandler(oAuth2SuccessHandler)
+    // )
+    // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-    //     return http.build();
+    // return http.build();
     // }
 
     // @Bean
-    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    //     http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-    //         .oauth2Login(Customizer.withDefaults());
-    //     return http.build();
+    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
+    // Exception {
+    // http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+    // .oauth2Login(Customizer.withDefaults());
+    // return http.build();
     // }
 }

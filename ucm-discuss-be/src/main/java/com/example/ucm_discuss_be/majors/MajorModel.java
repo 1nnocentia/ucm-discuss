@@ -43,15 +43,15 @@ public class MajorModel {
 
     @NotBlank(message = "Major name is required")
     @Size(
-        min = 2,
-        max = 255,
-        message = "Major name must be between 2 and 255 characters"
+        min = 1,
+        max = 10,
+        message = "Major name must be between 1 and 10 characters"
     )
     @Column(
         name = "name",
         nullable = false,
         unique = true,
-        length = 255
+        length = 10
     )
     private String name;
 

@@ -86,7 +86,7 @@ public class FeMockSeeder implements CommandLineRunner {
         FacultyModel itFaculty = facultyRepository.findById(1L).orElseThrow();
 
         UserModel current = ensureUser(
-                "han.inno@student.ucm.ac.id",
+                "haninno@student.ciputra.ac.id",
                 "Han Inno",
                 "0806022410010",
                 false,

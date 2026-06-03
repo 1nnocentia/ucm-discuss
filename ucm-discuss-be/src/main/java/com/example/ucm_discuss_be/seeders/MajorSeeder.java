@@ -28,13 +28,13 @@ public class MajorSeeder implements CommandLineRunner {
             System.out.println("Seeding Majors...");
 
             MajorModel imt = new MajorModel();
-            imt.setName("Informatics");
+            imt.setName("AI");
 
             MajorModel vcd = new MajorModel();
-            vcd.setName("Visual Communication Design");
+            vcd.setName("GD");
 
             MajorModel man = new MajorModel();
-            man.setName("Management");
+            man.setName("IBM");
 
             majorRepository.saveAll(List.of(imt, vcd, man));
             System.out.println("Majors seeded.");

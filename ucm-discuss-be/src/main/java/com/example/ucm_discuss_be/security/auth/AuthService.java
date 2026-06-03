@@ -8,8 +8,8 @@ import com.example.ucm_discuss_be.users.UserLoginDto;
 import com.example.ucm_discuss_be.users.UserModel;
 import com.example.ucm_discuss_be.users.UserRepository;
 import com.example.ucm_discuss_be.users.UserService;
-import com.example.ucm_discuss_be.users.UserResponseDto;
 import lombok.RequiredArgsConstructor;
+
 // import org.springframework.security.authentication.AuthenticationManager;
 // import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 // import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -42,4 +42,19 @@ public class AuthService {
         LoginResponseDto.Data data = new LoginResponseDto.Data(jwtToken, userLoginDto);
         return new LoginResponseDto(true, data);
     }
+
+    @Transactional(readOnly = true)
+    public LoginResponseDto demoLogin(String email) {
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException("Demo email not found.", org.springframework.http.HttpStatus.NOT_FOUND));
+
+        String jwtToken = jwtService.generateToken(user.getEmail());
+
+        UserLoginDto userLoginDto = userService.convertToLoginResponse(user);
+
+        LoginResponseDto.Data data = new LoginResponseDto.Data(jwtToken, userLoginDto);
+        return new LoginResponseDto(true, data);
+    }
+
+    
 }
