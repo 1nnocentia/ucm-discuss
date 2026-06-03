@@ -16,10 +16,10 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
     return (
         <View style={styles.container}>
             <View style={styles.leftColumn}>
-                    {reply.content && reply.content.length > 0 && (
-                        <View style={[styles.threadLine, { backgroundColor: theme.colors.textSecondary + '22' }]} />
-                    )}
-                </View>
+                {reply.content && reply.content.length > 0 && (
+                    <View style={[styles.threadLine, { backgroundColor: theme.colors.textSecondary + '22' }]} />
+                )}
+            </View>
 
             <View style={styles.replyContainer}>
                 <View style={styles.header}>
@@ -38,7 +38,12 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
                 )}
 
                 <View style={styles.actions}>
-                    <VoteButton initialVotes={reply.votes} />
+                    <VoteButton
+                        initialVotes={reply.votes}
+                        initialIsVoted={reply.userVoteStatus}
+                        targetId={reply.id}
+                        type="comment"
+                    />
                     {/* Kalau mau tambah sampai level 3, bisa tambah reply lagi disini */}
                 </View>
             </View>
@@ -47,51 +52,51 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
 }
 
 const styles = StyleSheet.create({
-    container: { 
-        flexDirection: 'row', 
-        marginTop: 12 
+    container: {
+        flexDirection: 'row',
+        marginTop: 12
     },
-    replyContainer: { 
-        flex: 1 
+    replyContainer: {
+        flex: 1
     },
-    header: { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        gap: 6, 
-        marginBottom: 4 
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        marginBottom: 4
     },
-    author: { 
-        fontSize: 13, 
-        fontWeight: 'bold' 
+    author: {
+        fontSize: 13,
+        fontWeight: 'bold'
     },
-    metaText: { 
-        fontSize: 11 
+    metaText: {
+        fontSize: 11
     },
-    text: { 
-        fontSize: 13, 
+    text: {
+        fontSize: 13,
         lineHeight: 18,
-        marginBottom: 6 
+        marginBottom: 6
     },
-    actions: { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        gap: 12 
+    actions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12
     },
-    leftColumn: { 
-        alignItems: 'center', 
-        marginRight: 8, 
-        width: 10 
+    leftColumn: {
+        alignItems: 'center',
+        marginRight: 8,
+        width: 10
     },
-    threadLine: { 
-        width: 2, 
+    threadLine: {
+        width: 2,
         flex: 1,
-        marginTop: 4, 
-        borderRadius: 1 
+        marginTop: 4,
+        borderRadius: 1
     },
-    replyImage: { 
-        width: '100%', 
-        height: 180, 
-        borderRadius: 8, 
-        marginBottom: 8 
+    replyImage: {
+        width: '100%',
+        height: 180,
+        borderRadius: 8,
+        marginBottom: 8
     },
 });

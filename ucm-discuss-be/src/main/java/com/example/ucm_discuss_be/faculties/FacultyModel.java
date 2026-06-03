@@ -4,11 +4,6 @@ import java.util.List;
 
 import com.example.ucm_discuss_be.users.UserModel;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,9 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,15 +41,15 @@ public class FacultyModel {
 
     @NotBlank(message = "Faculty name is required")
     @Size(
-        min = 2,
-        max = 255,
-        message = "Faculty name must be between 2 and 255 characters"
+        min = 1,
+        max = 10,
+        message = "Faculty name must be between 1 and 10 characters"
     )
     @Column(
         name = "name",
         nullable = false,
         unique = true,
-        length = 255
+        length = 10
     )
     private String name;
 

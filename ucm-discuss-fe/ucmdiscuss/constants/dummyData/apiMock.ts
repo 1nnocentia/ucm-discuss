@@ -87,7 +87,7 @@ export const ApiMock = {
             description: payload.description,
             image: payload.image || null,
             aiInteraction: normalizeAiInteraction(payload.aiInteraction),
-            createdAt: 'Baru saja',
+            createdAt: 'Now',
             votes: 0,
             comments: 0,
             topic: TOPICS.find(t => t.id === payload.topicId) || { id: payload.topicId, name: 'Unknown' },
@@ -106,7 +106,7 @@ export const ApiMock = {
             parentPostId: payload.parentCommentId || null,
             content: payload.content,
             image: payload.image || null,
-            createdAt: 'Baru saja',
+            createdAt: 'Now',
             votes: 0,
             user: payload.isAnonymous ? USERS.anon1 : USERS.current,
             replies: []

@@ -14,7 +14,7 @@ public class ThreadCreationDto {
     @Size(min = 3, max = 255)
     private String title;
 
-    @NotBlank(message = "Thread content is required")
+    // @NotBlank(message = "Thread content is required")
     @Size(min = 1, max = 10000)
     private String content;
 
@@ -27,9 +27,6 @@ public class ThreadCreationDto {
     private Long courseId;
 
     // Optional: attach 1 image when creating a thread
-    @Size(
-        max = 1000,
-        message = "Image URL must be at most 1000 characters"
-    )
+    @Size(max = 1000, message = "Image URL must be at most 1000 characters")
     private String image;
 }

@@ -190,23 +190,45 @@ export const ApiService = {
     // Profile
     getUserProfile: async (): Promise<ProfileCardData> => {
         if (USE_MOCK_DATA) return ApiMock.getUserProfile();
-
-        const response = await apiClient.get('/me/profile');
-        return response.data;
+        try {
+            const response = await apiClient.get('/me/profile');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+            return null as any;
+        }
     },
 
     getUserHistory: async (): Promise<UserHistory[]> => {
         if (USE_MOCK_DATA) return ApiMock.getUserHistory();
 
-        const response = await apiClient.get('/me/history');
+        try {
+            const response = await apiClient.get('/me/history');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching user history:', error);
+            return [];
+        }
+    },
+
+    updateAnonymousStatus: async (isAnonymous: boolean) => {
+        // if (USE_MOCK_DATA) return ApiMock.updateAnonymousStatus?.(isAnonymous) || { success: true, isAnonymous };
+        const response = await apiClient.patch('/me/anonymous-status', { isAnonymous });
         return response.data;
     },
 
     // Auth
-    login: async (email: string, isStudent: boolean, nim: string, name: string, token: string) => {
+    login: async (email: string, isStudent: boolean, nim: string, name: string) => {
         if (USE_MOCK_DATA) return ApiMock.login?.(email, isStudent, nim, name) || { token: 'mock-token', user: { id: '1', email, name: 'Mock User', nim: '12345', isStudent: true } };
 
-        const response = await apiClient.post('/auth/login', { email });
+        const response = await apiClient.post('/api/auth/login', { email });
+        return response.data;
+    },
+
+    demologin: async (email: string, isStudent: boolean, nim: string, name: string) => {
+        if (USE_MOCK_DATA) return ApiMock.login?.(email, isStudent, nim, name) || { token: 'mock-token', user: { id: '1', email, name: 'Mock User', nim: '12345', isStudent: true } };
+
+        const response = await apiClient.post('/api/auth/demo-login', { email });
         return response.data;
     },
 

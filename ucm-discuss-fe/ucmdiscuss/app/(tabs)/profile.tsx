@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ScrollView, StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from "@/context/ThemeContext";
@@ -8,6 +8,7 @@ import { ApiService } from "@/controllers/services/apiService";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { UserHistory } from "@/models/user";
+import { useFocusEffect } from "expo-router";
 
 
 export const profileScreen = () => {
@@ -25,7 +26,7 @@ export const profileScreen = () => {
         setIsAnonymous(userDetails?.isAnonymous ?? false);
     }, [userDetails?.isAnonymous]);
 
-    const { data: historyData = [], isLoading: historyLoading, isError: historyError } = useQuery<UserHistory[]>({
+    const { data: historyData = [], isLoading: historyLoading, isError: historyError, refetch } = useQuery<UserHistory[]>({
         queryKey: ['profile-history', user?.id],
         queryFn: async (): Promise<UserHistory[]> => {
             if (!user?.id) return [];
@@ -34,6 +35,13 @@ export const profileScreen = () => {
         enabled: !!user?.id,
     });
 
+    useFocusEffect(
+        useCallback(() => {
+            refreshUserDetails();
+            refetch();
+        }, [refreshUserDetails, refetch])
+    );
+
     // const handleAnonymousToggle = (isAnonymous: boolean) => {
     //     setIsAnonymous(isAnonymous);
     //     console.log('Toggle anonymous:', isAnonymous);
@@ -41,11 +49,19 @@ export const profileScreen = () => {
     
     const handleAnonymousToggle = (value: boolean) => {
         setIsAnonymous(value);
-        console.log('Global anon status diubah menjadi:', value);
+        return ApiService.updateAnonymousStatus(value)
+            .then(() => {
+                console.log('Anonymous status updated successfully');
+                refreshUserDetails();
+            })
+            .catch((error) => {
+                console.error('Error updating anonymous status:', error);
+            });
     }
 
 
     const isLoading = authLoading || historyLoading;
+    console.log('User datails:', userDetails);
 
     return (
         <SafeAreaView edges={['top']} style={[styles.viewStyle, { backgroundColor: theme.colors.primary }]}>
@@ -71,9 +87,16 @@ export const profileScreen = () => {
                     <>
                         <ProfileCard 
                             user={{
-                                ...userDetails,
-                                isAnonymous,
-                            }} 
+                                name: userDetails?.name,
+                                nim: userDetails?.nim,
+                                major: userDetails?.major,
+                                faculty: userDetails?.faculty,
+                                votesCount: userDetails?.votesCount,
+                                headerImage: userDetails?.headerImage,
+                                postCount: userDetails?.postCount,
+                                commentCount: userDetails?.commentCount,
+                                isAnonymous: isAnonymous, 
+                            }}
                             onAnonymousToggle={handleAnonymousToggle}
                         />
                         <ProfileTabs data={historyData} />

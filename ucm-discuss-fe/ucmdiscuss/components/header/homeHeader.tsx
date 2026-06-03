@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
-// Using context-backed search overlay; no local modal here
+import LogoutButton from '../buttons/logoutButton';
 
 interface HomeHeaderProps {
   isSearchActive?: boolean;
@@ -45,13 +45,19 @@ export const HomeHeader = ({ isSearchActive, onOpenSearch, onCloseSearch, search
       </View>
     );
   }
+  
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.primary }]}>
 
       {/* Logo */}
-        <Text style={[styles.title, { color: theme.colors.logo }]}>
+        {/* <Text style={[styles.title, { color: theme.colors.logo }]}>
           UCM Discuss
-        </Text>
+        </Text> */}
+        <LogoutButton>
+            <Text style={[styles.title, { color: theme.colors.logo }]}>
+                UCM Discuss
+            </Text>
+        </LogoutButton>
 
       {/* Search */}
       <View style={styles.rightContainer}>

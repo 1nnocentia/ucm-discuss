@@ -164,7 +164,7 @@ public class UserService implements UserDetailsService {
         response.setName(user.getName());
         response.setEmail(user.getEmail());
 
-        if (user.getIsLecturer() == false) {
+        if (Boolean.FALSE.equals(user.getIsLecturer())) {
             response.setIsStudent(true);
         } else {
             response.setIsStudent(false);
@@ -256,7 +256,7 @@ public class UserService implements UserDetailsService {
     
         // Create a list of authorities based on whether the user is a lecturer
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        if (user.getIsLecturer()) {
+        if (Boolean.TRUE.equals(user.getIsLecturer())) {
             authorities.add(new SimpleGrantedAuthority("ROLE_DOSEN"));
         } else {
             authorities.add(new SimpleGrantedAuthority("ROLE_MAHASISWA"));

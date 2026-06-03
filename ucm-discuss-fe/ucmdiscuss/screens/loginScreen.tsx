@@ -1,27 +1,23 @@
 import { StyleSheet, Image, View, TouchableOpacity, Text } from "react-native";
 import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoginButton from "@/components/buttons/loginButton";
 import { useRouter } from "expo-router";  
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ApiService } from "@/controllers/services/apiService";
 
 export default function LoginScreen() {
     const { theme } = useTheme();
+    const { demoLogin } = useAuth();
     const router = useRouter();
     const ImgBg = require("@/assets/splashscreen/splashMinimal.png");
 
     const handleFakeLogin = async () => {
         try {
-            await AsyncStorage.setItem('authToken', 'mock-token');
-            const mockUser = { 
-                id: '1', 
-                email: 'haninno@student.ucm.ac.id', 
-                name: 'Han Inno', 
-                nim: '12345', 
-                isStudent: true 
-            };
-            await AsyncStorage.setItem('userData', JSON.stringify(mockUser));
-            router.replace('/(tabs)/(home)'); 
+            const success = await demoLogin();
+            if (success) {
+                router.replace('/(tabs)/(home)');
+            }
         } catch (error) {
             console.error("Gagal fake login:", error);
         }

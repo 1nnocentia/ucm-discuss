@@ -60,7 +60,12 @@ export default function DetailedThreadCard({ post, onCommentPress }: DetailedThr
 
             {/* Footer */}
             <View style={styles.footer}>
-                <VoteButton initialVotes={post.votes} initialIsVoted={post.userVoteStatus} />
+                <VoteButton 
+                    initialVotes={post.votes} 
+                    initialIsVoted={post.userVoteStatus} 
+                    targetId={post.id}
+                    type="post"
+                />
                 <CommentButton
                     count={post.comments}
                     targetId={post.id}

@@ -2,7 +2,7 @@ import { useSearch } from "@/context/SearchContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useDebounce } from "@/controllers/hooks/useDebounce";
 
-import { View, Text, Alert, TouchableOpacity } from "react-native";
+import { View, Text, Alert, TouchableOpacity, ActivityIndicator } from "react-native";
 import { AnimatedSearchOverlay } from "@/components/search/animatedSearchOverlay";
 import HomePostCard from "@/components/threadCard/homePostCard";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -22,8 +22,13 @@ export default function homeScreen() {
     const [isLoading, setIsLoading] = useState(true);
     const [now, setNow] = useState(Date.now());
 
-    const fetchPostsData = async (): Promise<Post[]> => {
-        return ApiService.getPosts();
+    // Pagination states
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+    const fetchPostsData = async (targetPage = 1): Promise<Post[]> => {
+        return ApiService.getPosts(targetPage);
     };
 
     useEffect(() => {
@@ -44,10 +49,19 @@ export default function homeScreen() {
 
             const loadPosts = async () => {
                 setIsLoading(true);
-                const data = await fetchPostsData();
-                if (isActive) {
-                    setPosts(data);
-                    setIsLoading(false);
+                try {
+                    const data = await fetchPostsData(1);
+                    if (isActive) {
+                        setPosts(data);
+                        setPage(1);
+                        setHasMore(data.length >= 10); // Spring Boot page size is 10
+                    }
+                } catch (error) {
+                    console.error("Error loading posts:", error);
+                } finally {
+                    if (isActive) {
+                        setIsLoading(false);
+                    }
                 }
             };
             loadPosts();
@@ -57,6 +71,33 @@ export default function homeScreen() {
             };
         }, [])
     );
+
+    const loadMorePosts = async () => {
+        if (isLoading || isLoadingMore || !hasMore) {
+            return;
+        }
+
+        setIsLoadingMore(true);
+        const nextPage = page + 1;
+        try {
+            const data = await fetchPostsData(nextPage);
+            if (data.length > 0) {
+                setPosts(prev => {
+                    const existingIds = new Set(prev.map(p => p.id));
+                    const newPosts = data.filter((p: Post) => !existingIds.has(p.id));
+                    return [...prev, ...newPosts];
+                });
+                setPage(nextPage);
+                setHasMore(data.length >= 10);
+            } else {
+                setHasMore(false);
+            }
+        } catch (error) {
+            console.error("Error loading more posts:", error);
+        } finally {
+            setIsLoadingMore(false);
+        }
+    };
 
     const { isSearchActive, searchQuery } = useSearch();
     const debounceSearchQuery = useDebounce(searchQuery, 500);
@@ -120,15 +161,17 @@ export default function homeScreen() {
             "Cancel Upload",
             "Are you sure you want to cancel this upload? This action cannot be undone.",
             [
-                {text: "No", style: "cancel"},
-                {text: "Yes", style: "destructive", onPress: async () => {
-                    try {
-                        await removeLocalPost(postId);
-                        Alert.alert("Upload cancelled", "The pending thread has been removed.");
-                    } catch (error) {
-                        Alert.alert("Cancellation failed", "Failed to remove the pending thread. Please try again.");
+                { text: "No", style: "cancel" },
+                {
+                    text: "Yes", style: "destructive", onPress: async () => {
+                        try {
+                            await removeLocalPost(postId);
+                            Alert.alert("Upload cancelled", "The pending thread has been removed.");
+                        } catch (error) {
+                            Alert.alert("Cancellation failed", "Failed to remove the pending thread. Please try again.");
+                        }
                     }
-                }}
+                }
             ]
         )
     }
@@ -171,24 +214,32 @@ export default function homeScreen() {
                 </View>
             )}
 
-            <FlashList 
+            <FlashList
                 data={feedPosts}
                 keyExtractor={(item) => item.id}
-                maintainVisibleContentPosition={{ 
+                maintainVisibleContentPosition={{
                     autoscrollToTopThreshold: 50,
-                 }}
+                }}
+                onEndReached={loadMorePosts}
+                onEndReachedThreshold={0.4}
+                ListFooterComponent={() => {
+                    if (!isLoadingMore) return null;
+                    return (
+                        <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                            <ActivityIndicator size="small" color={theme.colors.primary} />
+                        </View>
+                    );
+                }}
                 renderItem={({ item }) => (
                     <HomePostCard
                         post={item}
                         onPress={() => {
                             const localPost = localPosts.find((post) => post.id === item.id);
 
-                            if (localPost) {
+                            if (localPost && localPost.syncStatus !== 'published') {
                                 Alert.alert(
-                                    localPost.syncStatus === 'published' ? 'Thread lokal' : 'Thread masih upload',
-                                    localPost.syncStatus === 'published'
-                                        ? 'Thread ini dibuat dari draft lokal.'
-                                        : 'Thread sedang menunggu upload selesai.'
+                                    'Thread masih upload',
+                                    'Thread sedang menunggu upload selesai.'
                                 );
                                 return;
                             }
@@ -200,7 +251,7 @@ export default function homeScreen() {
             />
 
             {isSearchActive && (
-                <AnimatedSearchOverlay 
+                <AnimatedSearchOverlay
                     isSearchActive={isSearchActive}
                     searchQuery={debounceSearchQuery}
                 />

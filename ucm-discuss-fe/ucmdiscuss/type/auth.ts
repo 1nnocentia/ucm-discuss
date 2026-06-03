@@ -8,5 +8,7 @@ export interface AuthcontextType {
     loading: boolean;
     refreshUserDetails: () => Promise<void>;
     login: (email?: string, isStudent?: boolean, nim?: string, name?: string) => Promise<boolean>;
-    logout: () => Promise<void>;
+    demoLogin: () => Promise<boolean>;
+    logout: () => Promise<boolean>;
+    updateLocalVotesCount: (increment: boolean) => void;
 }
