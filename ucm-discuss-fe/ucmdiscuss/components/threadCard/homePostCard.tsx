@@ -82,7 +82,12 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
 
             {/* Footer: Votes & Comments */}
             <View style={styles.footer}>
-                <VoteButton initialVotes={post.votes} initialIsVoted={post.userVoteStatus} />
+                <VoteButton 
+                    initialVotes={post.votes} 
+                    initialIsVoted={post.userVoteStatus} 
+                    targetId={post.id}
+                    type="post"
+                />
 
                 <View style={styles.commentGroup}>
                     <CommentButton count={post.comments} targetId={post.id} />

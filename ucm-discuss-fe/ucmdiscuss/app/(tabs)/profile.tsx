@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ScrollView, StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from "@/context/ThemeContext";
@@ -8,6 +8,7 @@ import { ApiService } from "@/controllers/services/apiService";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { UserHistory } from "@/models/user";
+import { useFocusEffect } from "expo-router";
 
 
 export const profileScreen = () => {
@@ -25,7 +26,7 @@ export const profileScreen = () => {
         setIsAnonymous(userDetails?.isAnonymous ?? false);
     }, [userDetails?.isAnonymous]);
 
-    const { data: historyData = [], isLoading: historyLoading, isError: historyError } = useQuery<UserHistory[]>({
+    const { data: historyData = [], isLoading: historyLoading, isError: historyError, refetch } = useQuery<UserHistory[]>({
         queryKey: ['profile-history', user?.id],
         queryFn: async (): Promise<UserHistory[]> => {
             if (!user?.id) return [];
@@ -33,6 +34,13 @@ export const profileScreen = () => {
         },
         enabled: !!user?.id,
     });
+
+    useFocusEffect(
+        useCallback(() => {
+            refreshUserDetails();
+            refetch();
+        }, [refreshUserDetails, refetch])
+    );
 
     // const handleAnonymousToggle = (isAnonymous: boolean) => {
     //     setIsAnonymous(isAnonymous);
@@ -44,11 +52,11 @@ export const profileScreen = () => {
         return ApiService.updateAnonymousStatus(value)
             .then(() => {
                 console.log('Anonymous status updated successfully');
+                refreshUserDetails();
             })
             .catch((error) => {
                 console.error('Error updating anonymous status:', error);
             });
-        console.log('Global Anonymous Status:', value);
     }
 
 

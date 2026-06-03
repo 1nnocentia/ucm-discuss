@@ -41,7 +41,12 @@ export default function CommentItem({ comment, onReplyPress }: CommentItemProps)
                     </Text>
 
                     <View style={styles.actions}>
-                        <VoteButton initialVotes={comment.votes} />
+                        <VoteButton 
+                            initialVotes={comment.votes} 
+                            initialIsVoted={comment.userVoteStatus}
+                            targetId={comment.id}
+                            type="comment"
+                        />
                         <TouchableOpacity onPress={() => onReplyPress(comment.id, null)} style={styles.replyBtn}>
                             <Text style={[styles.replyBtnText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]}>
                                 Reply
