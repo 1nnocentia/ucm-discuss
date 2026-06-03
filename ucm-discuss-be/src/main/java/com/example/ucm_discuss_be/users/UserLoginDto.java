@@ -17,6 +17,7 @@ import lombok.Setter;
 })
 
 public class UserLoginDto {
+    //To match ze Contract
     private Long id;
 
     private String email;
