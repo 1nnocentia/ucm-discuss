@@ -2,7 +2,7 @@ package com.example.ucm_discuss_be.security.auth;
 
 import com.example.ucm_discuss_be.exceptions.BusinessException;
 import com.example.ucm_discuss_be.security.jwt.JwtService;
-import com.example.ucm_discuss_be.users.UserLoginDto;
+import com.example.ucm_discuss_be.users.UserLoginResponseDto;
 // import com.example.ucm_discuss_be.security.auth.LoginRequestDto;
 // import com.example.ucm_discuss_be.security.auth.LoginResponseDto;
 import com.example.ucm_discuss_be.users.UserModel;
@@ -37,7 +37,7 @@ public class AuthService {
                 .orElseThrow(() -> new BusinessException("You are not registered in our app yet.", org.springframework.http.HttpStatus.BAD_REQUEST));
 
         String jwtToken = jwtService.generateToken(user.getEmail());
-        UserLoginDto userLoginDto = userService.convertToLoginResponse(user);
+        UserLoginResponseDto userLoginDto = userService.convertToLoginResponse(user);
 
         LoginResponseDto.Data data = new LoginResponseDto.Data(jwtToken, userLoginDto);
         return new LoginResponseDto(true, data);

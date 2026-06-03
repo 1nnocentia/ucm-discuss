@@ -157,8 +157,8 @@ public class UserService implements UserDetailsService {
         return response;
     }
 
-    public UserLoginDto convertToLoginResponse(UserModel user) {
-        UserLoginDto response = new UserLoginDto();
+    public UserLoginResponseDto convertToLoginResponse(UserModel user) {
+        UserLoginResponseDto response = new UserLoginResponseDto();
         response.setId(user.getId());
         response.setNimOrNisn(user.getNimOrNisn());
         response.setName(user.getName());
