@@ -13,6 +13,15 @@ export function AuthProvider({ children}: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
+    const resolveAuthResponse = (response: any) => {
+        const payload = response?.data?.data ?? response?.data ?? response;
+
+        return {
+            token: payload?.token ?? payload?.jwtToken ?? response?.data?.token ?? response?.data?.jwtToken ?? response?.token ?? response?.jwtToken,
+            user: payload?.user ?? payload?.userLoginDto ?? response?.data?.user ?? response?.data?.userLoginDto ?? response?.user,
+        };
+    };
+
     const isAuthenticated = !!user && !!token;
 
     useEffect(() => {
@@ -74,22 +83,66 @@ export function AuthProvider({ children}: { children: React.ReactNode }) {
             const resolvedNim = nim || mockSeed?.nim || '';
             const resolvedName = name || mockSeed?.name || '';
 
-            const data = await ApiService.login(resolvedEmail, resolvedIsStudent, resolvedNim, resolvedName, '');
+            const response = await ApiService.login(resolvedEmail, resolvedIsStudent, resolvedNim, resolvedName);
+            const { token: resolvedToken, user: resolvedUser } = resolveAuthResponse(response);
+
+            if (!resolvedToken) {
+                throw new Error('Token not found in login response');
+            }
+
+            await AsyncStorage.setItem('authToken', resolvedToken);
+
             const freshDetails = await ApiService.getUserProfile();
 
             await Promise.all([
-                AsyncStorage.setItem('authToken', data.token),
-                AsyncStorage.setItem('userData', JSON.stringify(data.user)),
+                AsyncStorage.setItem('userData', JSON.stringify(resolvedUser)),
                 AsyncStorage.setItem('userDetails', JSON.stringify(freshDetails)),
                 AsyncStorage.setItem('userDetailsUpdatedAt', String(Date.now())),
             ]);
 
-            setToken(data.token);
-            setUser(data.user);
+            setToken(resolvedToken);
+            setUser(resolvedUser);
             setUserDetails(freshDetails);
             return true;
         } catch (error) {
             console.error("Login error:", error);
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const demoLogin = async () => {
+        try {
+            setLoading(true);
+
+            const targetEmail = 'haninno@student.ciputra.ac.id';
+            const response = await ApiService.demologin(targetEmail, true, '12345', 'Han Inno');
+
+            console.log("ISI RESPONSE DARI BACKEND:", response);
+
+            const { token: realToken, user: realUser } = resolveAuthResponse(response);
+
+            if (!realToken) {
+                throw new Error("Token not found in demo login response");
+            }
+
+            await AsyncStorage.setItem('authToken', realToken);
+
+            const freshDetails = await ApiService.getUserProfile();
+
+            await Promise.all([
+                AsyncStorage.setItem('userData', JSON.stringify(realUser)),
+                AsyncStorage.setItem('userDetails', JSON.stringify(freshDetails)),
+                AsyncStorage.setItem('userDetailsUpdatedAt', String(Date.now())),
+            ]);
+
+            setToken(realToken);
+            setUser(realUser);
+            setUserDetails(freshDetails);
+            return true;
+        } catch (error) {
+            console.error('Demo login error:', error);
             return false;
         } finally {
             setLoading(false);
@@ -134,10 +187,12 @@ export function AuthProvider({ children}: { children: React.ReactNode }) {
         setToken(null);
         setUser(null);
         setUserDetails(null);
+
+        return true;
     };
 
     return (
-        <AuthContext.Provider value={{ user, userDetails, token, isAuthenticated, loading, refreshUserDetails, login, logout }}>
+        <AuthContext.Provider value={{ user, userDetails, token, isAuthenticated, loading, refreshUserDetails, login, demoLogin, logout }}>
             {children}
         </AuthContext.Provider>
     );

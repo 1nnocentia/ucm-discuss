@@ -6,6 +6,7 @@ export const apiClient = axios.create({
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
     }
 });
 
@@ -20,6 +21,24 @@ apiClient.interceptors.request.use(
         return config;
     },
     (error) => {
+        return Promise.reject(error);
+    }
+);
+
+apiClient.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response) {
+            if (error.response.status === 401) {
+                console.warn("Token is null or invalid.");
+            } else if (error.response.status === 500) {
+                console.warn("Server encountered an internal error.");
+            }
+        } else if (error.request) {
+            console.warn("No response received from server. Possible network error.");
+        }
         return Promise.reject(error);
     }
 );
