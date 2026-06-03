@@ -28,21 +28,21 @@ export default function LoginScreen() {
     };
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.primary }]}>
-            <View style={{ position: 'absolute', top: -20, left: 0, right: 0, bottom: 0 }}>
+        <View style={[styles.container, { backgroundColor: theme.colors.primary }]}>
                 <Image source={ImgBg} style={styles.backgroundImage} />
-                <View style={styles.contentWrapper}>
-                <LoginButton />
-                <TouchableOpacity 
-                        style={styles.fakeLoginButton} 
-                        onPress={handleFakeLogin}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={styles.fakeLoginText}>Demo Login</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </SafeAreaView>
+                    <SafeAreaView style={styles.safeArea}>
+                        <View style={styles.contentWrapper}>
+                            <LoginButton />
+                                <TouchableOpacity 
+                                        style={styles.fakeLoginButton} 
+                                        onPress={handleFakeLogin}
+                                        activeOpacity={0.8}
+                                    >
+                                    <Text style={styles.fakeLoginText}>Demo Login</Text>
+                                </TouchableOpacity>
+                        </View>
+                    </SafeAreaView>
+        </View>
     )
 }
 
@@ -57,11 +57,17 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         resizeMode: 'cover',
+        width: '100%',
+        height: '100%',
+    },
+    safeArea: {
+        flex: 1,
     },
     contentWrapper: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         alignItems: 'center',
+        paddingBottom: 200,
         zIndex: 10,
         gap: 20,
     },
@@ -69,7 +75,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#9C27B0', 
         paddingVertical: 12,
         paddingHorizontal: 24,
-        borderRadius: 8,
+        borderRadius: 12,
+        width: '100%',
+        maxWidth: 200,
+        alignItems: 'center',
         elevation: 3,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },

@@ -5,9 +5,9 @@ import { StyleSheet } from 'react-native';
 
 const SignInWithGoogle = () => {
     return (
-        <SafeAreaView>
+        // <SafeAreaView>
             <LoginScreen />
-        </SafeAreaView>
+        // </SafeAreaView>
     )
 }
 export default SignInWithGoogle;
