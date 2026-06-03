@@ -2,7 +2,7 @@ import { ApiMock } from '@/constants/dummyData/apiMock';
 import { apiClient } from '@/controllers/services/apiClient';
 import { CreatePostInput, CreateCommentInput, ProfileCardData, UserHistory, TopicsData } from '@/models/user';
 
-const USE_MOCK_DATA = false; 
+const USE_MOCK_DATA = true; 
 
 const buildImagePart = (imageUri?: string | null) => {
     if (!imageUri) {
