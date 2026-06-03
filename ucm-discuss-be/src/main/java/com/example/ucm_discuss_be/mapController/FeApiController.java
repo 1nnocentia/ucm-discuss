@@ -42,6 +42,7 @@ import com.example.ucm_discuss_be.replies.ReplyModel;
 import com.example.ucm_discuss_be.replies.ReplyRepository;
 import com.example.ucm_discuss_be.security.auth.AuthService;
 import com.example.ucm_discuss_be.security.auth.LoginRequestDto;
+import com.example.ucm_discuss_be.threads.AiInteraction;
 import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.threads.ThreadRepository;
 import com.example.ucm_discuss_be.threads.ThreadService;
@@ -57,7 +58,7 @@ public class FeApiController {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d MMM yyyy",
             Locale.forLanguageTag("id-ID"));
-    private static final String DEFAULT_DEV_EMAIL = "han.inno@student.ucm.ac.id";
+    private static final String DEFAULT_DEV_EMAIL = "haninno@student.ciputra.ac.id";
 
     @Autowired
     private AuthService authService;
@@ -178,6 +179,29 @@ public class FeApiController {
         dto.setImage(imageUrl);
 
         ThreadModel created = threadService.saveThread(dto);
+
+        if (aiInteraction != null && !aiInteraction.isBlank()) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                Map<String, Object> aiMap = mapper.readValue(aiInteraction, Map.class);
+                String question = (String) aiMap.get("question");
+                String answer = (String) aiMap.get("answer");
+                if (question != null && !question.isBlank()) {
+                    AiInteraction interaction = new AiInteraction();
+                    interaction.setThreadId(created.getId());
+                    interaction.setQuestion(question);
+                    interaction.setAnswer(answer);
+                    
+                    created.setAiInteraction(interaction);
+                    interaction.setThread(created);
+                    
+                    threadRepository.save(created);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(buildPost(created, user));
     }
 
@@ -350,6 +374,15 @@ public class FeApiController {
         return ResponseEntity.ok(userService.getUserByEmail(user.getEmail()));
     }
 
+    @PatchMapping({ "/me/anonymous-status", "/api/users/me/anonymous-status" })
+    public ResponseEntity<Map<String, Object>> setAnonymous(@AuthenticationPrincipal UserDetails userDetails) {
+        UserModel user = resolveAuthenticatedUser(userDetails)
+                .orElseGet(() -> resolveCurrentUser().orElseThrow(() -> new ResourceNotFoundException("User", 1L)));
+        user.setIsAnon(!Boolean.TRUE.equals(user.getIsAnon()));
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
     @GetMapping({ "/me/history", "/api/users/me/history", "/api/users/me/viewed-threads" })
     public ResponseEntity<List<Map<String, Object>>> getMyHistory(@AuthenticationPrincipal UserDetails userDetails) {
         UserModel user = resolveAuthenticatedUser(userDetails)
@@ -368,9 +401,7 @@ public class FeApiController {
             history.add(item);
         });
 
-        commentRepository.findByUserId(user.getId()).stream()
-                .filter(comment -> !isReplyComment(comment.getId()))
-                .forEach(comment -> {
+        commentRepository.findByUserId(user.getId()).forEach(comment -> {
                     Map<String, Object> item = new LinkedHashMap<>();
                     item.put("type", "comment");
                     item.put("id", comment.getId().toString());
@@ -434,7 +465,23 @@ public class FeApiController {
         boolean voted = currentUser != null
                 && userVotesThreadRepository.findByUserIdAndThreadId(currentUser.getId(), thread.getId()).isPresent();
         post.put("userVoteStatus", voted);
-        post.put("aiInteraction", null);
+
+        if (thread.getAiInteraction() != null) {
+            Map<String, Object> aiMap = new LinkedHashMap<>();
+            Map<String, Object> actorMap = new LinkedHashMap<>();
+            actorMap.put("id", thread.getUser().getId().toString());
+            actorMap.put("name", anonymous ? "Anonymous" : thread.getUser().getName());
+            actorMap.put("isAnonymous", anonymous);
+            
+            aiMap.put("actorName", actorMap);
+            aiMap.put("question", thread.getAiInteraction().getQuestion());
+            aiMap.put("answer", thread.getAiInteraction().getAnswer());
+            aiMap.put("isGenerating", false);
+            post.put("aiInteraction", aiMap);
+        } else {
+            post.put("aiInteraction", null);
+        }
+
         return post;
     }
 
@@ -530,6 +577,15 @@ public class FeApiController {
     }
 
     private Optional<UserModel> resolveCurrentUser() {
+        org.springframework.security.core.Authentication authentication = 
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && 
+            !(authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                return userRepository.findByEmail(((UserDetails) principal).getUsername());
+            }
+        }
         return userRepository.findByEmail(DEFAULT_DEV_EMAIL)
                 .or(() -> userRepository.findAll().stream().findFirst());
     }
