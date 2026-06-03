@@ -2,7 +2,7 @@ import { ApiMock } from '@/constants/dummyData/apiMock';
 import { apiClient } from '@/controllers/services/apiClient';
 import { CreatePostInput, CreateCommentInput, ProfileCardData, UserHistory, TopicsData } from '@/models/user';
 
-const USE_MOCK_DATA = true; 
+const USE_MOCK_DATA = false; 
 
 const buildImagePart = (imageUri?: string | null) => {
     if (!imageUri) {
@@ -161,6 +161,7 @@ export const ApiService = {
     //     const response = await apiClient.get(`/topics/${topicId}/stats`);
     //     return response.data;
     // },
+    
     getCurrentTopicSelectorData: async (): Promise<{id: string, name: string}[]> => {
         const topics = await ApiService.getTopics();
         

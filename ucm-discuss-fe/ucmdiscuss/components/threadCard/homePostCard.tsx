@@ -17,7 +17,8 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
     const { theme } = useTheme();
     const router = useRouter();
 
-    const { isAnonymous, name } = post.user;
+
+    const { isAnonymous = false, name = "Unknown" } = post?.user || {};
     const authorName = isAnonymous ? 'anonymous' : name;
     
     const handleCommentAction = () => {
@@ -30,6 +31,7 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
             });
         }
     };
+    // console.log("Data Post yang diterima:", JSON.stringify(post, null, 2));
 
     return (
         <TouchableOpacity 
@@ -48,7 +50,7 @@ export default function HomePostCard({ post, onPress }: HomePostCardProps) {
                     </Text>
                 </View>
                 <View style={[styles.topicBadge, { backgroundColor: theme.colors.lightSecondary + '22' }]}>
-                    <Text style={[styles.topicText, { color: theme.colors.secondary }]}>{post.topic.name}</Text>
+                    <Text style={[styles.topicText, { color: theme.colors.secondary }]}>{post.topic?.name || "Topics"}</Text>
                 </View>
             </View>
 

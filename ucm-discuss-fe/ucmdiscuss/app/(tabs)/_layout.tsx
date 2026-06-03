@@ -11,6 +11,7 @@ export default function TabsLayout() {
 
     return (
         <Tabs
+            initialRouteName="(home)"
             screenOptions={{ 
                 tabBarActiveTintColor: theme.colors.buttonOn,
                 tabBarInactiveTintColor: theme.colors.buttonOff,

@@ -54,10 +54,11 @@ export function AuthProvider({ children}: { children: React.ReactNode }) {
                         }
                     }
                 }
-            } else if (ApiService.isMockMode()) {
-                // In mock mode, bootstrap a local session so profile can be explored before backend auth exists.
-                await login();
-            }
+            } 
+            // else if (ApiService.isMockMode()) {
+            //     // In mock mode, bootstrap a local session so profile can be explored before backend auth exists.
+            //     await login();
+            // }
         } finally {
             setLoading(false);
         }

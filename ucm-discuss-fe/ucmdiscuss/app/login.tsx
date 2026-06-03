@@ -3,13 +3,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/context/AuthContext';
 import { StyleSheet } from 'react-native';
 
-export const SignInWithGoogle = () => {
+const SignInWithGoogle = () => {
     return (
-        <SafeAreaView>
+        // <SafeAreaView>
             <LoginScreen />
-        </SafeAreaView>
+        // </SafeAreaView>
     )
 }
+export default SignInWithGoogle;
 
 const styles = StyleSheet.create({
 
