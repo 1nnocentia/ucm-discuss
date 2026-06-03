@@ -15,7 +15,7 @@ interface DetailedThreadCardProps {
 
 export default function DetailedThreadCard({ post, onCommentPress }: DetailedThreadCardProps) {
     const { theme } = useTheme();
-    const { isAnonymous, name } = post.user;
+    const { isAnonymous = false, name = "Unknown" } = post?.user || {};
     const authorName = isAnonymous ? 'anonymous' : post.user.name;
 
     return (
@@ -31,7 +31,7 @@ export default function DetailedThreadCard({ post, onCommentPress }: DetailedThr
                     </Text>
                 </View>
                 <View style={[styles.topicBadge, { backgroundColor: theme.colors.lightSecondary + '22' }]}>
-                    <Text style={[styles.topicText, { color: theme.colors.secondary }]}>{post.topic.name}</Text>
+                    <Text style={[styles.topicText, { color: theme.colors.secondary }]}>{post.topic?.name || "Topics"}</Text>
                 </View>
             </View>
 

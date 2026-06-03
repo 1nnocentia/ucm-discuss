@@ -1,23 +1,54 @@
-import { StyleSheet, Image } from "react-native";
+import { StyleSheet, Image, View, TouchableOpacity, Text } from "react-native";
 import { useTheme } from "@/context/ThemeContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoginButton from "@/components/buttons/loginButton";
+import { useRouter } from "expo-router";  
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen() {
     const { theme } = useTheme();
+    const router = useRouter();
     const ImgBg = require("@/assets/splashscreen/splashMinimal.png");
+
+    const handleFakeLogin = async () => {
+        try {
+            await AsyncStorage.setItem('authToken', 'mock-token');
+            const mockUser = { 
+                id: '1', 
+                email: 'haninno@student.ucm.ac.id', 
+                name: 'Han Inno', 
+                nim: '12345', 
+                isStudent: true 
+            };
+            await AsyncStorage.setItem('userData', JSON.stringify(mockUser));
+            router.replace('/(tabs)/(home)'); 
+        } catch (error) {
+            console.error("Gagal fake login:", error);
+        }
+    };
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.primary }]}>
-            <Image source={ImgBg} style={styles.backgroundImage} />
-            <LoginButton />
+            <View style={{ position: 'absolute', top: -20, left: 0, right: 0, bottom: 0 }}>
+                <Image source={ImgBg} style={styles.backgroundImage} />
+                <View style={styles.contentWrapper}>
+                <LoginButton />
+                <TouchableOpacity 
+                        style={styles.fakeLoginButton} 
+                        onPress={handleFakeLogin}
+                        activeOpacity={0.8}
+                    >
+                        <Text style={styles.fakeLoginText}>Demo Login</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-
+        flex: 1,
     },
     backgroundImage: {
         position: 'absolute',
@@ -27,5 +58,27 @@ const styles = StyleSheet.create({
         bottom: 0,
         resizeMode: 'cover',
     },
-
+    contentWrapper: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 10,
+        gap: 20,
+    },
+    fakeLoginButton: {
+        backgroundColor: '#9C27B0', 
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+    },
+    fakeLoginText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 14,
+    }
 })
