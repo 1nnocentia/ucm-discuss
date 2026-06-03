@@ -10,4 +10,5 @@ export interface AuthcontextType {
     login: (email?: string, isStudent?: boolean, nim?: string, name?: string) => Promise<boolean>;
     demoLogin: () => Promise<boolean>;
     logout: () => Promise<boolean>;
+    updateLocalVotesCount: (increment: boolean) => void;
 }

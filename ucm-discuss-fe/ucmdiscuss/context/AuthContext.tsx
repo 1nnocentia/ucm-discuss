@@ -1,5 +1,5 @@
 import { ProfileCardData, User } from "@/models/user";
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext, useCallback } from "react";
 import { AuthcontextType } from "@/type/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ApiService } from "@/controllers/services/apiService";
@@ -7,7 +7,7 @@ import { ApiService } from "@/controllers/services/apiService";
 const AuthContext = createContext<AuthcontextType | undefined>(undefined);
 const USER_DETAILS_TTL_MS = 24 * 60 * 60 * 1000;
 
-export function AuthProvider({ children}: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [userDetails, setUserDetails] = useState<ProfileCardData | null>(null);
     const [token, setToken] = useState<string | null>(null);
@@ -63,7 +63,7 @@ export function AuthProvider({ children}: { children: React.ReactNode }) {
                         }
                     }
                 }
-            } 
+            }
             // else if (ApiService.isMockMode()) {
             //     // In mock mode, bootstrap a local session so profile can be explored before backend auth exists.
             //     await login();
@@ -149,11 +149,10 @@ export function AuthProvider({ children}: { children: React.ReactNode }) {
         }
     };
 
-    const refreshUserDetails = async () => {
+    const refreshUserDetails = useCallback(async () => {
         // if (!token) return;  Karena belum bisa
 
         try {
-            setLoading(true);
             console.log("Memanggil API getUserProfile...");
             const freshDetails = await ApiService.getUserProfile();
             console.log("Data Profil berhasil diambil:", freshDetails);
@@ -165,11 +164,9 @@ export function AuthProvider({ children}: { children: React.ReactNode }) {
             ]);
         } catch (error) {
             console.error('Failed to refresh user details in context:', error);
-        } finally {
-            setLoading(false);
         }
-    };
-    
+    }, []);
+
 
     const logout = async () => {
         try {
@@ -191,8 +188,18 @@ export function AuthProvider({ children}: { children: React.ReactNode }) {
         return true;
     };
 
+    const updateLocalVotesCount = useCallback((increment: boolean) => {
+        setUserDetails(prev => {
+            if (!prev) return prev;
+            return {
+                ...prev,
+                votesCount: prev.votesCount + (increment ? 1 : -1)
+            };
+        });
+    }, []);
+
     return (
-        <AuthContext.Provider value={{ user, userDetails, token, isAuthenticated, loading, refreshUserDetails, login, demoLogin, logout }}>
+        <AuthContext.Provider value={{ user, userDetails, token, isAuthenticated, loading, refreshUserDetails, login, demoLogin, logout, updateLocalVotesCount }}>
             {children}
         </AuthContext.Provider>
     );
