@@ -21,13 +21,13 @@ import com.example.ucm_discuss_be.security.oauth2.OAuth2SucessHandler;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
+// @EnableWebSecurity
+// @EnableMethodSecurity
 @RequiredArgsConstructor
 @Profile("!dev")
 public class SecurityConfig {
-    private final JwtAuthFilter jwtAuthFilter;
-    private final OAuth2SucessHandler oAuth2SuccessHandler;
+    // private final JwtAuthFilter jwtAuthFilter;
+    // private final OAuth2SucessHandler oAuth2SuccessHandler;
 
     @Autowired
     @Qualifier("handlerExceptionResolver")
@@ -68,9 +68,9 @@ public class SecurityConfig {
                 //    .anyRequest().authenticated()
                 .anyRequest().permitAll() // TOLONG HAPUS INI NANTI
             )
-            .oauth2Login(oauth2 -> oauth2
-                .successHandler(oAuth2SuccessHandler)
-            )
+            // .oauth2Login(oauth2 -> oauth2
+            //     .successHandler(oAuth2SuccessHandler)
+            // ) // TOLONG DI UNCOMMENT!!!
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
             // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // TOLONG DI UNCOMMENT!!!
 
