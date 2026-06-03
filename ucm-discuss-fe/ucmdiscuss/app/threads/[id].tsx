@@ -61,7 +61,7 @@ export function ThreadDiscussionScreen({ routeId, routerProp, themeOverride }: T
                     parentPostId: newCommentPayload.parentCommentId || null,
                     content: newCommentPayload.content,
                     image: newCommentPayload.image || null,
-                    createdAt: 'Baru saja',
+                    createdAt: 'Now',
                     votes: 0,
                     user: { id: 'current-user', name: 'You', isAnonymous: newCommentPayload.isAnonymous },
                     replies: [],

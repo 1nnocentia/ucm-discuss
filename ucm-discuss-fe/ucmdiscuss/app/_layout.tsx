@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { useTheme } from '@/context/ThemeContext';
 
@@ -7,12 +7,12 @@ import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from "@expo-goog
 import { OpenSans_400Regular, OpenSans_500Medium, OpenSans_600SemiBold } from "@expo-google-fonts/open-sans";
 import { Merienda_400Regular, Merienda_500Medium, Merienda_600SemiBold } from "@expo-google-fonts/merienda";
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import LottieView from 'lottie-react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { PendingUploadsProvider } from '@/context/PendingUploadsContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -58,7 +58,7 @@ export default function RootLayout() {
     return (
       <View style={{ flex: 1, backgroundColor: '#121212' }}> 
         <LottieView
-          source={require('@/assets/splashscreen/splashscreen.json')}
+          source={require('@/assets/splashscreen/splashScreen.json')}
           autoPlay
           loop={false}
           onAnimationFinish={() => setLottieFinished(true)}
@@ -85,9 +85,37 @@ export default function RootLayout() {
 
 function MainLayout() {
   const { theme } = useTheme();
+  const { isAuthenticated, loading } = useAuth();
+  const router = useRouter();
+  const segments = useSegments();
+
+  const rootNavigationState = useRootNavigationState();
+
+  useEffect(() => {
+        if (loading) return;
+        if (!rootNavigationState?.key) return;
+
+        const inLoginScreen = segments[0] === 'login'; 
+
+        if (!isAuthenticated && !inLoginScreen) {
+            router.replace('/login');
+        } else if (isAuthenticated && inLoginScreen) {
+            router.replace('/(tabs)/(home)'); 
+        }
+    }, [isAuthenticated, loading, segments, rootNavigationState?.key]);
+
+    if (loading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#121212', justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color="#9C27B0" /> 
+      </View>
+    );
+  }
+  
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false}} />
       <Stack.Screen
         name="createPostTopics"
@@ -96,6 +124,7 @@ function MainLayout() {
           headerShown: false,
         }}
       />
+      
     </Stack>
 
   );

@@ -3,6 +3,7 @@ import React from "react";
 import { TouchableOpacity, StyleSheet, View, Text } from "react-native";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
+import Ionicons from "@expo/vector-icons/build/Ionicons";
 
 
 export default function LoginButton() {
@@ -20,12 +21,19 @@ export default function LoginButton() {
     return (
         <View style={styles.buttonContainer}>
             <TouchableOpacity
-                style={[styles.button, { backgroundColor: theme.colors.primary, opacity: loading ? 0.7 : 1 }]}
+                style={[styles.button, { backgroundColor: theme.colors.logo, opacity: loading ? 0.7 : 1 }]}
                 onPress={handleLoginPress}
                 activeOpacity={0.7}
                 disabled={loading}
             >
-                <Text style={styles.buttonText}>{loading ? 'Signing in...' : 'Login with UC Account'}</Text>
+                <Ionicons 
+                    name="logo-google" 
+                    size={20} 
+                    color="#ea4335"
+                    style={styles.googleIcon} 
+                />
+
+                <Text style={[styles.buttonText]}>{loading ? 'Signing in...' : 'Login with UC Account'}</Text>
             </TouchableOpacity>
         </View>
     )   
@@ -33,19 +41,31 @@ export default function LoginButton() {
 
 const styles = StyleSheet.create({
     buttonContainer: {
-        flex: 1,
-        justifyContent: 'center',
+        width: '100%',
         alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
     },
     button: {
-        borderRadius: 8,
+        flexDirection: 'row', 
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#F2F4F5', 
+        borderRadius: 12,
         paddingVertical: 12,
         paddingHorizontal: 24,
+        width: '100%',
+        maxWidth: 280, 
+        borderWidth: 1,
+        borderColor: '#E3E5E8',
+    },
+    googleIcon: {
+        marginRight: 25, 
     },
     buttonText: {
-        fontSize: 14,
-        color: 'white',
-        fontWeight: 'bold',
+        fontSize: 15,
+        fontFamily: 'Inter-Medium', 
+        color: '#121212',
     }
 
 })
