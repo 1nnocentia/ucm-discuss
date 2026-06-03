@@ -39,7 +39,7 @@ public class AuthService {
         String jwtToken = jwtService.generateToken(user.getEmail());
         UserLoginResponseDto userLoginDto = userService.convertToLoginResponse(user);
 
-        LoginResponseDto.Data data = new LoginResponseDto.Data(jwtToken, userResponseDto);
+        LoginResponseDto.Data data = new LoginResponseDto.Data(jwtToken, userLoginDto);
         return new LoginResponseDto(true, data);
     }
 }
