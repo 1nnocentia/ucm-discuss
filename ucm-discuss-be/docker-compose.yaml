@@ -1,7 +1,7 @@
 services:
   db:
     image: mariadb:lts
-    container_name: ucmdiscuss-be
+    container_name: ucmdiscuss-db
     restart: always
     environment:
       MARIADB_DATABASE: ${DB_url}
