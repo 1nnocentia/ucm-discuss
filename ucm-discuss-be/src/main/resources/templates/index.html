@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCM Discuss</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            800: '#FDA258',
+                            900: '#c57c34',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-enter {
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4 antialiased selection:bg-orange-200">
+
+    <main
+        class="bg-white w-full max-w-sm rounded-[28px] shadow-lg p-8 flex flex-col items-center relative overflow-hidden">
+
+        <div class="absolute top-0 left-0 w-full h-2 bg-emerald-800"></div>
+
+        <div
+            class="w-24 h-24 bg-orange-50 rounded-[24px] flex items-center justify-center mb-6 shadow-sm border border-orange-100">
+            <svg class="w-12 h-12 text-emerald-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z">
+                </path>
+            </svg>
+        </div>
+
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight text-center mb-1">UCM Discuss</h1>
+        <p class="text-sm text-gray-500 text-center mb-8 px-2 leading-relaxed">
+            Forum Diskusi khusus mahasiswa UC Makassar.
+            Dapat di download di Android.
+        </p>
+
+        <a href="/ucm-discuss-release.apk" download id="downloadBtn"
+            class="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-medium py-3.5 px-6 rounded-full flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-emerald-800 focus:ring-offset-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            <span>Unduh APK</span>
+        </a>
+
+        <!-- <div class="mt-6 flex flex-col items-center gap-1 text-xs text-gray-400">
+            <span>Versi 1.0.0 • Ukuran ±25 MB</span>
+            <span class="flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                    </path>
+                </svg>
+                Aman & Bebas Iklan
+            </span>
+        </div> -->
+    </main>
+
+    <div id="toast"
+        class="hidden fixed bottom-6 bg-gray-900 text-white px-6 py-3 rounded-full text-sm font-medium shadow-xl z-50 flex items-center gap-3">
+        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Unduhan dimulai. Periksa notifikasi Anda.
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const downloadBtn = document.getElementById('downloadBtn');
+            const toast = document.getElementById('toast');
+
+            downloadBtn.addEventListener('click', () => {
+                // Tampilkan toast notification
+                toast.classList.remove('hidden');
+                toast.classList.add('toast-enter');
+
+                // Sembunyikan toast setelah 4 detik
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                    toast.classList.remove('toast-enter');
+                }, 4000);
+            });
+        });
+    </script>
+</body>
+
+</html>
