@@ -103,11 +103,9 @@
             const toast = document.getElementById('toast');
 
             downloadBtn.addEventListener('click', () => {
-                // Tampilkan toast notification
                 toast.classList.remove('hidden');
                 toast.classList.add('toast-enter');
 
-                // Sembunyikan toast setelah 4 detik
                 setTimeout(() => {
                     toast.classList.add('hidden');
                     toast.classList.remove('toast-enter');

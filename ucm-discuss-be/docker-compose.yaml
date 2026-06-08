@@ -4,21 +4,24 @@ services:
     container_name: ucmdiscuss-be
     restart: always
     environment:
-      MARIADB_DATABASE: ${DB_NAME}
-      MARIADB_USER: ${DB_USER}
-      MARIADB_PASSWORD: ${DB_PASSWORD}
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_url}
+      MARIADB_USER: ${DB_username}
+      MARIADB_PASSWORD: ${DB_password}
+      MARIADB_ROOT_PASSWORD: ${DB_password}
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
 
   api:
-    build: 
+    build: .
     container_name: ucmdiscuss-api
     restart: always
     ports:
-      - "8080:8080"
+      - "${DB_port}:8080"
+    dns:
+      - "8.8.8.8"
+      - "1.1.1.1"
     depends_on:
       - db
     env_file:
