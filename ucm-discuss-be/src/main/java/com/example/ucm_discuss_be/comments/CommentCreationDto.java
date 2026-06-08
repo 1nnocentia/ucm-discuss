@@ -22,6 +22,8 @@ public class CommentCreationDto {
     @NotNull(message = "User ID is required")
     private Long userId;
 
+    private Boolean askedAi = false;
+
     // Optional: attach 1 image when creating a comment
     @Size(
         max = 1000,

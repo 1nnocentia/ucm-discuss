@@ -43,14 +43,7 @@ public class AiService {
     public String getAnswerAndSave(Long threadId, String question) {
         String response = generateAnswer(question);
 
-        log.info("Menyimpan Response dari Gemini untuk Thread {}: {}", threadId, response);
-
-        AiInteractionModel interaction = AiInteractionModel.builder()
-                .threadId(threadId)
-                .question(question)
-                .answer(response)
-                .build();
-        aiRepository.save(interaction);
+        log.info("Generated Gemini response for Thread {} context: {}", threadId, response);
 
         return response;
     }

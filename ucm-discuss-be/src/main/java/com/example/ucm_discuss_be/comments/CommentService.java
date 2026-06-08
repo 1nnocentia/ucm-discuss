@@ -52,7 +52,7 @@ public class CommentService {
         CommentModel comment = new CommentModel();
         comment.setContent(dto.getContent());
         comment.setIs_anon(dto.getIs_anon() != null ? dto.getIs_anon() : false);
-        comment.setAsked_ai(false);
+        comment.setAsked_ai(dto.getAskedAi() != null ? dto.getAskedAi() : false);
         comment.setVote_count(0);
         comment.setUser(user);
         comment.setThread(thread);

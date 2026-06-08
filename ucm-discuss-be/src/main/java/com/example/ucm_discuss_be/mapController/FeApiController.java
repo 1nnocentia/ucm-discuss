@@ -191,10 +191,10 @@ public class FeApiController {
                     interaction.setThreadId(created.getId());
                     interaction.setQuestion(question);
                     interaction.setAnswer(answer);
-                    
+
                     created.setAiInteraction(interaction);
                     interaction.setThread(created);
-                    
+
                     threadRepository.save(created);
                 }
             } catch (Exception e) {
@@ -228,6 +228,7 @@ public class FeApiController {
             @RequestParam(required = false) String parentCommentId,
             @RequestParam String content,
             @RequestParam(name = "isAnonymous") boolean isAnonymous,
+            @RequestParam(required = false) Boolean askedAi,
             @RequestParam(value = "image", required = false) MultipartFile image,
             @RequestParam(value = "userId", required = false) Long userId) throws Exception {
 
@@ -240,6 +241,7 @@ public class FeApiController {
         dto.setUserId(user.getId());
         dto.setContent(content);
         dto.setIs_anon(isAnonymous);
+        dto.setAskedAi(askedAi != null ? askedAi : false);
         dto.setImage(imageUrl);
 
         CommentModel created = commentService.saveComment(dto);
@@ -402,17 +404,17 @@ public class FeApiController {
         });
 
         commentRepository.findByUserId(user.getId()).forEach(comment -> {
-                    Map<String, Object> item = new LinkedHashMap<>();
-                    item.put("type", "comment");
-                    item.put("id", comment.getId().toString());
-                    item.put("postId", comment.getThread().getId().toString());
-                    item.put("content", comment.getContent());
-                    item.put("parentPostTitle", comment.getThread().getTitle());
-                    item.put("createdAt", formatDate(comment.getCreated_at()));
-                    item.put("votesCount", comment.getVote_count());
-                    item.put("commentCount", 0);
-                    history.add(item);
-                });
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("type", "comment");
+            item.put("id", comment.getId().toString());
+            item.put("postId", comment.getThread().getId().toString());
+            item.put("content", comment.getContent());
+            item.put("parentPostTitle", comment.getThread().getTitle());
+            item.put("createdAt", formatDate(comment.getCreated_at()));
+            item.put("votesCount", comment.getVote_count());
+            item.put("commentCount", 0);
+            history.add(item);
+        });
 
         history.sort(
                 Comparator.comparing((Map<String, Object> item) -> String.valueOf(item.get("createdAt"))).reversed());
@@ -472,7 +474,7 @@ public class FeApiController {
             actorMap.put("id", thread.getUser().getId().toString());
             actorMap.put("name", anonymous ? "Anonymous" : thread.getUser().getName());
             actorMap.put("isAnonymous", anonymous);
-            
+
             aiMap.put("actorName", actorMap);
             aiMap.put("question", thread.getAiInteraction().getQuestion());
             aiMap.put("answer", thread.getAiInteraction().getAnswer());
@@ -517,7 +519,22 @@ public class FeApiController {
                 .map(reply -> buildComment(reply.getReply_comment(), currentUser))
                 .toList();
         payload.put("replies", replies);
-        payload.put("aiInteraction", null);
+
+        if (Boolean.TRUE.equals(comment.getAsked_ai())) {
+            Map<String, Object> aiMap = new LinkedHashMap<>();
+            Map<String, Object> actorMap = new LinkedHashMap<>();
+            actorMap.put("id", comment.getUser().getId().toString());
+            actorMap.put("name", anonymous ? "Anonymous" : comment.getUser().getName());
+            actorMap.put("isAnonymous", anonymous);
+
+            aiMap.put("actorName", actorMap);
+            aiMap.put("question", "Ask AI");
+            aiMap.put("answer", comment.getContent());
+            aiMap.put("isGenerating", false);
+            payload.put("aiInteraction", aiMap);
+        } else {
+            payload.put("aiInteraction", null);
+        }
         return payload;
     }
 
@@ -577,10 +594,10 @@ public class FeApiController {
     }
 
     private Optional<UserModel> resolveCurrentUser() {
-        org.springframework.security.core.Authentication authentication = 
-            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && 
-            !(authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() &&
+                !(authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
                 return userRepository.findByEmail(((UserDetails) principal).getUsername());
