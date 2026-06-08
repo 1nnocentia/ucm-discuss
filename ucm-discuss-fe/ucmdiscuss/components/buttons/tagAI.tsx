@@ -6,16 +6,18 @@ import { useGenerateAiTag } from "@/controllers/hooks/useGenerateAiTag";
 
 interface TagAIProps {
     onAiSuccess: (question: string, answer: string) => void;
+    threadId?: string;
+    align?: 'left' | 'right';
 }
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-export default function TagAI({ onAiSuccess }: TagAIProps) {
+export default function TagAI({ onAiSuccess, threadId, align = 'left' }: TagAIProps) {
     const { theme } = useTheme();
     const [isAiCalled, setAiCalled] = useState(false);
     const [aiPrompt, setAiPrompt] = useState("");
 
-    const { mutateAsync, isPending } = useGenerateAiTag();
+    const { mutateAsync, isPending } = useGenerateAiTag(threadId);
 
     const handleTagAIPress = () => {
         if (isPending) return; 
@@ -67,7 +69,8 @@ export default function TagAI({ onAiSuccess }: TagAIProps) {
                     { 
                         backgroundColor: theme.colors.background,
                         borderColor: theme.colors.primary + '40',
-                    }
+                    },
+                    align === 'right' ? { right: 0 } : { left: 0 }
                 ]}>
                     <Text style={[styles.bubbleLabel, { color: theme.colors.primary, fontFamily: theme.fonts.montserrat }]}>
                         Ask UCMDiscussAI
@@ -89,6 +92,8 @@ export default function TagAI({ onAiSuccess }: TagAIProps) {
                             // maxLength={80}
                             editable={!isPending}
                             autoFocus
+                            onSubmitEditing={handleGenerate}
+                            returnKeyType="send"
                         />
                         
                         <TouchableOpacity 
@@ -124,7 +129,6 @@ const styles = StyleSheet.create({
     bubbleContainer: {
         position: 'absolute',
         bottom: '120%',
-        left: 0,
         width: 280,
         padding: 12,
         zIndex: 2,

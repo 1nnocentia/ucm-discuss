@@ -183,8 +183,8 @@ export function ThreadDiscussionScreen({ routeId, routerProp, themeOverride }: T
 
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]} edges={['top', 'bottom']}>
-            <KeyboardAvoidingView 
-                style={styles.container} 
+            <KeyboardAvoidingView
+                style={styles.container}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
             >
@@ -207,6 +207,7 @@ export function ThreadDiscussionScreen({ routeId, routerProp, themeOverride }: T
                 <TypingSpace
                     ref={typingSpaceRef}
                     replyingTo={replyingTo}
+                    threadId={postId}
                     onSendComment={handleSendComment}
                     onCancelReply={handleCancelReply}
                 />
@@ -218,27 +219,27 @@ export function ThreadDiscussionScreen({ routeId, routerProp, themeOverride }: T
 export default ThreadDiscussionScreen;
 
 const styles = StyleSheet.create({
-    safeArea: { 
-        flex: 1 
+    safeArea: {
+        flex: 1
     },
-    container: { 
-        flex: 1 
+    container: {
+        flex: 1
     },
 
-    listContent: { 
+    listContent: {
         paddingBottom: 24
     },
 
-    commentContainer: { 
-        flexDirection: 'row', 
-        paddingHorizontal: 16, 
-        paddingVertical: 12, 
-        borderBottomWidth: 0.5 
+    commentContainer: {
+        flexDirection: 'row',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderBottomWidth: 0.5
     },
-    commentLeft: { 
-        alignItems: 'center', 
-        marginRight: 12, 
-        width: 32 
+    commentLeft: {
+        alignItems: 'center',
+        marginRight: 12,
+        width: 32
     },
     centerContainer: {
         flex: 1,

@@ -157,73 +157,73 @@ export default function CreateThreadScreen() {
 
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
-            <KeyboardAvoidingView 
-                style={styles.container} 
+            <KeyboardAvoidingView
+                style={styles.container}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
             >
                 <Header title="New Thread" />
 
                 <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
-                    
-                        <View style={styles.topicSelector}>
-                            <Text style={[styles.topicText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
-                                {isAnonymous ? 'anonymous' : user?.name}
-                            </Text>
-                            <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} style={styles.topicIcon} />
-                            <TopicSelector 
-                                selectedTopic={selectedTopic}
-                                onSelectTopic={setSelectedTopic}
-                            />
-                        </View>
 
-                        <TextInput
-                            style={[styles.titleInput, { color: theme.colors.textPrimary, borderColor: theme.colors.textSecondary + '33', fontFamily: theme.fonts.montserrat }]}
-                            placeholder="Title"
-                            placeholderTextColor={theme.colors.textSecondary}
-                            value={title}
-                            onChangeText={setTitle}
+                    <View style={styles.topicSelector}>
+                        <Text style={[styles.topicText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.montserrat }]}>
+                            {isAnonymous ? 'anonymous' : user?.name}
+                        </Text>
+                        <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} style={styles.topicIcon} />
+                        <TopicSelector
+                            selectedTopic={selectedTopic}
+                            onSelectTopic={setSelectedTopic}
                         />
-                        
-                        {postImage && (
-                            <View style={styles.imagePreviewContainer}>
-                                <ZoomableImage uri={postImage} style={styles.imagePreview} resizeMode="cover" />
-                                <TouchableOpacity 
-                                    style={[styles.removeImageBtn, { backgroundColor: 'rgba(0,0,0,0.6)' }]} 
-                                    onPress={() => setPostImage(null)}
-                                >
-                                    <Ionicons name="close" size={20} color="#FDFDFD" />
-                                </TouchableOpacity>
-                            </View>
-                        )}
+                    </View>
 
-                        {aiResult && (
-                            <View style={[styles.aiResultContainer, { borderColor: theme.colors.primary + '44', backgroundColor: theme.colors.primary + '11' }]}>
-                                <View style={styles.aiResultHeader}>
-                                    <AICard variant="onCreate" />
-                                </View>
-                                
-                                <View style={styles.aiResultContent}>
-                                    <Text style={[styles.aiLabel, { color: theme.colors.textSecondary }]}>Q:</Text>
-                                    <Text style={[styles.aiQuestion, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
-                                        {aiResult.question}
-                                    </Text>
-                                    
-                                    <Text style={[styles.aiLabel, { color: theme.colors.textSecondary, marginTop: 8 }]}>A:</Text>
-                                    <Text style={[styles.aiAnswer, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
-                                        {aiResult.answer}
-                                    </Text>
-                                </View>
-                                {!aiResult.isUsed && (
-                                    <View style={styles.aiResultActions}>
-                                        <TouchableOpacity 
-                                            style={[styles.aiActionBtn, { backgroundColor: theme.colors.primary }]}
-                                            onPress={handleUseAiResult}
-                                        >
+                    <TextInput
+                        style={[styles.titleInput, { color: theme.colors.textPrimary, borderColor: theme.colors.textSecondary + '33', fontFamily: theme.fonts.montserrat }]}
+                        placeholder="Title"
+                        placeholderTextColor={theme.colors.textSecondary}
+                        value={title}
+                        onChangeText={setTitle}
+                    />
+
+                    {postImage && (
+                        <View style={styles.imagePreviewContainer}>
+                            <ZoomableImage uri={postImage} style={styles.imagePreview} resizeMode="cover" />
+                            <TouchableOpacity
+                                style={[styles.removeImageBtn, { backgroundColor: 'rgba(0,0,0,0.6)' }]}
+                                onPress={() => setPostImage(null)}
+                            >
+                                <Ionicons name="close" size={20} color="#FDFDFD" />
+                            </TouchableOpacity>
+                        </View>
+                    )}
+
+                    {aiResult && (
+                        <View style={[styles.aiResultContainer, { borderColor: theme.colors.primary + '44', backgroundColor: theme.colors.primary + '11' }]}>
+                            <View style={styles.aiResultHeader}>
+                                <AICard variant="onCreate" />
+                            </View>
+
+                            <View style={styles.aiResultContent}>
+                                <Text style={[styles.aiLabel, { color: theme.colors.textSecondary }]}>Q:</Text>
+                                <Text style={[styles.aiQuestion, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
+                                    {aiResult.question}
+                                </Text>
+
+                                <Text style={[styles.aiLabel, { color: theme.colors.textSecondary, marginTop: 8 }]}>A:</Text>
+                                <Text style={[styles.aiAnswer, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
+                                    {aiResult.answer}
+                                </Text>
+                            </View>
+                            {!aiResult.isUsed && (
+                                <View style={styles.aiResultActions}>
+                                    <TouchableOpacity
+                                        style={[styles.aiActionBtn, { backgroundColor: theme.colors.primary }]}
+                                        onPress={handleUseAiResult}
+                                    >
                                         <Ionicons name="checkmark" size={16} color="#FFF" style={{ marginRight: 4 }} />
                                         <Text style={[styles.aiActionText, { color: '#FFF' }]}>Use</Text>
                                     </TouchableOpacity>
-                                    
-                                    <TouchableOpacity 
+
+                                    <TouchableOpacity
                                         style={[styles.aiActionBtn, { backgroundColor: theme.colors.textSecondary + '30' }]}
                                         onPress={handleClearAiResult}
                                     >
@@ -231,34 +231,34 @@ export default function CreateThreadScreen() {
                                         <Text style={[styles.aiActionText, { color: theme.colors.textSecondary }]}>Dismiss</Text>
                                     </TouchableOpacity>
                                 </View>
-                                )}
-                            </View>
-                        )}
-
-                        <TextInput
-                            ref={contentInputRef}
-                            style={[styles.contentInput, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}
-                            placeholder={`Before you post, please make sure to:\n1. Add a clear title that describe your question.\n2. Add all required option below (Course name and Topic)\n3. Write a detailed description of your issue\n\nNote: Screenshots are welcome, but please do not posts full assignment.`}
-                            placeholderTextColor={theme.colors.textSecondary}
-                            multiline
-                            textAlignVertical="top"
-                            value={content}
-                            onChangeText={setContent}
-                        />
-
-                        
-                        
-                        <View style={styles.toolbar}>
-                            <UploadImg 
-                                onImagesSelected={(images) => {
-                                    if (images.length > 0) {
-                                        setPostImage(images[0].uri);
-                                        console.log("Gambar berhasil dipilih:", images[0].uri);
-                                    }
-                                }} 
-                            />  
-                            <TagAI onAiSuccess={handleAiSuccess} />
+                            )}
                         </View>
+                    )}
+
+                    <TextInput
+                        ref={contentInputRef}
+                        style={[styles.contentInput, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}
+                        placeholder={`Before you post, please make sure to:\n1. Add a clear title that describe your question.\n2. Add all required option below (Course name and Topic)\n3. Write a detailed description of your issue\n\nNote: Screenshots are welcome, but please do not posts full assignment.`}
+                        placeholderTextColor={theme.colors.textSecondary}
+                        multiline
+                        textAlignVertical="top"
+                        value={content}
+                        onChangeText={setContent}
+                    />
+
+
+
+                    <View style={styles.toolbar}>
+                        <UploadImg
+                            onImagesSelected={(images) => {
+                                if (images.length > 0) {
+                                    setPostImage(images[0].uri);
+                                    console.log("Gambar berhasil dipilih:", images[0].uri);
+                                }
+                            }}
+                        />
+                        <TagAI onAiSuccess={handleAiSuccess} />
+                    </View>
                 </ScrollView>
 
                 <BottomBar
@@ -267,59 +267,59 @@ export default function CreateThreadScreen() {
                     disabled={isButtonDisabled}
                     onPressPost={handlePost}
                 />
-                
+
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    safeArea: { 
-        flex: 1 
+    safeArea: {
+        flex: 1
     },
-    container: { 
-        flex: 1 
+    container: {
+        flex: 1
     },
-    scrollView: { 
-        flex: 1, 
+    scrollView: {
+        flex: 1,
         paddingHorizontal: 20
     },
     scrollContent: {
         flexGrow: 1,
     },
-    topicSelector: { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        marginTop: 16, 
-        marginBottom: 12 
+    topicSelector: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 16,
+        marginBottom: 12
     },
-    topicText: { 
-        fontSize: 14, 
-        fontWeight: '600' 
+    topicText: {
+        fontSize: 14,
+        fontWeight: '600'
     },
-    topicIcon: { 
-        marginHorizontal: 8 
+    topicIcon: {
+        marginHorizontal: 8
     },
-    titleInput: { 
-        fontSize: 18, 
-        fontWeight: 'bold', 
-        borderBottomWidth: 1, 
-        paddingVertical: 12, 
-        marginBottom: 16 
+    titleInput: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        borderBottomWidth: 1,
+        paddingVertical: 12,
+        marginBottom: 16
     },
-    contentInput: { 
-        fontSize: 14, 
+    contentInput: {
+        fontSize: 14,
         // minHeight: 200, 
-        lineHeight: 22 
+        lineHeight: 22
     },
-    toolbar: { 
-        flexDirection: 'row', 
-        marginTop: 16, 
+    toolbar: {
+        flexDirection: 'row',
+        marginTop: 16,
         marginBottom: 32,
         gap: 18,
     },
-    toolbarIcon: { 
-        marginRight: 16 
+    toolbarIcon: {
+        marginRight: 16
     },
     imagePreviewContainer: {
         width: '100%',
