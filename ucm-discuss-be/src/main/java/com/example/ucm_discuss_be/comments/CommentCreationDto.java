@@ -24,6 +24,8 @@ public class CommentCreationDto {
 
     private Boolean askedAi = false;
 
+    private String aiQuestion;
+
     // Optional: attach 1 image when creating a comment
     @Size(
         max = 1000,

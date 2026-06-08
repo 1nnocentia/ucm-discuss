@@ -53,6 +53,7 @@ public class CommentService {
         comment.setContent(dto.getContent());
         comment.setIs_anon(dto.getIs_anon() != null ? dto.getIs_anon() : false);
         comment.setAsked_ai(dto.getAskedAi() != null ? dto.getAskedAi() : false);
+        comment.setAiQuestion(dto.getAiQuestion());
         comment.setVote_count(0);
         comment.setUser(user);
         comment.setThread(thread);
@@ -178,6 +179,7 @@ public class CommentService {
         dto.setContent(comment.getContent());
         dto.setVote_count(comment.getVote_count());
         dto.setAsked_ai(comment.getAsked_ai());
+        dto.setAi_question(comment.getAiQuestion());
         dto.setIs_anon(comment.getIs_anon());
         dto.setCreated_at(comment.getCreated_at());
         dto.setImage(comment.getImage());

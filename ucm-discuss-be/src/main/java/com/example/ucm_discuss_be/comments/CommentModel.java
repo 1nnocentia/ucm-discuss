@@ -90,6 +90,14 @@ public class CommentModel {
     )
     private Boolean asked_ai = false;
 
+    @Size(max = 1000, message = "AI Question must be at most 1000 characters")
+    @Column(
+        name = "ai_question",
+        nullable = true,
+        length = 1000
+    )
+    private String aiQuestion;
+
     @NotNull(message = "Anonymous status is required")
     @Column(
         name = "is_anon",

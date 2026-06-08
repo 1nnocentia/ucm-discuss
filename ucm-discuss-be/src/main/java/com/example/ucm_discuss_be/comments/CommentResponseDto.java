@@ -19,6 +19,7 @@ public class CommentResponseDto {
     private int vote_count;
     private String image;
     private Boolean asked_ai;
+    private String ai_question;
     private Boolean is_anon;
     private LocalDateTime created_at;
     private UserResponseDto user;

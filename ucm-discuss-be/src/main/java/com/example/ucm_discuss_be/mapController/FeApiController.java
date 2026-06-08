@@ -229,6 +229,7 @@ public class FeApiController {
             @RequestParam String content,
             @RequestParam(name = "isAnonymous") boolean isAnonymous,
             @RequestParam(required = false) Boolean askedAi,
+            @RequestParam(required = false) String aiQuestion,
             @RequestParam(value = "image", required = false) MultipartFile image,
             @RequestParam(value = "userId", required = false) Long userId) throws Exception {
 
@@ -242,6 +243,7 @@ public class FeApiController {
         dto.setContent(content);
         dto.setIs_anon(isAnonymous);
         dto.setAskedAi(askedAi != null ? askedAi : false);
+        dto.setAiQuestion(aiQuestion);
         dto.setImage(imageUrl);
 
         CommentModel created = commentService.saveComment(dto);
@@ -528,7 +530,7 @@ public class FeApiController {
             actorMap.put("isAnonymous", anonymous);
 
             aiMap.put("actorName", actorMap);
-            aiMap.put("question", "Ask AI");
+            aiMap.put("question", comment.getAiQuestion() != null ? comment.getAiQuestion() : "Ask AI");
             aiMap.put("answer", comment.getContent());
             aiMap.put("isGenerating", false);
             payload.put("aiInteraction", aiMap);
