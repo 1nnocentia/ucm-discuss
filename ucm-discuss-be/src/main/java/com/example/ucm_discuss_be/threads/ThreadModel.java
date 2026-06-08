@@ -11,6 +11,7 @@ import com.example.ucm_discuss_be.courses.CourseModel;
 import com.example.ucm_discuss_be.userVotesThread.UserVotesThreadModel;
 import com.example.ucm_discuss_be.userViewedThreads.UserViewedThreadModel;
 import com.example.ucm_discuss_be.users.UserModel;
+import com.example.ucm_discuss_be.aiInteraction.AiInteractionModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -88,7 +89,7 @@ public class ThreadModel {
     private List<UserVotesThreadModel> user_votes_threads;
 
     @OneToOne(mappedBy = "thread", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private AiInteraction aiInteraction;
+    private AiInteractionModel aiInteraction;
 
     // @OneToOne(
     // mappedBy = "thread",

@@ -46,78 +46,41 @@ import jakarta.validation.constraints.Size;
 @Setter
 
 @Entity
-@Table(
-    name = "users",
-    uniqueConstraints = {
+@Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email"),
-        @UniqueConstraint(columnNames = "nim_or_nisn")
-    }
-)
+// @UniqueConstraint(columnNames = "nim_or_nisn")
+})
 public class UserModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "NIM or NISN is required")
-    @Size(
-        min = 5,
-        max = 50,
-        message = "NIM or NISN must be between 5 and 50 characters"
-    )
-    @Column(
-        name = "nim_or_nisn",
-        nullable = false,
-        unique = true,
-        length = 50
-    )
+    // @NotBlank(message = "NIM or NISN is required")
+    @Size(min = 5, max = 50, message = "NIM or NISN must be between 5 and 50 characters")
+    @Column(name = "nim_or_nisn", nullable = true, unique = true, length = 50)
     private String nimOrNisn;
 
     @NotBlank(message = "Name is required")
-    @Size(
-        min = 2,
-        max = 255,
-        message = "Name must be between 2 and 255 characters"
-    )
-    @Column(
-        name = "name",
-        nullable = false,
-        length = 255
-    )
+    @Size(min = 2, max = 255, message = "Name must be between 2 and 255 characters")
+    @Column(name = "name", nullable = false, length = 255)
     private String name;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email format is invalid")
-    @Size(
-        max = 255,
-        message = "Email must not exceed 255 characters"
-    )
-    @Column(
-        name = "email",
-        nullable = false,
-        unique = true,
-        length = 255
-    )
+    @Size(max = 255, message = "Email must not exceed 255 characters")
+    @Column(name = "email", nullable = false, unique = true, length = 255)
     private String email;
 
     @NotNull(message = "Lecturer status is required")
-    @Column(
-        name = "is_lecturer",
-        nullable = false
-    )
+    @Column(name = "is_lecturer", nullable = false)
     private Boolean isLecturer = false;
 
     @NotNull(message = "Anonymous status is required")
-    @Column(
-        name = "is_anon",
-        nullable = false
-    )
+    @Column(name = "is_anon", nullable = false)
     private Boolean isAnon = false;
 
-    @Column(
-        name = "header_image",
-        length = 255
-    )
+    @Column(name = "header_image", length = 255)
     private String headerImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -128,67 +91,29 @@ public class UserModel {
     @JoinColumn(name = "faculty_id")
     private FacultyModel faculty;
 
-    @OneToMany(
-        mappedBy = "user",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NotificationModel> notifications;
 
-    @OneToMany(
-        mappedBy = "user",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ThreadModel> created_threads;
 
-    @OneToMany(
-        mappedBy = "user",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentModel> comments;
 
-    @OneToMany(
-        mappedBy = "user",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserVotesThreadModel> voted_threads;
 
-    @OneToMany(
-        mappedBy = "user",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserVotesCommentModel> voted_comments;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "user_course",
-        joinColumns = @JoinColumn(
-            name = "user_id",
-            referencedColumnName = "id"
-        ),
-        inverseJoinColumns = @JoinColumn(
-            name = "course_id",
-            referencedColumnName = "id"
-        )
-    )
+    @JoinTable(name = "user_course", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"))
     private List<CourseModel> courses;
 
-    @OneToMany(
-        mappedBy = "user",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserViewedThreadModel> viewed_threads;
 
     @CreationTimestamp
-    @Column(
-        name = "created_at",
-        nullable = false,
-        updatable = false
-    )
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }

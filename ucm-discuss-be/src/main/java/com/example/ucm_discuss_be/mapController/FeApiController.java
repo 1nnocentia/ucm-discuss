@@ -42,7 +42,7 @@ import com.example.ucm_discuss_be.replies.ReplyModel;
 import com.example.ucm_discuss_be.replies.ReplyRepository;
 import com.example.ucm_discuss_be.security.auth.AuthService;
 import com.example.ucm_discuss_be.security.auth.LoginRequestDto;
-import com.example.ucm_discuss_be.threads.AiInteraction;
+import com.example.ucm_discuss_be.aiInteraction.AiInteractionModel;
 import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.threads.ThreadRepository;
 import com.example.ucm_discuss_be.threads.ThreadService;
@@ -187,7 +187,7 @@ public class FeApiController {
                 String question = (String) aiMap.get("question");
                 String answer = (String) aiMap.get("answer");
                 if (question != null && !question.isBlank()) {
-                    AiInteraction interaction = new AiInteraction();
+                    AiInteractionModel interaction = new AiInteractionModel();
                     interaction.setThreadId(created.getId());
                     interaction.setQuestion(question);
                     interaction.setAnswer(answer);
