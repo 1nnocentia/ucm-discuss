@@ -8,7 +8,7 @@ import ZoomableImage from '@/components/common/zoomableImage';
 import TagAI from '@/components/buttons/tagAI';
 
 type TypingSpaceProps = {
-    onSendComment?: (commentText: string, imageUri: string | null) => void;
+    onSendComment?: (commentText: string, imageUri: string | null, askedAi?: boolean, aiQuestion?: string) => void;
     onCancelReply?: (cancelledCommentId: string) => void;
     replyingTo?: string;
     threadId?: string;
@@ -25,8 +25,8 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
     const [commentText, setCommentText] = useState('');
     const textInputRef = useRef<TextInput>(null);
     const [postImage, setPostImage] = useState<string | null>(null);
-    const isTyping = commentText.length > 0 || postImage !== null;
     const [aiResult, setAiResult] = useState<{ question: string; answer: string; isUsed?: boolean } | null>(null);
+    const isTyping = commentText.length > 0 || postImage !== null || !!(aiResult && aiResult.isUsed);
 
     const handleAiSuccess = (question: string, answer: string) => {
         setAiResult({ question, answer });
@@ -34,8 +34,7 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
 
     const handleUseAiResult = () => {
         if (aiResult) {
-            setCommentText(prev => (prev ? prev + "\n" + aiResult.answer : aiResult.answer));
-            setAiResult(null);
+            setAiResult({ ...aiResult, isUsed: true });
         }
     };
 
@@ -57,13 +56,17 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
     }), []);
 
     const handleSendComment = () => {
-        if (commentText.trim().length === 0 && !postImage) return;
-        onSendComment?.(commentText.trim(), postImage);
-        if (!onSendComment) {
-            console.log('Kirim komentar ke Controller:', commentText);
-        }
+        const hasContent = commentText.trim().length > 0 || postImage || (aiResult && aiResult.isUsed);
+        if (!hasContent) return;
+
+        const finalContent = aiResult && aiResult.isUsed ? aiResult.answer : commentText.trim();
+        const askedAi = !!(aiResult && aiResult.isUsed);
+        const aiQuestion = aiResult && aiResult.isUsed ? aiResult.question : undefined;
+
+        onSendComment?.(finalContent, postImage, askedAi, aiQuestion);
         setCommentText('');
         setPostImage(null);
+        setAiResult(null);
     };
 
     const placeholder = replyingTo ? 'Write a reply...' : 'Write a comment...';
@@ -88,6 +91,14 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
 
             {aiResult && (
                 <View style={[styles.aiResultContainer, { borderColor: theme.colors.primary + '44', backgroundColor: theme.colors.primary + '11' }]}>
+                    {aiResult.isUsed && (
+                        <TouchableOpacity
+                            style={{ position: 'absolute', top: 8, right: 8, zIndex: 1, padding: 4 }}
+                            onPress={handleClearAiResult}
+                        >
+                            <Ionicons name="close" size={18} color={theme.colors.textSecondary} />
+                        </TouchableOpacity>
+                    )}
                     <View style={styles.aiResultContent}>
                         <Text style={[styles.aiLabel, { color: theme.colors.textSecondary, fontFamily: theme.fonts.montserrat }]}>
                             Q: {aiResult.question}
@@ -96,23 +107,25 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
                             {aiResult.answer}
                         </Text>
                     </View>
-                    <View style={styles.aiResultActions}>
-                        <TouchableOpacity
-                            style={[styles.aiActionBtn, { backgroundColor: theme.colors.primary }]}
-                            onPress={handleUseAiResult}
-                        >
-                            <Ionicons name="checkmark" size={14} color="#FFF" style={{ marginRight: 4 }} />
-                            <Text style={[styles.aiActionText, { color: '#FFF', fontFamily: theme.fonts.montserrat }]}>Use</Text>
-                        </TouchableOpacity>
+                    {!aiResult.isUsed && (
+                        <View style={styles.aiResultActions}>
+                            <TouchableOpacity
+                                style={[styles.aiActionBtn, { backgroundColor: theme.colors.primary }]}
+                                onPress={handleUseAiResult}
+                            >
+                                <Ionicons name="checkmark" size={14} color="#FFF" style={{ marginRight: 4 }} />
+                                <Text style={[styles.aiActionText, { color: '#FFF', fontFamily: theme.fonts.montserrat }]}>Use</Text>
+                            </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={[styles.aiActionBtn, { backgroundColor: theme.colors.textSecondary + '30' }]}
-                            onPress={handleClearAiResult}
-                        >
-                            <Ionicons name="close" size={14} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
-                            <Text style={[styles.aiActionText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.montserrat }]}>Dismiss</Text>
-                        </TouchableOpacity>
-                    </View>
+                            <TouchableOpacity
+                                style={[styles.aiActionBtn, { backgroundColor: theme.colors.textSecondary + '30' }]}
+                                onPress={handleClearAiResult}
+                            >
+                                <Ionicons name="close" size={14} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
+                                <Text style={[styles.aiActionText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.montserrat }]}>Dismiss</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
                 </View>
             )}
 
@@ -121,6 +134,7 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
                     <TouchableOpacity style={styles.leftBtn} onPress={() => {
                         setCommentText('');
                         setPostImage(null);
+                        setAiResult(null);
                         if (replyingTo) onCancelReply?.(replyingTo);
                     }}>
                         <Ionicons name="close" size={24} color={theme.colors.textSecondary} />
@@ -134,11 +148,12 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
                         color: theme.colors.textPrimary,
                         fontFamily: theme.fonts.openSans
                     }]}
-                    placeholder={placeholder}
+                    placeholder={aiResult?.isUsed ? 'Using AI response...' : placeholder}
                     placeholderTextColor={theme.colors.textSecondary}
                     multiline
                     maxLength={500}
-                    value={commentText}
+                    editable={!aiResult?.isUsed}
+                    value={aiResult?.isUsed ? '' : commentText}
                     onChangeText={setCommentText}
                 />
 
@@ -161,10 +176,10 @@ const TypingSpace = forwardRef<TypingSpaceRef, TypingSpaceProps>(({ onSendCommen
                     <TouchableOpacity
                         style={[
                             styles.sendBtn,
-                            { opacity: (commentText.trim().length > 0 || postImage) ? 1 : 0.5 }
+                            { opacity: (commentText.trim().length > 0 || postImage || !!(aiResult && aiResult.isUsed)) ? 1 : 0.5 }
                         ]}
                         onPress={handleSendComment}
-                        disabled={commentText.trim().length === 0 && !postImage}
+                        disabled={commentText.trim().length === 0 && !postImage && !(aiResult && aiResult.isUsed)}
                     >
                         <Ionicons name="send" size={20} color={theme.colors.primary} />
                     </TouchableOpacity>

@@ -3,7 +3,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LoginButton from "@/components/buttons/loginButton";
-import { useRouter } from "expo-router";  
+import { useRouter } from "expo-router";
 import { ApiService } from "@/controllers/services/apiService";
 
 export default function LoginScreen() {
@@ -25,19 +25,19 @@ export default function LoginScreen() {
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.primary }]}>
-                <Image source={ImgBg} style={styles.backgroundImage} />
-                    <SafeAreaView style={styles.safeArea}>
-                        <View style={styles.contentWrapper}>
-                            <LoginButton />
-                                <TouchableOpacity 
+            <Image source={ImgBg} style={styles.backgroundImage} />
+            <SafeAreaView style={styles.safeArea}>
+                <View style={styles.contentWrapper}>
+                    <LoginButton />
+                    {/* <TouchableOpacity 
                                         style={styles.fakeLoginButton} 
                                         onPress={handleFakeLogin}
                                         activeOpacity={0.8}
                                     >
                                     <Text style={styles.fakeLoginText}>Demo Login</Text>
-                                </TouchableOpacity>
-                        </View>
-                    </SafeAreaView>
+                                </TouchableOpacity> */}
+                </View>
+            </SafeAreaView>
         </View>
     )
 }
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         gap: 20,
     },
     fakeLoginButton: {
-        backgroundColor: '#9C27B0', 
+        backgroundColor: '#9C27B0',
         paddingVertical: 12,
         paddingHorizontal: 24,
         borderRadius: 12,

@@ -59,6 +59,14 @@ const toMultipartCommentFormData = (payload: CreateCommentInput) => {
         formData.append('parentCommentId', payload.parentCommentId);
     }
 
+    if (payload.askedAi !== undefined) {
+        formData.append('askedAi', String(payload.askedAi));
+    }
+
+    if (payload.aiQuestion) {
+        formData.append('aiQuestion', payload.aiQuestion);
+    }
+
     const imagePart = buildImagePart(payload.image ?? null);
     if (imagePart) {
         formData.append('image', imagePart);

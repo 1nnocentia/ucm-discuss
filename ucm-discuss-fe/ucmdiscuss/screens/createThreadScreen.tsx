@@ -197,7 +197,15 @@ export default function CreateThreadScreen() {
                     )}
 
                     {aiResult && (
-                        <View style={[styles.aiResultContainer, { borderColor: theme.colors.primary + '44', backgroundColor: theme.colors.primary + '11' }]}>
+                        <View style={[styles.aiResultContainer, { borderColor: theme.colors.primary + '44', backgroundColor: theme.colors.primary + '11', position: 'relative' }]}>
+                            {aiResult.isUsed && (
+                                <TouchableOpacity
+                                    style={{ position: 'absolute', top: 8, right: 8, zIndex: 1, padding: 4 }}
+                                    onPress={handleClearAiResult}
+                                >
+                                    <Ionicons name="close" size={20} color={theme.colors.textSecondary} />
+                                </TouchableOpacity>
+                            )}
                             <View style={styles.aiResultHeader}>
                                 <AICard variant="onCreate" />
                             </View>
@@ -309,7 +317,7 @@ const styles = StyleSheet.create({
     },
     contentInput: {
         fontSize: 14,
-        // minHeight: 200, 
+        minHeight: 200, 
         lineHeight: 22
     },
     toolbar: {

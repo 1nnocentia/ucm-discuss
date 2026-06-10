@@ -4,6 +4,7 @@ import { useTheme } from '@/context/ThemeContext';
 import VoteButton from '@/components/buttons/voteButton';
 import ZoomableImage from '@/components/common/zoomableImage';
 import { ThreadComment } from '@/models/user';
+import AICard from '@/components/threadCard/aiCard';
 
 interface ReplyItemProps {
     reply: ThreadComment;
@@ -29,9 +30,21 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
                     <Text style={[styles.metaText, { color: theme.colors.textSecondary }]}>• {reply.createdAt}</Text>
                 </View>
 
-                <Text style={[styles.text, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
-                    {reply.content}
-                </Text>
+                {reply.aiInteraction && (
+                    <AICard
+                        variant="reply"
+                        question={reply.aiInteraction.question}
+                        answer={reply.aiInteraction.answer}
+                        style={{ marginBottom: 8 }}
+                        full={true}
+                    />
+                )}
+
+                {!reply.aiInteraction && (
+                    <Text style={[styles.text, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
+                        {reply.content}
+                    </Text>
+                )}
 
                 {reply.image && (
                     <ZoomableImage uri={reply.image} style={styles.replyImage} resizeMode="contain" />

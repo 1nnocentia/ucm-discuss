@@ -49,6 +49,7 @@ export default function DetailedThreadCard({ post, onCommentPress }: DetailedThr
                     question={post.aiInteraction.question}
                     answer={post.aiInteraction.answer}
                     style={{ marginBottom: 8 }}
+                    full={true}
                 />
             )}
 

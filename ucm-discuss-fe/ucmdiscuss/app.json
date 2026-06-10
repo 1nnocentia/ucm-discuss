@@ -22,7 +22,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.studywithinno.ucmdiscuss"
     },
     "web": {
       "output": "static",
@@ -47,6 +48,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "59ea02fa-f909-400e-ab1b-ea87a962b410"
+      }
+    },
+    "owner": "studywithinno"
   }
 }

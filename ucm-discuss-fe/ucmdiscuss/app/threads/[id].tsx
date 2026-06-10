@@ -65,6 +65,12 @@ export function ThreadDiscussionScreen({ routeId, routerProp, themeOverride }: T
                     votes: 0,
                     user: { id: 'current-user', name: 'You', isAnonymous: newCommentPayload.isAnonymous },
                     replies: [],
+                    aiInteraction: newCommentPayload.askedAi ? {
+                        actorName: { id: 'current-user', name: 'You', isAnonymous: newCommentPayload.isAnonymous },
+                        question: newCommentPayload.aiQuestion || 'Ask AI',
+                        answer: newCommentPayload.content,
+                        isGenerating: false,
+                    } : undefined,
                 };
 
                 if (!newCommentPayload.parentCommentId) {
@@ -126,7 +132,7 @@ export function ThreadDiscussionScreen({ routeId, routerProp, themeOverride }: T
         <CommentItem comment={item} onReplyPress={handleReplyPress} />
     );
 
-    const handleSendComment = async (commentText: string, imageUri?: string | null) => {
+    const handleSendComment = async (commentText: string, imageUri?: string | null, askedAi?: boolean, aiQuestion?: string) => {
         if (!postId) return;
 
         const payload: CreateCommentInput = {
@@ -135,6 +141,8 @@ export function ThreadDiscussionScreen({ routeId, routerProp, themeOverride }: T
             content: commentText,
             image: imageUri || null,
             isAnonymous: false,
+            askedAi: askedAi,
+            aiQuestion: aiQuestion,
         };
 
         submitCommentMutation.mutate(payload, {

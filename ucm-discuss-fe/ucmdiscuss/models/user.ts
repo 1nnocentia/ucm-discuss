@@ -71,6 +71,8 @@ export interface CreateCommentInput {
     content: string;
     image?: string | null;
     isAnonymous: boolean;
+    askedAi?: boolean;
+    aiQuestion?: string;
 }
 
 export interface PostHistory {

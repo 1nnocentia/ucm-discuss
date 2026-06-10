@@ -5,6 +5,7 @@ import { useTheme } from '@/context/ThemeContext';
 import VoteButton from '@/components/buttons/voteButton';
 import ReplyItem from '@/components/threadDiscussion/replyItem';
 import ZoomableImage from '@/components/common/zoomableImage';
+import AICard from '@/components/threadCard/aiCard';
 import { ThreadComment } from '@/models/user';
 
 interface CommentItemProps {
@@ -18,7 +19,7 @@ export default function CommentItem({ comment, onReplyPress }: CommentItemProps)
 
     return (
         <View style={[styles.container, { borderBottomColor: theme.colors.textSecondary + '11' }]}>
-            
+
             <View style={styles.mainCommentRow}>
                 <View style={styles.rightColumn}>
                     <View style={styles.header}>
@@ -36,13 +37,25 @@ export default function CommentItem({ comment, onReplyPress }: CommentItemProps)
                         />
                     )}
 
-                    <Text style={[styles.text, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
-                        {comment.content}
-                    </Text>
+                    {comment.aiInteraction && (
+                        <AICard
+                            variant="comment"
+                            question={comment.aiInteraction.question}
+                            answer={comment.aiInteraction.answer}
+                            style={{ marginBottom: 8 }}
+                            full={true}
+                        />
+                    )}
+
+                    {!comment.aiInteraction && (
+                        <Text style={[styles.text, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]}>
+                            {comment.content}
+                        </Text>
+                    )}
 
                     <View style={styles.actions}>
-                        <VoteButton 
-                            initialVotes={comment.votes} 
+                        <VoteButton
+                            initialVotes={comment.votes}
                             initialIsVoted={comment.userVoteStatus}
                             targetId={comment.id}
                             type="comment"
@@ -68,36 +81,36 @@ export default function CommentItem({ comment, onReplyPress }: CommentItemProps)
 }
 
 const styles = StyleSheet.create({
-    container: { 
+    container: {
         paddingHorizontal: 16,
-        paddingVertical: 12, 
+        paddingVertical: 12,
         borderBottomWidth: 0.5,
         flex: 1
     },
-    mainCommentRow: { 
-        flexDirection: 'row' 
+    mainCommentRow: {
+        flexDirection: 'row'
     },
-    
-    rightColumn: { 
-        flex: 1 
+
+    rightColumn: {
+        flex: 1
     },
-    header: { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
         gap: 8,
-        marginBottom: 4 
-        },
-    author: { 
-        fontSize: 14, 
-        fontWeight: 'bold' 
+        marginBottom: 4
     },
-    metaText: { 
-        fontSize: 12 
-    },
-    text: { 
+    author: {
         fontSize: 14,
-        lineHeight: 20, 
-        marginBottom: 8 
+        fontWeight: 'bold'
+    },
+    metaText: {
+        fontSize: 12
+    },
+    text: {
+        fontSize: 14,
+        lineHeight: 20,
+        marginBottom: 8
     },
     commentImage: {
         width: '100%',
@@ -105,22 +118,22 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginBottom: 8,
     },
-    
-    actions: { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        gap: 16 
+
+    actions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 16
     },
-    replyBtn: { 
-        paddingVertical: 4 
+    replyBtn: {
+        paddingVertical: 4
     },
-    replyBtnText: { 
-        fontSize: 13, 
-        fontWeight: '600' 
+    replyBtnText: {
+        fontSize: 13,
+        fontWeight: '600'
     },
 
-    repliesContainer: { 
+    repliesContainer: {
         marginLeft: 30,
-        marginTop: 4 
+        marginTop: 4
     }
 });

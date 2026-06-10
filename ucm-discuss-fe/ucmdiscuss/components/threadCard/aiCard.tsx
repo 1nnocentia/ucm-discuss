@@ -10,9 +10,10 @@ interface AICardProps {
     style?: StyleProp<ViewStyle>;
     question?: string | null;
     answer?: string | null;
+    full?: boolean;
 }
 
-export default function AICard({ variant, style, question, answer }: AICardProps) {
+export default function AICard({ variant, style, question, answer, full = false }: AICardProps) {
     const { theme } = useTheme();
     
     const getVariantConfig = (variant: AIVariant) => {
@@ -85,7 +86,7 @@ export default function AICard({ variant, style, question, answer }: AICardProps
                 // style
             ]}>
                 <Ionicons 
-                    name="sparkles"
+                     name="sparkles"
                     size={config.iconSize} 
                     color={theme.colors.primary} 
                     style={styles.icon} 
@@ -104,12 +105,18 @@ export default function AICard({ variant, style, question, answer }: AICardProps
             {(question || answer) && (
                     <View style={styles.qaContainer}>
                         {question ? (
-                            <Text style={[styles.questionText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]} numberOfLines={2}>
+                            <Text 
+                                style={[styles.questionText, { color: theme.colors.textPrimary, fontFamily: theme.fonts.openSans }]} 
+                                numberOfLines={full ? undefined : 2}
+                            >
                                 Q: {question}
                             </Text>
                         ) : null}
                         {answer ? (
-                            <Text style={[styles.answerText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]} numberOfLines={2}>
+                            <Text 
+                                style={[styles.answerText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.openSans }]} 
+                                numberOfLines={full ? undefined : 2}
+                            >
                                 A: {answer}
                             </Text>
                         ) : null}
