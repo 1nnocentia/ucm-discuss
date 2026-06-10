@@ -4,30 +4,45 @@ services:
     container_name: ucmdiscuss-db
     restart: always
     environment:
-      MARIADB_DATABASE: ${DB_url}
-      MARIADB_USER: ${DB_username}
-      MARIADB_PASSWORD: ${DB_password}
-      MARIADB_ROOT_PASSWORD: ${DB_password}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   api:
     build:
       context: .
-      network: host
+      dockerfile: dockerfile
     container_name: ucmdiscuss-api
     restart: always
     ports:
-      - "${DB_port}:8080"
+      - "${API_Port:-8080}:8080"
     dns:
       - "8.8.8.8"
       - "1.1.1.1"
     depends_on:
-      - db
+      db:
+          condition: service_healthy
     env_file:
       - .env
+    environment:
+      # Override datasource URL agar mengarah ke container db
+      SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - api_logs:/app/logs
 
 volumes:
   db_data:
+  api_logs:
