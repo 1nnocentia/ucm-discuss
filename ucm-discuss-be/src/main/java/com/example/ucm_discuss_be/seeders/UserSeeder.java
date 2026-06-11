@@ -151,9 +151,8 @@ public class UserSeeder implements CommandLineRunner {
         ObjectMapper mapper = new ObjectMapper();
 
         for (String filename : List.of("ucm2023.json", "ucm2024.json", "ucm2025.json")) {
-            String resourcePath = "com/example/ucm_discuss_be/seeders/" + filename;
-            org.springframework.core.io.ClassPathResource resource = new org.springframework.core.io.ClassPathResource(
-                    resourcePath);
+            String resourcePath = "seeders/" + filename;
+            org.springframework.core.io.ClassPathResource resource = new org.springframework.core.io.ClassPathResource(resourcePath);
             if (!resource.exists()) {
                 System.out.println("Seeder file " + filename + " not found in classpath, skipping.");
                 continue;
