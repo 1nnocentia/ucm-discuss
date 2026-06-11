@@ -151,89 +151,81 @@ public class UserSeeder implements CommandLineRunner {
         ObjectMapper mapper = new ObjectMapper();
 
         for (String filename : List.of("ucm2023.json", "ucm2024.json", "ucm2025.json")) {
-            java.io.File file = resolveSeederFile(filename);
-            if (file == null) {
-                System.out.println("Seeder file " + filename + " not found, skipping.");
+            String resourcePath = "com/example/ucm_discuss_be/seeders/" + filename;
+            org.springframework.core.io.ClassPathResource resource = new org.springframework.core.io.ClassPathResource(
+                    resourcePath);
+            if (!resource.exists()) {
+                System.out.println("Seeder file " + filename + " not found in classpath, skipping.");
                 continue;
             }
 
-            System.out.println("Processing " + file.getName() + "...");
-            List<Map<String, Object>> usersList = mapper.readValue(file, List.class);
-            int countInserted = 0;
+            System.out.println("Processing " + filename + " from classpath...");
+            try (java.io.InputStream inputStream = resource.getInputStream()) {
+                List<Map<String, Object>> usersList = mapper.readValue(inputStream, List.class);
+                int countInserted = 0;
 
-            for (Map<String, Object> item : usersList) {
-                String email = (String) item.get("email");
-                if (email == null || email.isBlank()) {
-                    continue;
-                }
-                if (existingEmails.contains(email)) {
-                    continue; // Skip if email already exists
-                }
-
-                UserModel user = new UserModel();
-                user.setEmail(email);
-
-                String name = (String) item.get("name");
-                user.setName(name != null && !name.isBlank() ? name : "User");
-
-                Boolean isLecturer = (Boolean) item.get("isLecturer");
-                user.setIsLecturer(isLecturer != null ? isLecturer : false);
-
-                Boolean isAnon = (Boolean) item.get("isAnon");
-                user.setIsAnon(isAnon != null ? isAnon : false);
-
-                if (!allMajors.isEmpty()) {
-                    user.setMajor(allMajors.get(ThreadLocalRandom.current().nextInt(allMajors.size())));
-                }
-                if (!allFaculties.isEmpty()) {
-                    user.setFaculty(allFaculties.get(ThreadLocalRandom.current().nextInt(allFaculties.size())));
-                }
-
-                // Handle nimOrNisn uniqueness & length constraint [5, 50]
-                String nim = (String) item.get("nimOrNisn");
-                if (nim == null || nim.isBlank()) {
-                    nim = null;
-                }
-
-                if (nim != null) {
-                    if (nim.length() > 50) {
-                        nim = nim.substring(0, 50);
+                for (Map<String, Object> item : usersList) {
+                    String email = (String) item.get("email");
+                    if (email == null || email.isBlank()) {
+                        continue;
+                    }
+                    if (existingEmails.contains(email)) {
+                        continue; // Skip if email already exists
                     }
 
-                    String candidateNim = nim;
-                    int count = 1;
-                    while (existingNims.contains(candidateNim)) {
-                        String suffix = String.valueOf(count);
-                        if (nim.length() + suffix.length() > 50) {
-                            candidateNim = nim.substring(0, 50 - suffix.length()) + suffix;
-                        } else {
-                            candidateNim = nim + suffix;
+                    UserModel user = new UserModel();
+                    user.setEmail(email);
+
+                    String name = (String) item.get("name");
+                    user.setName(name != null && !name.isBlank() ? name : "User");
+
+                    Boolean isLecturer = (Boolean) item.get("isLecturer");
+                    user.setIsLecturer(isLecturer != null ? isLecturer : false);
+
+                    Boolean isAnon = (Boolean) item.get("isAnon");
+                    user.setIsAnon(isAnon != null ? isAnon : false);
+
+                    if (!allMajors.isEmpty()) {
+                        user.setMajor(allMajors.get(ThreadLocalRandom.current().nextInt(allMajors.size())));
+                    }
+                    if (!allFaculties.isEmpty()) {
+                        user.setFaculty(allFaculties.get(ThreadLocalRandom.current().nextInt(allFaculties.size())));
+                    }
+
+                    // Handle nimOrNisn uniqueness & length constraint [5, 50]
+                    String nim = (String) item.get("nimOrNisn");
+                    if (nim == null || nim.isBlank()) {
+                        nim = null;
+                    }
+
+                    if (nim != null) {
+                        if (nim.length() > 50) {
+                            nim = nim.substring(0, 50);
                         }
-                        count++;
+
+                        String candidateNim = nim;
+                        int count = 1;
+                        while (existingNims.contains(candidateNim)) {
+                            String suffix = String.valueOf(count);
+                            if (nim.length() + suffix.length() > 50) {
+                                candidateNim = nim.substring(0, 50 - suffix.length()) + suffix;
+                            } else {
+                                candidateNim = nim + suffix;
+                            }
+                            count++;
+                        }
+                        nim = candidateNim;
+                        existingNims.add(nim);
                     }
-                    nim = candidateNim;
-                    existingNims.add(nim);
+
+                    user.setNimOrNisn(nim);
+
+                    userRepository.save(user);
+                    existingEmails.add(email);
+                    countInserted++;
                 }
-
-                user.setNimOrNisn(nim);
-
-                userRepository.save(user);
-                existingEmails.add(email);
-                countInserted++;
+                System.out.println("Finished " + filename + ": Inserted " + countInserted + " new users.");
             }
-            System.out.println("Finished " + file.getName() + ": Inserted " + countInserted + " new users.");
         }
-    }
-
-    private java.io.File resolveSeederFile(String filename) {
-        java.io.File file = new java.io.File("src/main/java/com/example/ucm_discuss_be/seeders/" + filename);
-        if (file.exists()) {
-            return file;
-        }
-        file = new java.io.File("ucm-discuss-be/src/main/java/com/example/ucm_discuss_be/seeders/" + filename);
-        if (file.exists()) {
-            return file;
-        }
-        return null;
     }
 }
