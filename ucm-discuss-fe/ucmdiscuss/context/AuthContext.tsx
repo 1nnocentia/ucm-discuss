@@ -3,6 +3,7 @@ import React, { createContext, useState, useEffect, useContext, useCallback } fr
 import { AuthcontextType } from "@/type/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ApiService } from "@/controllers/services/apiService";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 const AuthContext = createContext<AuthcontextType | undefined>(undefined);
 const USER_DETAILS_TTL_MS = 24 * 60 * 60 * 1000;
@@ -25,6 +26,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const isAuthenticated = !!user && !!token;
 
     useEffect(() => {
+        GoogleSignin.configure({
+            webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+        });
         loadStoredAuth();
     }, []);
 
@@ -73,17 +77,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-    const login = async (email = '', isStudent = false, nim = '', name = '') => {
+    const login = async () => {
         try {
             setLoading(true);
-            const mockSeed = ApiService.getMockLoginSeed();
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            const idToken = userInfo.idToken || userInfo.data?.idToken;
 
-            const resolvedEmail = email || mockSeed?.email || '';
-            const resolvedIsStudent = typeof isStudent === 'boolean' ? isStudent : (mockSeed?.isStudent ?? false);
-            const resolvedNim = nim || mockSeed?.nim || '';
-            const resolvedName = name || mockSeed?.name || '';
+            if (!idToken) {
+                throw new Error("No ID Token received from Google Sign-In");
+            }
 
-            const response = await ApiService.login(resolvedEmail, resolvedIsStudent, resolvedNim, resolvedName);
+            const response = await ApiService.loginWithGoogle(idToken);
             const { token: resolvedToken, user: resolvedUser } = resolveAuthResponse(response);
 
             if (!resolvedToken) {
