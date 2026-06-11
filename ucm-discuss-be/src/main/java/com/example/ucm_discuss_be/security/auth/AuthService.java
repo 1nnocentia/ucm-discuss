@@ -56,5 +56,33 @@ public class AuthService {
         return new LoginResponseDto(true, data);
     }
 
-    
+    @Transactional(readOnly = true)
+    public LoginResponseDto loginWithGoogle(String idToken) {
+        try {
+            org.springframework.security.oauth2.jwt.NimbusJwtDecoder jwtDecoder = 
+                org.springframework.security.oauth2.jwt.NimbusJwtDecoder.withJwkSetUri("https://www.googleapis.com/oauth2/v3/certs").build();
+            org.springframework.security.oauth2.jwt.Jwt jwt = jwtDecoder.decode(idToken);
+            
+            String issuer = jwt.getClaimAsString("iss");
+            if (issuer == null || (!issuer.equals("https://accounts.google.com") && !issuer.equals("accounts.google.com"))) {
+                throw new BusinessException("Invalid issuer", org.springframework.http.HttpStatus.BAD_REQUEST);
+            }
+            
+            String email = jwt.getClaimAsString("email");
+            if (email == null || email.isBlank()) {
+                throw new BusinessException("Email not found in token", org.springframework.http.HttpStatus.BAD_REQUEST);
+            }
+
+            UserModel user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new BusinessException("You are not registered in our app yet.", org.springframework.http.HttpStatus.BAD_REQUEST));
+
+            String jwtToken = jwtService.generateToken(user.getEmail());
+            UserLoginDto userLoginDto = userService.convertToLoginResponse(user);
+
+            LoginResponseDto.Data data = new LoginResponseDto.Data(jwtToken, userLoginDto);
+            return new LoginResponseDto(true, data);
+        } catch (org.springframework.security.oauth2.jwt.JwtException e) {
+            throw new BusinessException("Invalid Google token: " + e.getMessage(), org.springframework.http.HttpStatus.BAD_REQUEST);
+        }
+    }
 }

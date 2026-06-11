@@ -42,6 +42,7 @@ import com.example.ucm_discuss_be.replies.ReplyModel;
 import com.example.ucm_discuss_be.replies.ReplyRepository;
 import com.example.ucm_discuss_be.security.auth.AuthService;
 import com.example.ucm_discuss_be.security.auth.LoginRequestDto;
+import com.example.ucm_discuss_be.security.auth.GoogleLoginRequestDto;
 import com.example.ucm_discuss_be.aiInteraction.AiInteractionModel;
 import com.example.ucm_discuss_be.threads.ThreadModel;
 import com.example.ucm_discuss_be.threads.ThreadRepository;
@@ -102,6 +103,23 @@ public class FeApiController {
     @PostMapping({ "/auth/login", "/api/auth/login" })
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequestDto request) {
         var response = authService.login(request);
+        Map<String, Object> user = new LinkedHashMap<>();
+        user.put("id", response.getData().getUser().getId().toString());
+        user.put("email", response.getData().getUser().getEmail());
+        user.put("isStudent", response.getData().getUser().getIsStudent());
+        user.put("nim", response.getData().getUser().getNimOrNisn());
+        user.put("name", response.getData().getUser().getName());
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("token", response.getData().getToken());
+        payload.put("user", user);
+        return ResponseEntity.ok(payload);
+    }
+
+    @PostMapping({ "/auth/google", "/api/auth/google" })
+    public ResponseEntity<Map<String, Object>> googleLogin(
+            @RequestBody @jakarta.validation.Valid GoogleLoginRequestDto request) {
+        var response = authService.loginWithGoogle(request.getIdToken());
         Map<String, Object> user = new LinkedHashMap<>();
         user.put("id", response.getData().getUser().getId().toString());
         user.put("email", response.getData().getUser().getEmail());

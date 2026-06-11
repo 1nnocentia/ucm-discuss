@@ -233,6 +233,13 @@ export const ApiService = {
         return response.data;
     },
 
+    loginWithGoogle: async (idToken: string) => {
+        if (USE_MOCK_DATA) return ApiMock.login?.("haninno@student.ciputra.ac.id", true, "12345", "Han Inno");
+
+        const response = await apiClient.post('/api/auth/google', { idToken });
+        return response.data;
+    },
+
     demologin: async (email: string, isStudent: boolean, nim: string, name: string) => {
         if (USE_MOCK_DATA) return ApiMock.login?.(email, isStudent, nim, name) || { token: 'mock-token', user: { id: '1', email, name: 'Mock User', nim: '12345', isStudent: true } };
 

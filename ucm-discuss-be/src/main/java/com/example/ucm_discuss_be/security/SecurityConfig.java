@@ -64,7 +64,7 @@ public class SecurityConfig {
                 // })
                 // )
 
-                .authorizeHttpRequests(req -> req.requestMatchers("/api/auth/**", "/error").permitAll()
+                .authorizeHttpRequests(req -> req.requestMatchers("/", "/ucmdiscuss.apk", "/api/auth/**", "/error").permitAll()
                         // .anyRequest().authenticated()
                         .anyRequest().permitAll() // TOLONG HAPUS INI NANTI
                 )
