@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             setLoading(true);
             await GoogleSignin.hasPlayServices();
-            const userInfo = await GoogleSignin.signIn();
+            const userInfo = (await GoogleSignin.signIn()) as any;
             const idToken = userInfo.idToken || userInfo.data?.idToken;
 
             if (!idToken) {
