@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-@Component
+// @Component
 public class RequestInterceptor implements HandlerInterceptor {
     Logger logger = LoggerFactory.getLogger(RequestInterceptor.class);
     // Request is intercepted by this method before reaching the Controller
